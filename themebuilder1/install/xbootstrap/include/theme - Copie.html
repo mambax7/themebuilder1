@@ -1,0 +1,21 @@
+<{assign var=theme_name value=$xoTheme->folderName}>
+<{assign var=system_template_tpl value="./themes/$theme_name/builder_tpl/system_homepage_tpl.html"}>
+<{assign var="pm_template_tpl" value="../../themes/$theme_name/builder_tpl/pm_template_tpl.html"}>
+<{assign var="profile_template_tpl" value="../../themes/$theme_name/builder_tpl/profile_template_tpl.html"}>
+<{assign var="publisher_template_tpl" value="../../themes/$theme_name/builder_tpl/publisher_template_tpl.html"}>
+
+	<{ if $xoops_dirname=="system" && file_exists($system_template_tpl) }>
+		<{if $xoops_requesturi == "/xoops25777/index.php" or $xoops_requesturi == "/xoops25777/" }>
+			<{includeq file="$theme_name/builder_tpl/system_homepage_tpl.html"}>
+		<{else}>
+			<{includeq file="$theme_name/builder_tpl/default_template_tpl.html"}>
+		<{/if}>
+	<{ elseif $xoops_dirname=="pm" && file_exists($pm_template_tpl)}>
+		<{includeq file="$theme_name/builder_tpl/pm_template_tpl.html"}>
+	<{ elseif $xoops_dirname=="profile" && file_exists($profile_template_tpl)}>
+		<{includeq file="$theme_name/builder_tpl/profile_template_tpl.html"}>
+	<{ elseif $xoops_dirname=="publisher" && file_exists($publisher_template_tpl)}>
+		<{includeq file="$theme_name/builder_tpl/publisher_template_tpl.html"}>
+	<{else}>
+		<{includeq file="$theme_name/builder_tpl/default_template_tpl.html"}>
+	<{/if}>

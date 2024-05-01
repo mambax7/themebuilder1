@@ -1,100 +1,96 @@
 <?php
 
- if (file_exists("../../mainfile.php")) {   
-include("../../mainfile.php");  
-} elseif (file_exists("../../../mainfile.php")) {   
-include("../../../mainfile.php");  
-} 
+if (file_exists("../../mainfile.php")) {
+    include("../../mainfile.php");
+} elseif (file_exists("../../../mainfile.php")) {
+    include("../../../mainfile.php");
+}
 
-$local = dirname($_SERVER['PHP_SELF']);
-$location     = str_replace('/themes/maitscocorporate/admin', '', $local);
+$local    = dirname((string) $_SERVER['PHP_SELF']);
+$location = str_replace('/themes/maitscocorporate/admin', '', $local);
 
- global $xoopsDB;
-	$sql = "SELECT distinct conf_id, conf_name, conf_catid, conf_value, conf_desc, conf_formtype, conf_valuetype, conf_order FROM ".$xoopsDB->prefix("config_theme")." WHERE conf_catid = 1 ORDER BY conf_id DESC";
-	$result = $xoopsDB->query($sql); 
-	while (list($conf_id, $conf_name, $conf_catid, $conf_value, $conf_desc, $conf_formtype, $conf_valuetype, $conf_order) = $xoopsDB->fetchRow($result)) {
+global $xoopsDB;
+$sql    = "SELECT distinct conf_id, conf_name, conf_catid, conf_value, conf_desc, conf_formtype, conf_valuetype, conf_order FROM " . $xoopsDB->prefix("config_theme") . " WHERE conf_catid = 1 ORDER BY conf_id DESC";
+$result = $xoopsDB->query($sql);
+while ([$conf_id, $conf_name, $conf_catid, $conf_value, $conf_desc, $conf_formtype, $conf_valuetype, $conf_order] = $xoopsDB->fetchRow($result)) {
+    $MENU = 'MENU_' . $conf_name . '_' . $conf_id;
+    $arg  = $conf_name;
+    $val  = $conf_id;
 
- 
-				$MENU = 'MENU_' . $conf_name . '_' . $conf_id;
-				$arg = $conf_name; 
-				$val = $conf_id;
-				 
+    $sql      = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE catmenu=' . $conf_id . ' ORDER BY id ASC';
+    $result10 = $xoopsDB->query($sql);
+    while ($video_arr10 = $xoopsDB->fetchArray($result10)) {
+        $tree[$conf_id][] = $video_arr10;
+    }
 
-				 $sql = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE catmenu='.$conf_id.' ORDER BY id ASC';
-				$result10 = $xoopsDB -> query( $sql);
-				while($video_arr10 = $xoopsDB -> fetchArray( $result10 )){ 
-				$tree[$conf_id][] = $video_arr10;
-				}
+    if (!function_exists('formatTree')) {
+        function formatTree($tree, $parent)
+        {
+            $tree2 = [];
+            foreach ($tree as $i => $item) {
+                if ($item['parent'] == $parent) {
+                    $tree2[$item['id']]            = $item;
+                    $tree2[$item['id']]['submenu'] = formatTree($tree, $item['id']);
+                }
+            }
+            return $tree2;
+        }
+    }
 
-			if (!function_exists('formatTree')) {
-				function formatTree($tree, $parent){
-						$tree2 = array();
-						foreach($tree as $i => $item){
-							if($item['parent'] == $parent){
-								$tree2[$item['id']] = $item;
-								$tree2[$item['id']]['submenu'] = formatTree($tree, $item['id']);
-							}
-						}
-						return $tree2;
-					}
-				}	
-				 
-				 $menuhorizontal = formatTree($tree[$conf_id], 0); 
+    $menuhorizontal = formatTree($tree[$conf_id], 0);
 
-		if ($conf_value == 'skin1'){
-
-		
-				/* if(!empty($menuhorizontal)) {
+    if ($conf_value == 'skin1') {
+        /* if(!empty($menuhorizontal)) {
 				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf.css" rel="stylesheet" />';
 
-				 
+
 				${'MENU'.$arg .'_'. $val} .= '<ul class="sf-menu">';
 					foreach($menuhorizontal as $k => $item1){
-					
+
 						${'MENU'.$arg .'_'. $val} .= '<li>
 								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-					
-					
+
+
+
 																if(!empty($item1['submenu'])) {
 																${'MENU'.$arg .'_'. $val} .= '<ul>';
 																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
+
+
+
 																					${'MENU'.$arg .'_'. $val} .= '<li>
 																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
+
 																						if(!empty($item2['submenu'])) {
 																						${'MENU'.$arg .'_'. $val} .= '<ul>';
 																						foreach($item2['submenu'] as $k2 => $item3){
-																						
+
 																						${'MENU'.$arg .'_'. $val} .= '<li>
 																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
+
 																						//++++++niveau sous menu 1 ---20 a determiner dans les configurations prochain release
-																						
-																						
+
+
 																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
 																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
+
+																					${'MENU'.$arg .'_'. $val} .= '</li>	';
 																					}
-																					
-																					
-																					
-																					
-																	}				
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
+
+
+
+
+																	}
+																	${'MENU'.$arg .'_'. $val} .= '</ul>	';
+
 																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
+						${'MENU'.$arg .'_'. $val} .= '</li>	';
+
 					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
+					${'MENU'.$arg .'_'. $val} .= '</ul>	';
 				}*/
-				
-				${'MENU'.$arg .'_'. $val} = '
+
+        ${'MENU' . $arg . '_' . $val} = '
 				<style>
 				
 				/* Assistive text */
@@ -229,805 +225,532 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 				
 				
 				<nav id="site-navigation" class="themonic-nav" role="navigation"> <a class="assistive-text" href="#content" title="Skip to content">Skip to content</a><div class="menu-top-container"><ul id="menu-top" class="nav-menu"><li id="menu-item-17" class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item menu-item-home menu-item-17"><a href="http://demo.themonic.com/io-pro/">Home</a></li><li id="menu-item-74" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-74"><a href="http://demo.themonic.com/io-pro/blog/category/news/">News</a></li><li id="menu-item-141" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-141"><a href="http://demo.themonic.com/io-pro/blog/category/technology/">Tech</a></li><li id="menu-item-140" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-140"><a href="http://demo.themonic.com/io-pro/blog/category/mobile/">Mobile</a></li><li id="menu-item-138" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-138"><a href="http://demo.themonic.com/io-pro/blog/category/food/">Food</a></li><li id="menu-item-139" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-139"><a href="http://demo.themonic.com/io-pro/blog/category/beauty/">Beauty</a></li><li id="menu-item-15" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-15"><a href="http://demo.themonic.com/io-pro/full-width/">Full Width</a></li><li id="menu-item-157" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-157"><a href="http://demo.themonic.com/io-pro/blog/author/steve/">Author Page</a><ul class="sub-menu"><li id="menu-item-159" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-159"><a href="http://demo.themonic.com/io-pro/blog/author/stacy/">Stacy</a></li><li id="menu-item-158" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-158"><a href="http://demo.themonic.com/io-pro/blog/author/matt/">Matt</a></li></ul></li></ul><select class="selectnav" id="selectnav1"><option value="">Menu</option><option value="http://demo.themonic.com/io-pro/" selected="">HOME</option><option value="http://demo.themonic.com/io-pro/blog/category/news/">NEWS</option><option value="http://demo.themonic.com/io-pro/blog/category/technology/">TECH</option><option value="http://demo.themonic.com/io-pro/blog/category/mobile/">MOBILE</option><option value="http://demo.themonic.com/io-pro/blog/category/food/">FOOD</option><option value="http://demo.themonic.com/io-pro/blog/category/beauty/">BEAUTY</option><option value="http://demo.themonic.com/io-pro/full-width/">FULL WIDTH</option><option value="http://demo.themonic.com/io-pro/blog/author/steve/">AUTHOR PAGE</option><option value="http://demo.themonic.com/io-pro/blog/author/stacy/">- Stacy</option><option value="http://demo.themonic.com/io-pro/blog/author/matt/">- Matt</option></select></div> </nav>';
-			//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		
-		
-		if ($conf_value == 'skin2'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf2.css" rel="stylesheet" />';
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="sfs-menu">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li>
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		if ($conf_value == 'skin3'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf3.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="sfs3-menu">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li>
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-
-
-		if ($conf_value == 'skin4'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf4.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="sfs4-menu">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li>
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-
-
-		if ($conf_value == 'skin5'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf5.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="sfs5-menu">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li>
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		
-
-
-///
-
-		if ($conf_value == 'skin10'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="horizontal white">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						if(!empty($item1['submenu'])) {									//de skin 10 a skin 19 a faire ce if de sub menu pour afficher la fleche a coté a finir plutard
-							${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-						}else{
-							${'MENU'.$arg .'_'. $val} .= '<li>
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-						}						
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		if ($conf_value == 'skin11'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="horizontal black">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}	
-
-		if ($conf_value == 'skin12'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="horizontal red">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}	
-
-		if ($conf_value == 'skin13'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="horizontal green">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}	
-
-		if ($conf_value == 'skin14'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="horizontal blue">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}	
-
-		
-
-		
-		
-				if ($conf_value == 'skin15'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="vertical white">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		if ($conf_value == 'skin16'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="vertical black">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}	
-
-		if ($conf_value == 'skin17'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="vertical red">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}	
-
-		if ($conf_value == 'skin18'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="vertical green">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}	
-
-		if ($conf_value == 'skin19'){
-
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
-
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul class="vertical blue">';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="parent">
-								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul>';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul>';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="parent>
-																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
-																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
-
-
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		
-		
-//////
-//////
-		if ($conf_value == 'skin20'){
-
-				 if(!empty($menuhorizontal)) {
-				// ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf20.css" rel="stylesheet" />';
-				 
-				// ${'MENU'.$arg .'_'. $val} .= '<link href="http://www.bursa.com.tr/wp-content/plugins/mega_main_menu/src/css/cache.skin.css?ver=3.8" rel="stylesheet" />';
-
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/plugins/mega_main_menu/src/css/cache.skin.css?ver=3.8.1" rel="stylesheet" />';
-
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/blue.skin.css?ver=1.1.0" rel="stylesheet" />';
-
-				 
-				/*${'MENU'.$arg .'_'. $val} .= '<div class="container" style="padding:0" >
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin2') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf2.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="sfs-menu">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li>
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin3') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf3.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="sfs3-menu">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li>
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin4') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf4.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="sfs4-menu">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li>
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin5') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf5.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="sfs5-menu">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li>
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    ///
+
+    if ($conf_value == 'skin10') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="horizontal white">';
+            foreach ($menuhorizontal as $k => $item1) {
+                if (!empty($item1['submenu'])) {                                    //de skin 10 a skin 19 a faire ce if de sub menu pour afficher la fleche a coté a finir plutard
+                    ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+                } else {
+                    ${'MENU' . $arg . '_' . $val} .= '<li>
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+                }
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin11') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="horizontal black">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin12') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="horizontal red">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin13') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="horizontal green">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin14') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="horizontal blue">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin15') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="vertical white">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin16') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="vertical black">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin17') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="vertical red">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin18') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="vertical green">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    if ($conf_value == 'skin19') {
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf10.css" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<ul class="vertical blue">';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="parent">
+								<a href="' . $item1['link'] . '">' . $item1['label'] . '</a>';
+
+                if (!empty($item1['submenu'])) {
+                    ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item2['link'] . '">' . $item2['label'] . '</a>';
+
+                        if (!empty($item2['submenu'])) {
+                            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                ${'MENU' . $arg . '_' . $val} .= '<li class="parent>
+																						<a href="' . $item3['link'] . '">' . $item3['label'] . '</a></li>';
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                }
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
+
+    //////
+    //////
+    if ($conf_value == 'skin20') {
+        if (!empty($menuhorizontal)) {
+            // ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf20.css" rel="stylesheet" />';
+
+            // ${'MENU'.$arg .'_'. $val} .= '<link href="http://www.bursa.com.tr/wp-content/plugins/mega_main_menu/src/css/cache.skin.css?ver=3.8" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/plugins/mega_main_menu/src/css/cache.skin.css?ver=3.8.1" rel="stylesheet" />';
+
+            ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/blue.skin.css?ver=1.1.0" rel="stylesheet" />';
+            /*${'MENU'.$arg .'_'. $val} .= '<div class="container" style="padding:0" >
     <div id="mega_main_menu" class="nav_menu primary icons-disable first-lvl-align-left include-logo no-search">
 	<div class="menu_holder" data-sticky="1" data-stickyoffset="340">
 	<div class="menu_inner">
@@ -1037,51 +760,50 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 	</span><!-- /class="nav_logo" -->
 	<ul id="mega_main_menu_ul">';
 					foreach($menuhorizontal as $k => $item1){
-					
+
 						${'MENU'.$arg .'_'. $val} .= '<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-'.$item1['id'].' default_dropdown drop_to_right  submenu_default_width columns2">
 								<a href="'.$item1['link'].'">'.$item1['label'].'</a>';
-					
+
 																if(!empty($item1['submenu'])) {
 																${'MENU'.$arg .'_'. $val} .= '<ul class="dropdown">';
 																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
+
+
+
 																					${'MENU'.$arg .'_'. $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26594    submenu_default_width columns">
 																						<a href="'.$item2['link'].'">'.$item2['label'].'</a>';
-																						
+
 																						if(!empty($item2['submenu'])) {
 																						${'MENU'.$arg .'_'. $val} .= '<ul class="dropdown">';
 																						foreach($item2['submenu'] as $k2 => $item3){
-																						
+
 																						${'MENU'.$arg .'_'. $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2658594    submenu_default_width columns">
 																						<a href="'.$item3['link'].'">'.$item3['label'].'</a></li>';
-																						
-																						
+
+
 																						${'MENU'.$arg .'_'. $val} .= '</ul>	';
 																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';							
+
+																					${'MENU'.$arg .'_'. $val} .= '</li>	';
 																					}
-																					
-																					
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
+
+
+
+
+																	}
+																	${'MENU'.$arg .'_'. $val} .= '</ul>	';
+
 																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
+						${'MENU'.$arg .'_'. $val} .= '</li>	';
+
 					}
 					${'MENU'.$arg .'_'. $val} .= '</ul></div><!-- /class="menu_inner" -->
 	</div><!-- /class="menu_holder" --></div>  </div>	';	*/
-				}
+        }
 
+        /////
 
-/////
-
-/*${'MENU'.$arg .'_'. $val} .= '<!--container--->
+        /*${'MENU'.$arg .'_'. $val} .= '<!--container--->
 
 
   <div class="container" style="padding:0" >
@@ -1142,13 +864,13 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 	</div><!-- /class="menu_holder" --></div>  </div>
   <!--container--->
   ';
-  
-  
+
+
   */
-  
-  /*
-  
-  
+
+        /*
+
+
   	${'MENU'.$arg .'_'. $val} .= '<div class="menu_1">
 		<div class="container">
 			<div class="navigation">
@@ -1443,7 +1165,7 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 </ul></li>
 <li id="menu-item-137" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-137 widgets_dropdown additional_style_6 drop_to_left  submenu_default_width columns2"><a href="/6" class="item_link  with_icon"><i class="im-icon-puzzle"></i> <span><span class="link_text">Widgets</span></span></a>
 <ul class="mega_dropdown">
-<div id="text-7" class="widget widget_text"><div class="widgettitle">Contact Us</div>			<div class="textwidget"><ul class="contacts"> 
+<div id="text-7" class="widget widget_text"><div class="widgettitle">Contact Us</div>			<div class="textwidget"><ul class="contacts">
 <li><i class="im-icon-envelop"></i><a href="#">info@megamain.com</a><br>
 </li>
 <li><i class="im-icon-globe"></i><a href="#">www.megamain.com</a><br>
@@ -1462,13 +1184,11 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 	</div><!-- /class="menu_holder" --></div>			</div><!-- /.navigation-->
 		</div><!-- class="container" -->
 	</div><!-- class="" -->';
-  
-  
+
+
   */
-  
-  
-  
-  ${'MENU'.$arg .'_'. $val} .= '<div class="menu_1">
+
+        ${'MENU' . $arg . '_' . $val} .= '<div class="menu_1">
 		<div class="container">
 			<div class="navigation">
 <div id="mega_main_menu" class="nav_menu primary_menu icons-left first-lvl-align-left first-lvl-separator-smooth direction-horizontal responsive-enable mobile_minimized-enable version-1-1-0 include-logo include-search dropdowns_animation-anim_5">
@@ -1521,26 +1241,18 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 	</div><!-- /class="menu_holder" --></div>			</div><!-- /.navigation-->
 		</div><!-- class="container" -->
 	</div>';
-  
 
-//////
+        //////
 
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		
-		
-		if ($conf_value == 'skin21'){
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
 
-		
-			
-	//<link rel="stylesheet" href="https://googledrive.com/host/0B8nb-pnqjGo_RmxNeVdHVEF4U00/css/style.css"><link rel="stylesheet" href="https://googledrive.com/host/0B8nb-pnqjGo_RmxNeVdHVEF4U00/css/colors/blue.css">
-	//<ul><li class="link"><a href="#" class="ico-home" data-title="Home" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-about" data-title="About us" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-services" data-title="Services" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-portfolio" data-title="Portfolio" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-blog" data-title="Blog" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-contact" data-title="Contact" ></a></li></ul>
-	
-		
-				 if(!empty($menuhorizontal)) {
-				 ${'MENU'.$arg .'_'. $val} .= '<link href="'.$location.'/themes/maitscocorporate/css/cf21.css" rel="stylesheet" />
+    if ($conf_value == 'skin21') {
+        //<link rel="stylesheet" href="https://googledrive.com/host/0B8nb-pnqjGo_RmxNeVdHVEF4U00/css/style.css"><link rel="stylesheet" href="https://googledrive.com/host/0B8nb-pnqjGo_RmxNeVdHVEF4U00/css/colors/blue.css">
+        //<ul><li class="link"><a href="#" class="ico-home" data-title="Home" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-about" data-title="About us" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-services" data-title="Services" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-portfolio" data-title="Portfolio" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-blog" data-title="Blog" ></a></li><li class="separ"></li><li class="link"><a href="#" class="ico-contact" data-title="Contact" ></a></li></ul>
+
+        if (!empty($menuhorizontal)) {
+            ${'MENU' . $arg . '_' . $val} .= '<link href="' . $location . '/themes/maitscocorporate/css/cf21.css" rel="stylesheet" />
 				 	<link rel="stylesheet" href="https://googledrive.com/host/0B8nb-pnqjGo_RmxNeVdHVEF4U00/css/style.css"><link rel="stylesheet" href="https://googledrive.com/host/0B8nb-pnqjGo_RmxNeVdHVEF4U00/css/colors/blue.css">
 
 					<link rel="stylesheet" type="text/css" href="/arabesk125/themes/maitscocorporate/css/icomoon.css">
@@ -1548,90 +1260,78 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 					
 					';
 
-				 
-				${'MENU'.$arg .'_'. $val} .= '<ul>';
-					foreach($menuhorizontal as $k => $item1){
-					
-						${'MENU'.$arg .'_'. $val} .= '<li class="link">
-								<a href="'.$item1['link'].'" class="'.$item1['icons'].'" data-title="'.$item1['label'].'"></a>
+            ${'MENU' . $arg . '_' . $val} .= '<ul>';
+            foreach ($menuhorizontal as $k => $item1) {
+                ${'MENU' . $arg . '_' . $val} .= '<li class="link">
+								<a href="' . $item1['link'] . '" class="' . $item1['icons'] . '" data-title="' . $item1['label'] . '"></a>
 								<li class="separ"></li>';
-					
-					
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					${'MENU'.$arg .'_'. $val} .= '</ul>	';	
-				}
 
+                ${'MENU' . $arg . '_' . $val} .= '</li>	';
+            }
+            ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+        }
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+    }
 
-
-
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		}
-		
-		
-		
-		
-		if ($conf_value == 'mega_menu'){
-		
-			if( ! function_exists( 'mmm_nav_search' ) ){
-				function mmm_nav_search( $items, $args ) {
-					$searchform = '';
-					$searchform .= '<li class="nav_search_box">';
-						$searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
+    if ($conf_value == 'mega_menu') {
+        if (!function_exists('mmm_nav_search')) {
+            function mmm_nav_search($items, $args)
+            {
+                $searchform = '';
+                $searchform .= '<li class="nav_search_box">';
+                $searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
 							<i class="im-icon-search-3 icosearch"></i>
 							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
 							<input type="text" class="field" name="s" id="s" />
 						</form>';
-					$searchform .= '</li><!-- class="nav_search_box" -->';
-					$items = $items . $searchform;
-				
-			
-				return $items;
-				}
-			}
-			
-			if( ! function_exists( 'mmm_nav_login' ) ){
-				function mmm_nav_login( $items, $args ) {
-					$searchform = '';
-					$searchform .= '<li class="nav_search_box">';
-						$searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
-							<i class="im-icon-search-3 icosearch"></i>
-							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
-							<input type="text" class="field" name="s" id="s" />
-						</form>';
-					$searchform .= '</li><!-- class="nav_search_box" -->';
-					$items = $items . $searchform;
-					$items = '<li class="nav_search_box"><h3>login</h3></li>';
-				
-			
-				return $items;
-				}
-			}
-			
-			if( ! function_exists( 'mmm_nav_register' ) ){
-				function mmm_nav_register( $items, $args ) {
-					$searchform = '';
-					$searchform .= '<li class="nav_search_box">';
-						$searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
-							<i class="im-icon-search-3 icosearch"></i>
-							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
-							<input type="text" class="field" name="s" id="s" />
-						</form>';
-					$searchform .= '</li><!-- class="nav_search_box" -->';
-					$items = $items . $searchform;
-					$items = '<li class="nav_search_box"><h3>register</h3></li>';
-				
-			
-				return $items;
-				}
-			}
+                $searchform .= '</li><!-- class="nav_search_box" -->';
+                $items      = $items . $searchform;
 
-				 if(!empty($menuhorizontal)) {
-				 $unserialise = unserialize($conf_desc);
-				 //var_dump($unserialise);
-				 if ($unserialise['stickyoffset'] > 0){
-					${'MENU'.$arg .'_'. $val} .="
+                return $items;
+            }
+        }
+
+        if (!function_exists('mmm_nav_login')) {
+            function mmm_nav_login($items, $args)
+            {
+                $searchform = '';
+                $searchform .= '<li class="nav_search_box">';
+                $searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
+							<i class="im-icon-search-3 icosearch"></i>
+							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
+							<input type="text" class="field" name="s" id="s" />
+						</form>';
+                $searchform .= '</li><!-- class="nav_search_box" -->';
+                $items      = $items . $searchform;
+                $items      = '<li class="nav_search_box"><h3>login</h3></li>';
+
+                return $items;
+            }
+        }
+
+        if (!function_exists('mmm_nav_register')) {
+            function mmm_nav_register($items, $args)
+            {
+                $searchform = '';
+                $searchform .= '<li class="nav_search_box">';
+                $searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
+							<i class="im-icon-search-3 icosearch"></i>
+							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
+							<input type="text" class="field" name="s" id="s" />
+						</form>';
+                $searchform .= '</li><!-- class="nav_search_box" -->';
+                $items      = $items . $searchform;
+                $items      = '<li class="nav_search_box"><h3>register</h3></li>';
+
+                return $items;
+            }
+        }
+
+        if (!empty($menuhorizontal)) {
+            $unserialise = unserialize($conf_desc);
+            //var_dump($unserialise);
+            if ($unserialise['stickyoffset'] > 0) {
+                ${'MENU' . $arg . '_' . $val} .= "
 							
 							 <script type='application/javascript'>
 							 jQuery(document).ready(function(){
@@ -1661,88 +1361,81 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 							});
 							</script>
 							";
-					
-				 }else{
-				 
-					//$stick = 'class="menu_holder"';
-				 
-				 }
-				 
-				 
-				 
-				 //${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/plugins/mega_main_menu/src/css/cache.skin.css?ver=3.8.1" rel="stylesheet" />';
-				if ($unserialise['color'] == 'blue'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="'.XOOPS_URL.'/themes/themebuilder/css/blue.skin.css" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'green'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/green.skin.css?ver=1.1.0" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'orange'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/orange.skin.css?ver=1.1.0" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'depthblue'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/depthblue.skin.css?ver=1.1.0" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'multicolor'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/multicolor.skin.css?ver=1.1.0" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'aqua'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/aqua.skin.css?ver=1.1.0" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'silver'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/silver.skin.css?ver=1.1.0" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'violet'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/violet.skin.css?ver=1.1.0" rel="stylesheet" />';
-					 }elseif ($unserialise['color'] == 'white'){
-					 ${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/white.skin.css?ver=1.1.0" rel="stylesheet" />';
-				}
-				
-			$container_class = 
-            ' primary_style-' . $unserialise['primarystyle'] . 
-            ' icons-' . $unserialise['lang-menu_first_level_icons_position'] . 
-           	' first-lvl-align-' . $unserialise['lang-menu_first_level_item_align'] . 
-           	' first-lvl-separator-' . $unserialise['lang-menu_first_level_separator'] . 
-           	' language_direction-' . $unserialise['language_direction'] . 
-           	' direction-' . $unserialise['_direction'] . 
-//           	' responsive-' . ( ( is_array( $mega_main_menu'responsive_styles' ) && in_array( 'true', $mega_main_menu'responsive_styles'  ) ) ? 'enable' : 'disable' ) . 
-			' responsive-enable' .
-			' mobile_minimized-enable' .
-//           	' mobile_minimized-' . ( ( ( is_array( $mega_main_menu . '_mobile_minimized'  ) && in_array( 'true', $mega_main_menu . '_mobile_minimized'  ) ) || ( $indefinite_location_mode === true ) ) ? 'enable' : 'disable' ) . 
-//           	' fullwidth-' . ( ( is_array( $mega_main_menu->get_option( $args['theme_location'] . '_fullwidth_container' ) ) && in_array( 'true', $mega_main_menu->get_option( $args['theme_location'] . '_fullwidth_container' ) ) ) ? 'enable' : 'disable' ) . 
-           	' dropdowns_animation-' . $unserialise['_dropdowns_animation']
-			;
-			if(  $unserialise['logo_src'] ) {
-				$container_class .= ' include-logo';
-			} else {
-				$container_class .= ' no-logo';
-			}
-			if(  $unserialise['search_box'] ) {
-				$container_class .= ' include-search';
-			} else {
-				$container_class .= ' no-search';
-			}
-			if( $unserialise['woo_cart'] ) {
-				$container_class .= ' include-woo_cart';
-			} else {
-				$container_class .= ' no-woo_cart';
-			}
-			if( $unserialise['buddypress'] ) {
-				$container_class .= ' include-buddypress';
-			} else {
-				$container_class .= ' no-buddypress';
-			}				
-				
-				
-				if ($unserialise['stickyoffset'] > 0){
-				$datasticky = 'data-sticky="1"';
-				}
-				
-				
-				 ${'MENU'.$arg .'_'. $val} .= '<link rel="stylesheet" type="text/css" href="/arabesk125/themes/maitscocorporate/css/mega_main_menu.css">';
-				 
-				 ${'MENU'.$arg .'_'. $val} .= '<link rel="stylesheet" type="text/css" href="/arabesk125/themes/maitscocorporate/css/icomoon.css">
+            } else {
+                //$stick = 'class="menu_holder"';
+
+            }
+
+            //${'MENU'.$arg .'_'. $val} .= '<link href="http://menu.megamain.com/wp-content/plugins/mega_main_menu/src/css/cache.skin.css?ver=3.8.1" rel="stylesheet" />';
+            if ($unserialise['color'] == 'blue') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="' . XOOPS_URL . '/themes/themebuilder/css/blue.skin.css" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'green') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/green.skin.css?ver=1.1.0" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'orange') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/orange.skin.css?ver=1.1.0" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'depthblue') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/depthblue.skin.css?ver=1.1.0" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'multicolor') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/multicolor.skin.css?ver=1.1.0" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'aqua') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/aqua.skin.css?ver=1.1.0" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'silver') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/silver.skin.css?ver=1.1.0" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'violet') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/violet.skin.css?ver=1.1.0" rel="stylesheet" />';
+            } elseif ($unserialise['color'] == 'white') {
+                ${'MENU' . $arg . '_' . $val} .= '<link href="http://menu.megamain.com/wp-content/themes/megamainmenu/menu_skins/white.skin.css?ver=1.1.0" rel="stylesheet" />';
+            }
+
+            $container_class =
+                ' primary_style-' . $unserialise['primarystyle'] .
+                ' icons-' . $unserialise['lang-menu_first_level_icons_position'] .
+                ' first-lvl-align-' . $unserialise['lang-menu_first_level_item_align'] .
+                ' first-lvl-separator-' . $unserialise['lang-menu_first_level_separator'] .
+                ' language_direction-' . $unserialise['language_direction'] .
+                ' direction-' . $unserialise['_direction'] .
+                //           	' responsive-' . ( ( is_array( $mega_main_menu'responsive_styles' ) && in_array( 'true', $mega_main_menu'responsive_styles'  ) ) ? 'enable' : 'disable' ) .
+                ' responsive-enable' .
+                ' mobile_minimized-enable' .
+                //           	' mobile_minimized-' . ( ( ( is_array( $mega_main_menu . '_mobile_minimized'  ) && in_array( 'true', $mega_main_menu . '_mobile_minimized'  ) ) || ( $indefinite_location_mode === true ) ) ? 'enable' : 'disable' ) .
+                //           	' fullwidth-' . ( ( is_array( $mega_main_menu->get_option( $args['theme_location'] . '_fullwidth_container' ) ) && in_array( 'true', $mega_main_menu->get_option( $args['theme_location'] . '_fullwidth_container' ) ) ) ? 'enable' : 'disable' ) .
+                ' dropdowns_animation-' . $unserialise['_dropdowns_animation'];
+            if ($unserialise['logo_src']) {
+                $container_class .= ' include-logo';
+            } else {
+                $container_class .= ' no-logo';
+            }
+            if ($unserialise['search_box']) {
+                $container_class .= ' include-search';
+            } else {
+                $container_class .= ' no-search';
+            }
+            if ($unserialise['woo_cart']) {
+                $container_class .= ' include-woo_cart';
+            } else {
+                $container_class .= ' no-woo_cart';
+            }
+            if ($unserialise['buddypress']) {
+                $container_class .= ' include-buddypress';
+            } else {
+                $container_class .= ' no-buddypress';
+            }
+
+            if ($unserialise['stickyoffset'] > 0) {
+                $datasticky = 'data-sticky="1"';
+            }
+
+            ${'MENU' . $arg . '_' . $val} .= '<link rel="stylesheet" type="text/css" href="/arabesk125/themes/maitscocorporate/css/mega_main_menu.css">';
+
+            ${'MENU' . $arg . '_' . $val} .= '<link rel="stylesheet" type="text/css" href="/arabesk125/themes/maitscocorporate/css/icomoon.css">
 									<link rel="stylesheet" type="text/css" href="/arabesk125/themes/maitscocorporate/css/font-awesome.css">
 									
 		
 	<div class="menu_1">
 		<div class="containermegamenu">
 			<div class="navigation">
-				<div id="mega_main_menu" class="nav_menu primary_menu '.$container_class.' icons-left first-lvl-align-left first-lvl-separator-smooth '.$unserialise['direction'].' responsive-enable mobile_minimized-enable '.$unserialise['animation'].' version-1-1-0 include-logo include-search">
-					<div class="menu_holder" '.$datasticky.' data-stickyoffset="'.$unserialise['stickyoffset'].'">
+				<div id="mega_main_menu" class="nav_menu primary_menu ' . $container_class . ' icons-left first-lvl-align-left first-lvl-separator-smooth ' . $unserialise['direction'] . ' responsive-enable mobile_minimized-enable ' . $unserialise['animation'] . ' version-1-1-0 include-logo include-search">
+					<div class="menu_holder" ' . $datasticky . ' data-stickyoffset="' . $unserialise['stickyoffset'] . '">
 					<div class="mmm_fullwidth_container"></div>
 						<div class="menu_inner">
 
@@ -1760,206 +1453,152 @@ select.selectnav { margin:4px;  padding:10px; } /* centers select */
 			</span>
 						
 	<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
-	
-		
-		foreach($menuhorizontal as $k => $item1){
-						
-						if ($item1['class'] == 'default_dropdown'){
-						//default_dropdown
-													
-													
-						${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item1['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-'.$item1['id'].' default_dropdown additional_style_1 drop_to_right  submenu_default_width columns2">
-								<a title="'.$item1['label'].'" href="'.$item1['link'].'" class="item_link  with_icon"><i class="'.$item1['icons'].'"></i> <span><span class="link_text">'.$item1['label'].'</span></span></a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul class="mega_dropdown">';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item2['id'].'" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item2['id'].' default_style submenu_default_width columns">
-																						<a href="'.$item2['link'].'" class="item_link  with_icon"><i class="'.$item2['icons'].'"></i> <span><span class="link_text">'.$item2['label'].'</span></span></a>';
-																						
-																									if(!empty($item2['submenu'])) {
-																												${'MENU'.$arg .'_'. $val} .= '<ul class="mega_dropdown">';
-																													foreach($item2['submenu'] as $k2 => $item3){
-																															${'MENU'.$arg .'_'. $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item3['id'].' submenu_default_width columns">
-																															<a href="'.$item3['link'].'" class="item_link  with_icon"><i class="'.$item3['icons'].'"></i> <span><span class="link_text">'.$item3['label'].'</span></span></a>
+
+            foreach ($menuhorizontal as $k => $item1) {
+                if ($item1['class'] == 'default_dropdown') {
+                    //default_dropdown
+
+                    ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item1['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-' . $item1['id'] . ' default_dropdown additional_style_1 drop_to_right  submenu_default_width columns2">
+								<a title="' . $item1['label'] . '" href="' . $item1['link'] . '" class="item_link  with_icon"><i class="' . $item1['icons'] . '"></i> <span><span class="link_text">' . $item1['label'] . '</span></span></a>';
+
+                    if (!empty($item1['submenu'])) {
+                        ${'MENU' . $arg . '_' . $val} .= '<ul class="mega_dropdown">';
+                        foreach ($item1['submenu'] as $k1 => $item2) {
+                            ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item2['id'] . '" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item2['id'] . ' default_style submenu_default_width columns">
+																						<a href="' . $item2['link'] . '" class="item_link  with_icon"><i class="' . $item2['icons'] . '"></i> <span><span class="link_text">' . $item2['label'] . '</span></span></a>';
+
+                            if (!empty($item2['submenu'])) {
+                                ${'MENU' . $arg . '_' . $val} .= '<ul class="mega_dropdown">';
+                                foreach ($item2['submenu'] as $k2 => $item3) {
+                                    ${'MENU' . $arg . '_' . $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item3['id'] . ' submenu_default_width columns">
+																															<a href="' . $item3['link'] . '" class="item_link  with_icon"><i class="' . $item3['icons'] . '"></i> <span><span class="link_text">' . $item3['label'] . '</span></span></a>
 																															';
-																													
-																													
-																													${'MENU'.$arg .'_'. $val} .= '</li>	';
-																													}
-																									
-																												${'MENU'.$arg .'_'. $val} .= '</ul>	';							
-																									}
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					
-					
 
+                                    ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                                }
 
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                        ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                }
 
-					if ($item1['class'] == 'multicolumn_dropdown_bg'){
-						//multicolumn_dropdown with background								
-						${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item1['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-'.$item1['id'].' multicolumn_dropdown additional_style_2 drop_to_right  submenu_default_width columns3">
-								<a title="'.$item1['label'].'" href="'.$item1['link'].'" class="item_link  with_icon"><i class="'.$item1['icons'].'"></i> <span><span class="link_text">'.$item1['label'].'</span></span></a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul class="mega_dropdown" style="background-image:url(http://menu.megamain.com/wp-content/uploads/2013/10/iphone.png);background-repeat:no-repeat;background-attachment:scroll;background-position:center right;background-size:auto 100%;">';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item2['id'].'" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item2['id'].' default_style submenu_default_width columns">
-																						<a href="'.$item2['link'].'" class="item_link  with_icon"><i class="'.$item2['icons'].'"></i> <span><span class="link_text">'.$item2['label'].'</span></span></a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul class="mega_dropdown">';
-																								foreach($item2['submenu'] as $k2 => $item3){
-																								
-																								${'MENU'.$arg .'_'. $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item3['id'].' submenu_default_width columns">
-																								<a href="'.$item3['link'].'" class="item_link  with_icon"><i class="'.$item3['icons'].'"></i> <span><span class="link_text">'.$item3['label'].'</span></span></a>';
-																								${'MENU'.$arg .'_'. $val} .= '</li>	';
-																								}
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</ul>	';							
-																						}
-																					
-																					${'MENU'.$arg .'_'. $val} .= '</li>	';
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
-					
-					
-					
-					
-					
-					
-			if ($item1['class'] == 'multicolumn_dropdown'){
-						//multicolumn_dropdown normal										
-													
-						${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item1['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-'.$item1['id'].' multicolumn_dropdown additional_style_3 drop_to_right  submenu_default_width columns4">
-								<a title="'.$item1['label'].'" href="'.$item1['link'].'" class="item_link  with_icon"><i class="'.$item1['icons'].'"></i> <span><span class="link_text">'.$item1['label'].'</span></span></a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul class="mega_dropdown">';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																	
-																	
-																	
-																					${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item2['id'].'" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item2['id'].' default_style submenu_default_width columns">
-																						<a href="'.$item2['link'].'" class="item_link  with_icon"><i class="'.$item2['icons'].'"></i> <span><span class="link_text">'.$item2['label'].'</span></span></a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						${'MENU'.$arg .'_'. $val} .= '<ul class="mega_dropdown">';
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item3['id'].' submenu_default_width columns">
-																						<a href="'.$item3['link'].'" class="item_link  with_icon"><i class="'.$item3['icons'].'"></i> <span><span class="link_text">'.$item3['label'].'</span></span></a>';
-																						
-																						
-																						${'MENU'.$arg .'_'. $val} .= '</li>	';
-																						}
-																						
-																					${'MENU'.$arg .'_'. $val} .= '</ul>	';							
-																					}
-																					
-																				${'MENU'.$arg .'_'. $val} .= '</li>	';
-																					
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';								
-					 
-					}
+                if ($item1['class'] == 'multicolumn_dropdown_bg') {
+                    //multicolumn_dropdown with background
+                    ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item1['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-' . $item1['id'] . ' multicolumn_dropdown additional_style_2 drop_to_right  submenu_default_width columns3">
+								<a title="' . $item1['label'] . '" href="' . $item1['link'] . '" class="item_link  with_icon"><i class="' . $item1['icons'] . '"></i> <span><span class="link_text">' . $item1['label'] . '</span></span></a>';
 
+                    if (!empty($item1['submenu'])) {
+                        ${'MENU' . $arg . '_' . $val} .= '<ul class="mega_dropdown" style="background-image:url(http://menu.megamain.com/wp-content/uploads/2013/10/iphone.png);background-repeat:no-repeat;background-attachment:scroll;background-position:center right;background-size:auto 100%;">';
+                        foreach ($item1['submenu'] as $k1 => $item2) {
+                            ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item2['id'] . '" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item2['id'] . ' default_style submenu_default_width columns">
+																						<a href="' . $item2['link'] . '" class="item_link  with_icon"><i class="' . $item2['icons'] . '"></i> <span><span class="link_text">' . $item2['label'] . '</span></span></a>';
 
+                            if (!empty($item2['submenu'])) {
+                                ${'MENU' . $arg . '_' . $val} .= '<ul class="mega_dropdown">';
+                                foreach ($item2['submenu'] as $k2 => $item3) {
+                                    ${'MENU' . $arg . '_' . $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item3['id'] . ' submenu_default_width columns">
+																								<a href="' . $item3['link'] . '" class="item_link  with_icon"><i class="' . $item3['icons'] . '"></i> <span><span class="link_text">' . $item3['label'] . '</span></span></a>';
+                                    ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                                }
 
-					if ($item1['class'] == 'grid_dropdown'){		
-						//grid_dropdown			
-													
-						${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item1['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-'.$item1['id'].' grid_dropdown additional_style_4 drop_to_right  submenu_default_width columns5">
-								<a title="'.$item1['label'].'" href="'.$item1['link'].'" class="item_link  with_icon"><i class="'.$item1['icons'].'"></i> <span><span class="link_text">'.$item1['label'].'</span></span></a>';
-					
-																if(!empty($item1['submenu'])) {
-																${'MENU'.$arg .'_'. $val} .= '<ul class="mega_dropdown">';
-																	foreach($item1['submenu'] as $k1 => $item2){																
-																			${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item2['id'].'" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item2['id'].' default_style submenu_default_width columns" style="width:16.666666666667%;">
-																			<a href="'.$item2['link'].'" class="item_link  with_icon"><i class="'.$item2['icons'].'"></i> </a>';
-																						
-																						${'MENU'.$arg .'_'. $val} .= '
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                        ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                }
+
+                if ($item1['class'] == 'multicolumn_dropdown') {
+                    //multicolumn_dropdown normal
+
+                    ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item1['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-' . $item1['id'] . ' multicolumn_dropdown additional_style_3 drop_to_right  submenu_default_width columns4">
+								<a title="' . $item1['label'] . '" href="' . $item1['link'] . '" class="item_link  with_icon"><i class="' . $item1['icons'] . '"></i> <span><span class="link_text">' . $item1['label'] . '</span></span></a>';
+
+                    if (!empty($item1['submenu'])) {
+                        ${'MENU' . $arg . '_' . $val} .= '<ul class="mega_dropdown">';
+                        foreach ($item1['submenu'] as $k1 => $item2) {
+                            ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item2['id'] . '" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item2['id'] . ' default_style submenu_default_width columns">
+																						<a href="' . $item2['link'] . '" class="item_link  with_icon"><i class="' . $item2['icons'] . '"></i> <span><span class="link_text">' . $item2['label'] . '</span></span></a>';
+
+                            if (!empty($item2['submenu'])) {
+                                ${'MENU' . $arg . '_' . $val} .= '<ul class="mega_dropdown">';
+                                foreach ($item2['submenu'] as $k2 => $item3) {
+                                    ${'MENU' . $arg . '_' . $val} .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item3['id'] . ' submenu_default_width columns">
+																						<a href="' . $item3['link'] . '" class="item_link  with_icon"><i class="' . $item3['icons'] . '"></i> <span><span class="link_text">' . $item3['label'] . '</span></span></a>';
+
+                                    ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                                }
+
+                                ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                            }
+
+                            ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                        }
+                        ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                }
+
+                if ($item1['class'] == 'grid_dropdown') {
+                    //grid_dropdown
+
+                    ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item1['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-' . $item1['id'] . ' grid_dropdown additional_style_4 drop_to_right  submenu_default_width columns5">
+								<a title="' . $item1['label'] . '" href="' . $item1['link'] . '" class="item_link  with_icon"><i class="' . $item1['icons'] . '"></i> <span><span class="link_text">' . $item1['label'] . '</span></span></a>';
+
+                    if (!empty($item1['submenu'])) {
+                        ${'MENU' . $arg . '_' . $val} .= '<ul class="mega_dropdown">';
+                        foreach ($item1['submenu'] as $k1 => $item2) {
+                            ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item2['id'] . '" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item2['id'] . ' default_style submenu_default_width columns" style="width:16.666666666667%;">
+																			<a href="' . $item2['link'] . '" class="item_link  with_icon"><i class="' . $item2['icons'] . '"></i> </a>';
+
+                            ${'MENU' . $arg . '_' . $val} .= '
 																						
 																						<div class="post_details">
-																								<div class="post_icon pull-left"><i class="'.$item2['icons'].'"></i></div>
-																								<div class="post_title"><a rel="bookmark" href="'.$item2['link'].'" title="'.$item2['label'].'">'.$item2['label'].'</a></div>
-																								<div class="post_description">Item description. '.$item2['label'].'.</div>
+																								<div class="post_icon pull-left"><i class="' . $item2['icons'] . '"></i></div>
+																								<div class="post_title"><a rel="bookmark" href="' . $item2['link'] . '" title="' . $item2['label'] . '">' . $item2['label'] . '</a></div>
+																								<div class="post_description">Item description. ' . $item2['label'] . '.</div>
 																						</div><!-- /.post_details -->
 																						
 																						
 																						</li>	';
-																						
-																						
-																						if(!empty($item2['submenu'])) {
 
-																						foreach($item2['submenu'] as $k2 => $item3){
-																						
-																						${'MENU'.$arg .'_'. $val} .= '<li id="menu-item-'.$item3['id'].'" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$item3['id'].' submenu_default_width columns" style="width:16.666666666667%;">
-																						<a href="'.$item3['link'].'" class="item_link  with_icon"><i class="'.$item3['icons'].'"></i> </a>';
-																						${'MENU'.$arg .'_'. $val} .= '
+                            if (!empty($item2['submenu'])) {
+                                foreach ($item2['submenu'] as $k2 => $item3) {
+                                    ${'MENU' . $arg . '_' . $val} .= '<li id="menu-item-' . $item3['id'] . '" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-' . $item3['id'] . ' submenu_default_width columns" style="width:16.666666666667%;">
+																						<a href="' . $item3['link'] . '" class="item_link  with_icon"><i class="' . $item3['icons'] . '"></i> </a>';
+                                    ${'MENU' . $arg . '_' . $val} .= '
 																						
 																						<div class="post_details">
-																								<div class="post_icon pull-left"><i class="'.$item3['icons'].'"></i></div>
-																								<div class="post_title"><a rel="bookmark" href="'.$item3['link'].'" title="'.$item3['label'].'">'.$item3['label'].'</a></div>
-																								<div class="post_description">Item description. '.$item3['label'].'.</div>
+																								<div class="post_icon pull-left"><i class="' . $item3['icons'] . '"></i></div>
+																								<div class="post_title"><a rel="bookmark" href="' . $item3['link'] . '" title="' . $item3['label'] . '">' . $item3['label'] . '</a></div>
+																								<div class="post_description">Item description. ' . $item3['label'] . '.</div>
 																						</div><!-- /.post_details -->
 																						
 																						
 																						</li>	';
-																						}
-																						
-																					}
-																					
-																			//${'MENU'.$arg .'_'. $val} .= '</li>	';
-																					
-																	}			
-																	${'MENU'.$arg .'_'. $val} .= '</ul>	';			
-																	
-																}
-						${'MENU'.$arg .'_'. $val} .= '</li>	';
+                                }
+                            }
+                            //${'MENU'.$arg .'_'. $val} .= '</li>	';
 
+                        }
+                        ${'MENU' . $arg . '_' . $val} .= '</ul>	';
+                    }
+                    ${'MENU' . $arg . '_' . $val} .= '</li>	';
+                }
+            }
 
+            ${'MENU' . $arg . '_' . $val} .= mmm_nav_search();
+            ${'MENU' . $arg . '_' . $val} .= mmm_nav_login();
+            ${'MENU' . $arg . '_' . $val} .= mmm_nav_register();
 
-					
-					 
-					}
-			}
-
-	${'MENU'.$arg .'_'. $val} .= mmm_nav_search();
-${'MENU'.$arg .'_'. $val} .= mmm_nav_login();
-${'MENU'.$arg .'_'. $val} .= mmm_nav_register();	
-			
-
-
-
-
-
-
-			
-	
-	${'MENU'.$arg .'_'. $val} .= '
+            ${'MENU' . $arg . '_' . $val} .= '
 	</ul><!-- /class="mega_main_menu_ul" -->
 		</div><!-- /class="menu_inner" -->
 			</div><!-- /class="menu_holder" -->
@@ -1972,68 +1611,56 @@ ${'MENU'.$arg .'_'. $val} .= mmm_nav_register();
 					
 
 				 ';
+        }
 
-				}
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+        $hhhh = 'MENU_' . $arg . '_' . $val;
+        //$MENU_.$arg .'_'. $val = ${'MENU'.$arg.'_'.$val};
+        //var_dump(${'MENU'.$arg .'_'. $val});
+        //$MENU.$arg.'_'.$val= 'jjjj';
+        //var_dump(${'MENU'.$arg.'_'.$val});
+        //$MENU_menu2_6 = 'ddddddddddddddddd';
+        //var_dump($MENU_.$arg .'_'. $val);
+        //echo $val;
+        //var_dump($hhhh);
+        //var_dump($val);
+        ${$hhhh} = ${'MENU' . $arg . '_' . $val};
+    }
 
-		//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-		$hhhh = 'MENU_'.$arg .'_'. $val;
-		//$MENU_.$arg .'_'. $val = ${'MENU'.$arg.'_'.$val};
-		//var_dump(${'MENU'.$arg .'_'. $val});
-		//$MENU.$arg.'_'.$val= 'jjjj';
-		//var_dump(${'MENU'.$arg.'_'.$val});
-		//$MENU_menu2_6 = 'ddddddddddddddddd';
-		//var_dump($MENU_.$arg .'_'. $val);
-		//echo $val;
-		//var_dump($hhhh);
-		//var_dump($val);
-		$$hhhh = ${'MENU'.$arg.'_'.$val};
-		}
+    /////
+    /////
 
-/////
-/////		
-		
-if ($conf_value == 'mega_menu1'){
+    if ($conf_value == 'mega_menu1') {
+        $unserialise = unserialize($conf_desc);
 
-		$unserialise = unserialize($conf_desc);
+        //var_dump($conf_value);
 
-		
-		
-		//var_dump($conf_value);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-if ( !function_exists( 'css_font' ) ){ 		
-	function css_font( $args = array() ) {
-//var_dump($args);
-			$font = '';
-			if ( $args['font_family'] != '' && $args['font_family'] != false ) {
-				if ( $args['font_family'] == 'Inherit' ) {
-					$font .= "font-family: inherit;\n";
-				} else {
-					$font .= "font-family: " . $args['font_family'] . ", '" . $args['font_family'] . "';\n";
-				}
-			}
-			if ( $args['font_color'] != '' && $args['font_color'] != false ) {
-				$font .= "color: " . $args['font_color'] . ";\n";
-			}
-			if ( $args['font_size'] != '' && $args['font_size'] != false ) {
-				$font .= "font-size: " . $args['font_size'] . "px;\n";
-			}
-			if ( $args['font_weight'] != '' && $args['font_weight'] != false ) {
-				$font .= "font-weight: " . $args['font_weight'] . ";\n";
-			}
-			return $font;
-		}
-}
+        if (!function_exists('css_font')) {
+            function css_font($args = [])
+            {
+                //var_dump($args);
+                $font = '';
+                if ($args['font_family'] != '' && $args['font_family'] != false) {
+                    if ($args['font_family'] == 'Inherit') {
+                        $font .= "font-family: inherit;\n";
+                    } else {
+                        $font .= "font-family: " . $args['font_family'] . ", '" . $args['font_family'] . "';\n";
+                    }
+                }
+                if ($args['font_color'] != '' && $args['font_color'] != false) {
+                    $font .= "color: " . $args['font_color'] . ";\n";
+                }
+                if ($args['font_size'] != '' && $args['font_size'] != false) {
+                    $font .= "font-size: " . $args['font_size'] . "px;\n";
+                }
+                if ($args['font_weight'] != '' && $args['font_weight'] != false) {
+                    $font .= "font-weight: " . $args['font_weight'] . ";\n";
+                }
+                return $font;
+            }
+        }
 
-$outscript = "<script>
+        $outscript = "<script>
 
 /* 
  * Function for Mega Main Menu.
@@ -2335,8 +1962,8 @@ $outscript = "<script>
 
 
 </script>";
-		
-		$out = '/* custom icons */
+
+        $out                       = '/* custom icons */
 .mega_main *[class*="ci-icon-"],
 .bootstrap *[class*="ci-icon-"]
 {
@@ -4844,7 +4471,7 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 	display: table-cell !important;
 }
 /* END */';
-		$out .= '/* ' . $arg . ' */
+        $out                       .= '/* ' . $arg . ' */
 /* initial_height */
 #mega_main_menu.' . $arg . '
 {
@@ -4872,24 +4499,24 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i,
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	height:' . ( $unserialise['_first_level_item_height'] / 2 ) . 'px;
-	line-height:' . ( $unserialise['_first_level_item_height'] / 3 ) . 'px;
+	height:' . ($unserialise['_first_level_item_height'] / 2) . 'px;
+	line-height:' . ($unserialise['_first_level_item_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link.with_icon > .link_content > .link_text
 {
-	height:' . ( $unserialise['_first_level_item_height'] / 3 ) . 'px;
+	height:' . ($unserialise['_first_level_item_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i
 {
-	padding-top:' . ( $unserialise['_first_level_item_height'] / 3 / 2 ) . 'px;
+	padding-top:' . ($unserialise['_first_level_item_height'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	padding-bottom:' . ( $unserialise['_first_level_item_height'] / 3 / 2 ) . 'px;
+	padding-bottom:' . ($unserialise['_first_level_item_height'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li.nav_buddypress > .item_link > i:before
 {	
-	width:' . ( $unserialise['_first_level_item_height'] * 0.6 ) . 'px;
+	width:' . ($unserialise['_first_level_item_height'] * 0.6) . 'px;
 }
 /* initial_height_sticky */
 #mega_main_menu.' . $arg . ' > .menu_holder.sticky_container > .menu_inner > .nav_logo > .logo_link, 
@@ -4914,28 +4541,28 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > i,
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > .link_content
 {
-	height:' . ( $unserialise['_first_level_item_height_sticky'] / 2 ) . 'px;
-	line-height:' . ( $unserialise['_first_level_item_height_sticky'] / 3 ) . 'px;
+	height:' . ($unserialise['_first_level_item_height_sticky'] / 2) . 'px;
+	line-height:' . ($unserialise['_first_level_item_height_sticky'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link.with_icon > .link_content > .link_text
 {
-	height:' . ( $unserialise['_first_level_item_height_sticky'] / 3 ) . 'px;
+	height:' . ($unserialise['_first_level_item_height_sticky'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > i
 {
-	padding-top:' . ( $unserialise['_first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+	padding-top:' . ($unserialise['_first_level_item_height_sticky'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > .link_content
 {
-	padding-bottom:' . ( $unserialise['_first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+	padding-bottom:' . ($unserialise['_first_level_item_height_sticky'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' > .menu_holder.sticky_container > .menu_inner > ul > li.nav_buddypress > .item_link > i:before
 {	
-	width:' . ( $unserialise['_first_level_item_height_sticky'] * 0.6 ) . 'px;
+	width:' . ($unserialise['_first_level_item_height_sticky'] * 0.6) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link 
 {
-	margin:' . ( ( $unserialise['_first_level_item_height_sticky'] - $unserialise['_first_level_button_height'] ) / 2 ) . 'px 4px;
+	margin:' . (($unserialise['_first_level_item_height_sticky'] - $unserialise['_first_level_button_height']) / 2) . 'px 4px;
 }
 
 /* initial_height_mobile */
@@ -4966,24 +4593,24 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i,
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 	{
-		height:' . ( $unserialise['_first_level_item_height_sticky'] / 2 ) . 'px;
-		line-height:' . ( $unserialise['_first_level_item_height_sticky'] / 3 ) . 'px;
+		height:' . ($unserialise['_first_level_item_height_sticky'] / 2) . 'px;
+		line-height:' . ($unserialise['_first_level_item_height_sticky'] / 3) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i
 	{
-		padding-top:' . ( $unserialise['_first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+		padding-top:' . ($unserialise['_first_level_item_height_sticky'] / 3 / 2) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 	{
-		padding-bottom:' . ( $unserialise['_first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+		padding-bottom:' . ($unserialise['_first_level_item_height_sticky'] / 3 / 2) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable > .menu_holder > .menu_inner > ul > li.nav_buddypress > .item_link > i:before
 	{	
-		width:' . ( $unserialise['_first_level_item_height_sticky'] * 0.6 ) . 'px;
+		width:' . ($unserialise['_first_level_item_height_sticky'] * 0.6) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.primary_style-buttons > .menu_holder > .menu_inner > ul > li > .item_link 
 	{
-		margin:' . ( ( $unserialise['_first_level_item_height_sticky'] - $unserialise['_first_level_button_height'] ) / 2 ) . 'px 4px;
+		margin:' . (($unserialise['_first_level_item_height_sticky'] - $unserialise['_first_level_button_height']) / 2) . 'px 4px;
 	}
 }
 /* style-buttons */
@@ -5004,25 +4631,25 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons > .menu_holder > .menu_inner > ul > li > .item_link 
 {
-	margin:' . ( ( $unserialise['_first_level_item_height'] - $unserialise['_first_level_button_height'] ) / 2 ) . 'px 4px;
+	margin:' . (($unserialise['_first_level_item_height'] - $unserialise['_first_level_button_height']) / 2) . 'px 4px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i,
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	height:' . ( $unserialise['_first_level_button_height'] / 2 ) . 'px;
-	line-height:' . ( $unserialise['_first_level_button_height'] / 3 ) . 'px;
+	height:' . ($unserialise['_first_level_button_height'] / 2) . 'px;
+	line-height:' . ($unserialise['_first_level_button_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link.with_icon > .link_content > .link_text 
 {
-	height:' . ( $unserialise['_first_level_button_height'] / 3 ) . 'px;
+	height:' . ($unserialise['_first_level_button_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i
 {
-	padding-top:' . ( $unserialise['_first_level_button_height'] / 3 / 2 ) . 'px;
+	padding-top:' . ($unserialise['_first_level_button_height'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	padding-bottom:' . ( $unserialise['_first_level_button_height'] / 3 / 2 ) . 'px;
+	padding-bottom:' . ($unserialise['_first_level_button_height'] / 3 / 2) . 'px;
 }
 /* color_scheme */
 #mega_main_menu.' . $arg . ' > .menu_holder > .mmm_fullwidth_container
@@ -5042,7 +4669,7 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li .post_details > .post_title > .item_link
 {
 	/*" . mm_common::css_font( $unserialise["_menu_first_level_link_font"] ) . "*/
-	' . css_font( $unserialise['_menu_first_level_link_font'] ) . '
+	' . css_font($unserialise['_menu_first_level_link_font']) . '
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li > .item_link > i
 {
@@ -5127,7 +4754,7 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li .post_details > .post_description
 {
 	/*" . mm_common::css_font( $unserialise["_menu_dropdown_link_font"] ) . "*/
-	' . css_font( $unserialise['_menu_dropdown_link_font'] ) . '
+	' . css_font($unserialise['_menu_dropdown_link_font']) . '
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li .mega_dropdown > li > .item_link.with_icon
 {
@@ -5143,21 +4770,21 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 	height: ' . $unserialise['_menu_dropdown_icon_font'] . 'px;
 	line-height: ' . $unserialise['_menu_dropdown_icon_font'] . 'px;
 	font-size: ' . $unserialise['_menu_dropdown_icon_font'] . 'px;
-	margin-top: -' . ( $unserialise['_menu_dropdown_icon_font'] / 2 ) . 'px;
+	margin-top: -' . ($unserialise['_menu_dropdown_icon_font'] / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' li.default_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . ' li.tabs_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . ' li.widgets_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . ' li.multicolumn_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content
 {
-	margin-left: ' . ( $unserialise['_menu_dropdown_icon_font'] + 8 ) . 'px;
+	margin-left: ' . ($unserialise['_menu_dropdown_icon_font'] + 8) . 'px;
 }
 #mega_main_menu.' . $arg . '.language_direction-rtl li.default_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . '.language_direction-rtl li.tabs_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . '.language_direction-rtl li.widgets_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . '.language_direction-rtl li.multicolumn_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content
 {
-	margin-right: ' . ( $unserialise['_menu_dropdown_icon_font'] + 8 ) . 'px;
+	margin-right: ' . ($unserialise['_menu_dropdown_icon_font'] + 8) . 'px;
 }
 #mega_main_menu.' . $arg . ' li.default_dropdown .mega_dropdown > li > .item_link,
 #mega_main_menu.' . $arg . ' li.widgets_dropdown .mega_dropdown > li > .item_link,
@@ -5288,14 +4915,14 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 #mega_main_menu.' . $arg . ' .post_type_dropdown > .mega_dropdown > li .item_link,
 #mega_main_menu.' . $arg . ' .post_type_dropdown > .mega_dropdown > li .processed_image
 {
-	border-radius: ' . ( $unserialise['_corners_rounding'] / 2 ) . 'px;
+	border-radius: ' . ($unserialise['_corners_rounding'] / 2) . 'px;
 }
 ';
-			$additional_styles_presets = $unserialise['additional_styles_presets'];
-			if ( isset( $additional_styles_presets ) && is_array( $additional_styles_presets ) && count( $additional_styles_presets ) > 0 ) {
-				$out .= '/* additional_styles */ ';
-				foreach ( $unserialise['additional_styles_presets'] as $key => $value ) {
-					$out .= '
+        $additional_styles_presets = $unserialise['additional_styles_presets'];
+        if (isset($additional_styles_presets) && is_array($additional_styles_presets) && count($additional_styles_presets) > 0) {
+            $out .= '/* additional_styles */ ';
+            foreach ($unserialise['additional_styles_presets'] as $key => $value) {
+                $out .= '
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link
 {
 	/*" . mm_common::css_gradient( $value["bg_gradient"] ) . "*/
@@ -5304,29 +4931,29 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link > i
 {
 	color: ' . $value['text_color'] . ';
-	font-size: ' . $value[ 'icon' ]['font_size'] . 'px;
+	font-size: ' . $value['icon']['font_size'] . 'px;
 }
 #mega_main_menu.' . $arg . ' ul li .mega_dropdown li.additional_style_' . $key . ' > .item_link > i
 {
-	width: ' . $value[ 'icon' ]['font_size'] . 'px;
-	height: ' . $value[ 'icon' ]['font_size'] . 'px;
-	line-height: ' . $value[ 'icon' ]['font_size'] . 'px;
-	font-size: ' . $value[ 'icon' ]['font_size'] . 'px;
-	margin-top: -' . ( $value[ 'icon' ]['font_size'] / 2 ) . 'px;
+	width: ' . $value['icon']['font_size'] . 'px;
+	height: ' . $value['icon']['font_size'] . 'px;
+	line-height: ' . $value['icon']['font_size'] . 'px;
+	font-size: ' . $value['icon']['font_size'] . 'px;
+	margin-top: -' . ($value['icon']['font_size'] / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' ul li .mega_dropdown > li.additional_style_' . $key . ' > .item_link.with_icon > span
 {
-	margin-left: ' . ( $value[ 'icon' ]['font_size'] + 8 ) . 'px;
+	margin-left: ' . ($value['icon']['font_size'] + 8) . 'px;
 }
 #mega_main_menu.' . $arg . '.language_direction-rtl ul li .mega_dropdown > li.additional_style_' . $key . ' > .item_link.with_icon > span
 {
-	margin-right: ' . ( $value[ 'icon' ]['font_size'] + 8 ) . 'px;
+	margin-right: ' . ($value['icon']['font_size'] + 8) . 'px;
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link *,
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link .link_content
 {
 	color: ' . $value['text_color'] . ';
-	' . mm_common::css_font( $value[ 'font' ] ) . '
+	' . mm_common::css_font($value['font']) . '
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li.current-menu-ancestor.additional_style_' . $key . ' > .item_link,
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li.current-page-ancestor.additional_style_' . $key . ' > .item_link,
@@ -5350,313 +4977,294 @@ body #mega_main_menu li.default_dropdown > .mega_dropdown > li.menu-item.drop_to
 	color: ' . $value['text_color_hover'] . ';
 }
 ';
-				}
-			}
-/* set_of_custom_icons */
-$set_of_custom_icons = $unserialise['set_of_custom_icons'];
-if ( is_array( $set_of_custom_icons ) && count( $set_of_custom_icons ) > 0 ) {
-	$out .= '/* set_of_custom_icons */ ';
-	foreach ( $set_of_custom_icons as $value ) {
-		$icon_name = str_replace( array( '/', strrchr( $value[ 'custom_icon' ], '.' ) ), '', strrchr( $value[ 'custom_icon' ], '/' ) );
-		$out .= '
+            }
+        }
+        /* set_of_custom_icons */
+        $set_of_custom_icons = $unserialise['set_of_custom_icons'];
+        if (is_array($set_of_custom_icons) && count($set_of_custom_icons) > 0) {
+            $out .= '/* set_of_custom_icons */ ';
+            foreach ($set_of_custom_icons as $value) {
+                $icon_name = str_replace(['/', strrchr((string) $value['custom_icon'], '.')], '', strrchr((string) $value['custom_icon'], '/'));
+                $out       .= '
 i.ci-icon-' . $icon_name . ':before
 {
-	background-image: url(' . $value[ 'custom_icon' ] . ');
+	background-image: url(' . $value['custom_icon'] . ');
 }
 ';
-		if ( isset( $value[ 'custom_icon_hover' ] ) && $value[ 'custom_icon_hover' ] != '' ) {
-		$out .= '
+                if (isset($value['custom_icon_hover']) && $value['custom_icon_hover'] != '') {
+                    $out .= '
 #mega_main_menu li:hover > .item_link > i.ci-icon-' . $icon_name . ':before,
 i.ci-icon-' . $icon_name . ':hover:before
 {
-	background-image: url(' . $value[ 'custom_icon_hover' ] . ');
+	background-image: url(' . $value['custom_icon_hover'] . ');
 }
 ';
-		}
-	}
-}
+                }
+            }
+        }
 
-//////fonction extension to be added
-			if( ! function_exists( 'mmm_nav_search' ) ){
-				function mmm_nav_search( $items) {
-					$searchform = '';
-					$searchform .= '<li class="nav_search_box">';
-						$searchform .= '<form method="get" id="mega_main_menu_searchform" action="http://localhost/xoops25777/search.php">
+        //////fonction extension to be added
+        if (!function_exists('mmm_nav_search')) {
+            function mmm_nav_search($items)
+            {
+                $searchform = '';
+                $searchform .= '<li class="nav_search_box">';
+                $searchform .= '<form method="get" id="mega_main_menu_searchform" action="http://localhost/xoops25777/search.php">
 							<i class="im-icon-search-3 icosearch"></i>
 							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
 							<input type="text" class="field" name="s" id="s" />
 						</form>';
-					$searchform .= '</li><!-- class="nav_search_box" -->';
-					$items = $items . $searchform;
-				
-			
-				return $items;
-				}
-			}
-			
-			if( ! function_exists( 'mmm_nav_login' ) ){
-				function mmm_nav_login( $items ) {
-					$searchform = '';
-					$searchform .= '<li class="nav_search_box">';
-						$searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
+                $searchform .= '</li><!-- class="nav_search_box" -->';
+                $items      = $items . $searchform;
+
+                return $items;
+            }
+        }
+
+        if (!function_exists('mmm_nav_login')) {
+            function mmm_nav_login($items)
+            {
+                $searchform = '';
+                $searchform .= '<li class="nav_search_box">';
+                $searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
 							<i class="im-icon-search-3 icosearch"></i>
 							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
 							<input type="text" class="field" name="s" id="s" />
 						</form>';
-					$searchform .= '</li><!-- class="nav_search_box" -->';
-					$items = $items . $searchform;
-					$items = '<li class="nav_search_box"><h3>login</h3></li>';
-				
-			
-				return $items;
-				}
-			}
-			
-			if( ! function_exists( 'mmm_nav_register' ) ){
-				function mmm_nav_register( $items ) {
-					$searchform = '';
-					$searchform .= '<li class="nav_search_box">';
-						$searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
+                $searchform .= '</li><!-- class="nav_search_box" -->';
+                $items      = $items . $searchform;
+                $items      = '<li class="nav_search_box"><h3>login</h3></li>';
+
+                return $items;
+            }
+        }
+
+        if (!function_exists('mmm_nav_register')) {
+            function mmm_nav_register($items)
+            {
+                $searchform = '';
+                $searchform .= '<li class="nav_search_box">';
+                $searchform .= '<form method="get" id="mega_main_menu_searchform" action="">
 							<i class="im-icon-search-3 icosearch"></i>
 							<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
 							<input type="text" class="field" name="s" id="s" />
 						</form>';
-					$searchform .= '</li><!-- class="nav_search_box" -->';
-					$items = $items . $searchform;
-					$items = '<li class="nav_search_box"><h3>register</h3></li>';
-				
-			
-				return $items;
-				}
-			}
+                $searchform .= '</li><!-- class="nav_search_box" -->';
+                $items      = $items . $searchform;
+                $items      = '<li class="nav_search_box"><h3>register</h3></li>';
 
+                return $items;
+            }
+        }
 
+        /////
 
-/////
+        //var_dump($unserialise);
+        // check container_class variables
+        $container_class          = [];
+        $theme_location_safe_name = $arg;
+        $container_class[]        = $theme_location_safe_name;
+        $container_class[]        = 'primary_style-' . $unserialise['_primary_style'];
+        $container_class[]        = 'icons-' . $unserialise['_first_level_icons_position'];
+        $container_class[]        = 'first-lvl-align-' . $unserialise['_first_level_item_align'];
+        $container_class[]        = 'first-lvl-separator-' . $unserialise['_first_level_separator'];
+        $container_class[]        = 'direction-' . $unserialise['_direction'];
+        $container_class[]        = 'fullwidth-' . ((is_array($unserialise['_fullwidth_container']) && in_array('true', $unserialise['_fullwidth_container'])) ? 'enable' : 'disable');
+        $container_class[]        = 'pushing_content-' . ((is_array($unserialise['_pushing_content']) && in_array('true', $unserialise['_pushing_content'])) ? 'enable' : 'disable');
+        $container_class[]        = 'mobile_minimized-' . (((is_array($unserialise['_mobile_minimized']) && in_array('true', $unserialise['_mobile_minimized'])) || ($indefinite_location_mode === true)) ? 'enable' : 'disable');
+        $container_class[]        = 'dropdowns_trigger-' . $unserialise['_dropdowns_trigger'];
+        $container_class[]        = 'dropdowns_animation-' . $unserialise['_dropdowns_animation'];
+        $container_class[]        = ((is_array($unserialise['_included_components']) && in_array('company_logo', $unserialise['_included_components'])) && $unserialise['logo_src']) ? 'include-logo' : 'no-logo';
+        //$container_class[] = 'include-logo';
+        //var_dump($unserialise['_included_components']);
+        $container_class[] = (is_array($unserialise['_included_components']) && in_array('search_box', $unserialise['_included_components'])) ? 'include-search' : 'no-search';
+        $container_class[] = (is_array($unserialise['_included_components']) && in_array('woo_cart', $unserialise['_included_components'])) ? 'include-woo_cart' : 'no-woo_cart';
+        $container_class[] = (is_array($unserialise['_included_components']) && in_array('buddypress', $unserialise['_included_components'])) ? 'include-buddypress' : 'no-buddypress';
+        $container_class[] = 'responsive-' . ((is_array($unserialise['responsive_styles']) && in_array('true', $unserialise['responsive_styles'])) ? 'enable' : 'disable');
+        $container_class[] = 'coercive_styles-' . ((is_array($unserialise['coercive_styles']) && in_array('true', $unserialise['coercive_styles'])) ? 'enable' : 'disable');
+        $container_class[] = 'indefinite_location_mode-' . (($indefinite_location_mode === true) ? 'enable' : 'disable');
+        $container_class[] = 'language_direction-' . $unserialise['language_direction'];
+        $container_class[] = 'version-1.0.9';
 
-//var_dump($unserialise);
-			// check container_class variables
-			$container_class = array();
-			$theme_location_safe_name = $arg;
-			$container_class[] = $theme_location_safe_name;
-			$container_class[] = 'primary_style-' . $unserialise['_primary_style'];
-			$container_class[] = 'icons-' . $unserialise['_first_level_icons_position'];
-			$container_class[] = 'first-lvl-align-' . $unserialise['_first_level_item_align'];
-			$container_class[] = 'first-lvl-separator-' . $unserialise['_first_level_separator'];
-			$container_class[] = 'direction-' . $unserialise['_direction'];
-			$container_class[] = 'fullwidth-' . ( ( is_array( $unserialise['_fullwidth_container'] ) && in_array( 'true', $unserialise['_fullwidth_container'] ) ) ? 'enable' : 'disable' );
-			$container_class[] = 'pushing_content-' . ( ( is_array( $unserialise['_pushing_content'] ) && in_array( 'true', $unserialise['_pushing_content'] ) ) ? 'enable' : 'disable' );
-			$container_class[] = 'mobile_minimized-' . ( ( ( is_array( $unserialise['_mobile_minimized'] ) && in_array( 'true', $unserialise['_mobile_minimized'] ) ) || ( $indefinite_location_mode === true ) ) ? 'enable' : 'disable' );
-			$container_class[] = 'dropdowns_trigger-' . $unserialise['_dropdowns_trigger'] ;
-			$container_class[] = 'dropdowns_animation-' . $unserialise['_dropdowns_animation'] ;
-			$container_class[] = ( ( is_array( $unserialise['_included_components'] ) && in_array( 'company_logo', $unserialise['_included_components'] ) ) && $unserialise['logo_src'] ) ? 'include-logo' : 'no-logo';
-			//$container_class[] = 'include-logo';
-			//var_dump($unserialise['_included_components']);
-			$container_class[] = ( is_array( $unserialise['_included_components'] ) && in_array( 'search_box', $unserialise['_included_components'] ) ) ? 'include-search' : 'no-search';
-			$container_class[] = ( is_array( $unserialise['_included_components'] ) && in_array( 'woo_cart', $unserialise['_included_components'] ) ) ? 'include-woo_cart' : 'no-woo_cart';
-			$container_class[] = ( is_array( $unserialise['_included_components'] ) && in_array( 'buddypress', $unserialise['_included_components'] ) ) ? 'include-buddypress' : 'no-buddypress';
-			$container_class[] = 'responsive-' . ( ( is_array( $unserialise['responsive_styles'] ) && in_array( 'true', $unserialise['responsive_styles'] ) ) ? 'enable' : 'disable' );
-			$container_class[] = 'coercive_styles-' . ( ( is_array( $unserialise['coercive_styles'] ) && in_array( 'true', $unserialise['coercive_styles'] ) ) ? 'enable' : 'disable' );
-			$container_class[] = 'indefinite_location_mode-' . ( ( $indefinite_location_mode === true ) ? 'enable' : 'disable' );
-			$container_class[] = 'language_direction-' . $unserialise['language_direction'];
-			$container_class[] = 'version-1.0.9';
-
-			/*if ( in_array( 'disable', $unserialise['item_icon'], array() ) ) {
+        /*if ( in_array( 'disable', $unserialise['item_icon'], array() ) ) {
 				$container_class[] = 'structure_settings-no_icons icons-disable_globally';
-				
+
 			}*/
 
-			// implode container_class variables
-			$container_class_imploded = implode( ' ', $container_class );
+        // implode container_class variables
+        $container_class_imploded = implode(' ', $container_class);
 
-			// apply_filters container_class
-			/*if ( has_filter( 'mmm_container_class' ) ) {
+        // apply_filters container_class
+        /*if ( has_filter( 'mmm_container_class' ) ) {
 				$container_class_imploded .= ' ' . esc_attr( apply_filters( 'mmm_container_class', '', $container_class ) );
 			}*/
 
-			// check sticky variables
-			$data_sticky = ( (is_array( $unserialise['_sticky_status'] ) && in_array( 'true', $unserialise['_sticky_status']) ) /*|| ( $indefinite_location_mode === true )*/ ) 
-				? ' data-sticky="1"' 
-				: '';
-			$data_sticky .= ( ( $unserialise['_sticky_offset'] !== false && is_array( $unserialise['_sticky_status'] ) && in_array( 'true', $unserialise['_sticky_status']) ) /*|| ( $indefinite_location_mode === true ) */) 
-				? ' data-stickyoffset="' . $unserialise['_sticky_offset'] . '"' 
-				: '';
-//var_dump($unserialise['_sticky_status']);
-//var_dump($unserialise['_sticky_offset']);
-//var_dump($data_sticky);
-			// items_wrap (container) markup
-			$items_wrap = '';
-			$items_wrap .= $outscript;
-			$items_wrap .= '<style> ' . $out . ' </style>';
-			$items_wrap .= '<div id="mega_main_menu" class="' . $container_class_imploded . ' mega_main mega_main_menu">';
-			$items_wrap .= '<div class="menu_holder"' . $data_sticky . '>';
-			$items_wrap .= '<div class="mmm_fullwidth_container"></div><!-- class="fullwidth_container" -->';
-			$items_wrap .= '<div class="menu_inner">';
-			$items_wrap .= '<span class="nav_logo">';
-			if( ( is_array( $unserialise['_included_components'] ) && in_array( 'company_logo', $unserialise['_included_components'] ) ) && $unserialise['logo_src'] ) {
-					$items_wrap .= '<a class="logo_link" href="" title="">';
-					$items_wrap .= '<img src="http://www.frxoops.org/modules/news/images/topics/xoops.png" alt="" />'; //' . $unserialise['logo_src'] . '
-					//$items_wrap .= '<img src=' . XOOPS_URL . ' ' .$unserialise['logo_src'] . ' alt="" />'; //' . $unserialise['logo_src'] . '
+        // check sticky variables
+        $data_sticky = ((is_array($unserialise['_sticky_status']) && in_array('true', $unserialise['_sticky_status'])) /*|| ( $indefinite_location_mode === true )*/)
+            ? ' data-sticky="1"'
+            : '';
+        $data_sticky .= (($unserialise['_sticky_offset'] !== false && is_array($unserialise['_sticky_status']) && in_array('true', $unserialise['_sticky_status'])) /*|| ( $indefinite_location_mode === true ) */)
+            ? ' data-stickyoffset="' . $unserialise['_sticky_offset'] . '"'
+            : '';
+        //var_dump($unserialise['_sticky_status']);
+        //var_dump($unserialise['_sticky_offset']);
+        //var_dump($data_sticky);
+        // items_wrap (container) markup
+        $items_wrap = '';
+        $items_wrap .= $outscript;
+        $items_wrap .= '<style> ' . $out . ' </style>';
+        $items_wrap .= '<div id="mega_main_menu" class="' . $container_class_imploded . ' mega_main mega_main_menu">';
+        $items_wrap .= '<div class="menu_holder"' . $data_sticky . '>';
+        $items_wrap .= '<div class="mmm_fullwidth_container"></div><!-- class="fullwidth_container" -->';
+        $items_wrap .= '<div class="menu_inner">';
+        $items_wrap .= '<span class="nav_logo">';
+        if ((is_array($unserialise['_included_components']) && in_array('company_logo', $unserialise['_included_components'])) && $unserialise['logo_src']) {
+            $items_wrap .= '<a class="logo_link" href="" title="">';
+            $items_wrap .= '<img src="http://www.frxoops.org/modules/news/images/topics/xoops.png" alt="" />'; //' . $unserialise['logo_src'] . '
+            //$items_wrap .= '<img src=' . XOOPS_URL . ' ' .$unserialise['logo_src'] . ' alt="" />'; //' . $unserialise['logo_src'] . '
 
-					$items_wrap .= '</a>';
-			}
-			$items_wrap .= '<a class="mobile_toggle">';
-			$items_wrap .= '<span class="mobile_button">';
-			$items_wrap .= $unserialise['_mobile_label'] . ' &nbsp;';
-			$items_wrap .= '<span class="symbol_menu">&equiv;</span>'; // "Open menu" symbol
-			$items_wrap .= '<span class="symbol_cross">&#x2573;</span>'; // "Close menu" symbol
-			$items_wrap .= '</span><!-- class="mobile_button" -->';
-			$items_wrap .= '</a>';
-			$items_wrap .= '</span><!-- /class="nav_logo" -->';
-			//$items_wrap .= $args['items_wrap'];
-			
-$items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
-			foreach($menuhorizontal as $k => $item1){
-			//var_dump($k);
-			//var_dump($item1['class']);
-			
-			
-					if ($item1['class'] == 'default_dropdown'){
-						//default_dropdown
-							if ( !empty( $item1['submenu'] ) ) {
-								$haschildren = 'menu-item-has-children';
-							}else{ $haschildren = false; }
+            $items_wrap .= '</a>';
+        }
+        $items_wrap .= '<a class="mobile_toggle">';
+        $items_wrap .= '<span class="mobile_button">';
+        $items_wrap .= $unserialise['_mobile_label'] . ' &nbsp;';
+        $items_wrap .= '<span class="symbol_menu">&equiv;</span>'; // "Open menu" symbol
+        $items_wrap .= '<span class="symbol_cross">&#x2573;</span>'; // "Close menu" symbol
+        $items_wrap .= '</span><!-- class="mobile_button" -->';
+        $items_wrap .= '</a>';
+        $items_wrap .= '</span><!-- /class="nav_logo" -->';
+        //$items_wrap .= $args['items_wrap'];
 
-						$outlevel = '<li id="menu-item-'.$item1['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom '.$haschildren.' menu-item-'.$item1['id'].' default_dropdown additional_style_1 drop_to_right  submenu_default_width columns2">
+        $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
+        foreach ($menuhorizontal as $k => $item1) {
+            //var_dump($k);
+            //var_dump($item1['class']);
+
+            if ($item1['class'] == 'default_dropdown') {
+                //default_dropdown
+                if (!empty($item1['submenu'])) {
+                    $haschildren = 'menu-item-has-children';
+                } else {
+                    $haschildren = false;
+                }
+
+                $outlevel = '<li id="menu-item-' . $item1['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom ' . $haschildren . ' menu-item-' . $item1['id'] . ' default_dropdown additional_style_1 drop_to_right  submenu_default_width columns2">
 	
-								<a title="'.$item1['label'].'" href="'.$item1['link'].'" class="item_link  with_icon"><i class="'.$item1['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item1['label'].'</span></span></a>';
-					
-																if(!empty($item1['submenu'])) {
-																if ( !empty( $item2['submenu'] ) ) {
-																	$haschildren = 'menu-item-has-children';
-																}else{ $haschildren = false; }
-																$outlevel .= '<ul class="mega_dropdown">';
-																	foreach($item1['submenu'] as $k1 => $item2){
-																
-																						//<li id="menu-item-12" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-12 default_dropdown default_style drop_to_right submenu_default_width columns1">
+								<a title="' . $item1['label'] . '" href="' . $item1['link'] . '" class="item_link  with_icon"><i class="' . $item1['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item1['label'] . '</span></span></a>';
 
-																					$outlevel .= '<li id="menu-item-'.$item2['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom  '.$haschildren.' menu-item-'.$item2['id'].' default_dropdown default_style drop_to_right submenu_default_width columns1">
-																						<a href="'.$item2['link'].'" class="item_link  with_icon"><i class="'.$item2['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item2['label'].'</span></span></a>';
-																						
-																									if(!empty($item2['submenu'])) {
-																										if(!empty($item2['submenu'])) {
-																										$haschildren = 'menu-item-has-children';
-																										}else{ $haschildren = false; }
-																												$outlevel .= '<ul class="mega_dropdown">';
-																													foreach($item2['submenu'] as $k2 => $item3){
-																															$outlevel .= '<li id="menu-item-'.$item3['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom  '.$haschildren.' menu-item-'.$item3['id'].' default_dropdown default_style drop_to_right submenu_default_width columns1">
-																															<a href="'.$item3['link'].'" class="item_link  with_icon"><i class="'.$item3['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item3['label'].'</span></span></a>
+                if (!empty($item1['submenu'])) {
+                    if (!empty($item2['submenu'])) {
+                        $haschildren = 'menu-item-has-children';
+                    } else {
+                        $haschildren = false;
+                    }
+                    $outlevel .= '<ul class="mega_dropdown">';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        //<li id="menu-item-12" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-12 default_dropdown default_style drop_to_right submenu_default_width columns1">
+
+                        $outlevel .= '<li id="menu-item-' . $item2['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom  ' . $haschildren . ' menu-item-' . $item2['id'] . ' default_dropdown default_style drop_to_right submenu_default_width columns1">
+																						<a href="' . $item2['link'] . '" class="item_link  with_icon"><i class="' . $item2['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item2['label'] . '</span></span></a>';
+
+                        if (!empty($item2['submenu'])) {
+                            if (!empty($item2['submenu'])) {
+                                $haschildren = 'menu-item-has-children';
+                            } else {
+                                $haschildren = false;
+                            }
+                            $outlevel .= '<ul class="mega_dropdown">';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                $outlevel .= '<li id="menu-item-' . $item3['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom  ' . $haschildren . ' menu-item-' . $item3['id'] . ' default_dropdown default_style drop_to_right submenu_default_width columns1">
+																															<a href="' . $item3['link'] . '" class="item_link  with_icon"><i class="' . $item3['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item3['label'] . '</span></span></a>
 																															';
-																													
-																													
-																													
-																															if(!empty($item3['submenu'])) {
-																															if ( !empty( $item3['submenu'] ) ) {
-																																$haschildren = 'menu-item-has-children';
-																															}else{ $haschildren = false; }
-																															$outlevel .= '<ul class="mega_dropdown">';
-																															
-																															foreach($item3['submenu'] as $k3 => $item4){
-																															$outlevel .= '<li id="menu-item-'.$item4['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom  '.$haschildren.' menu-item-'.$item4['id'].' default_dropdown default_style drop_to_right submenu_default_width columns1">
-																															<a href="'.$item4['link'].'" class="item_link  with_icon"><i class="'.$item4['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item4['label'].'</span></span></a>
+
+                                if (!empty($item3['submenu'])) {
+                                    if (!empty($item3['submenu'])) {
+                                        $haschildren = 'menu-item-has-children';
+                                    } else {
+                                        $haschildren = false;
+                                    }
+                                    $outlevel .= '<ul class="mega_dropdown">';
+
+                                    foreach ($item3['submenu'] as $k3 => $item4) {
+                                        $outlevel .= '<li id="menu-item-' . $item4['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom  ' . $haschildren . ' menu-item-' . $item4['id'] . ' default_dropdown default_style drop_to_right submenu_default_width columns1">
+																															<a href="' . $item4['link'] . '" class="item_link  with_icon"><i class="' . $item4['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item4['label'] . '</span></span></a>
 																															';
-																													
-																																			if(!empty($item4['submenu'])) {
-																																				if ( !empty( $item4['submenu'] ) ) {
-																																					$haschildren = 'menu-item-has-children';
-																																				}else{ $haschildren = false; }
-																																				$outlevel .= '<ul class="mega_dropdown">';
-																																				
-																																									foreach($item4['submenu'] as $k4 => $item5){
-																																									$outlevel .= '<li id="menu-item-'.$item5['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom  '.$haschildren.' menu-item-'.$item5['id'].' default_dropdown default_style drop_to_right submenu_default_width columns1">
-																																									<a href="'.$item5['link'].'" class="item_link  with_icon"><i class="'.$item5['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item5['label'].'</span></span></a>
+
+                                        if (!empty($item4['submenu'])) {
+                                            if (!empty($item4['submenu'])) {
+                                                $haschildren = 'menu-item-has-children';
+                                            } else {
+                                                $haschildren = false;
+                                            }
+                                            $outlevel .= '<ul class="mega_dropdown">';
+
+                                            foreach ($item4['submenu'] as $k4 => $item5) {
+                                                $outlevel .= '<li id="menu-item-' . $item5['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom  ' . $haschildren . ' menu-item-' . $item5['id'] . ' default_dropdown default_style drop_to_right submenu_default_width columns1">
+																																									<a href="' . $item5['link'] . '" class="item_link  with_icon"><i class="' . $item5['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item5['label'] . '</span></span></a>
 																																									';
-																																							
-																																							
-																																										$outlevel .= '</li>	';
-																																									}
-																														
-																																				$outlevel .= '</ul>	';	
-																																	
-																																			}
-																													
-																													
-																															$outlevel .= '</li>	';
-																															}
-																									
-																												$outlevel .= '</ul>	';	
-																													
-																													}
-																													
-																													
-																													
-																													
-																													
-																													
-																													
-																													$outlevel .= '</li>	';
-																													}
-																									
-																												$outlevel .= '</ul>	';							
-																									}
-																					$outlevel .= '</li>	';
-																	}			
-																	$outlevel .= '</ul>	';			
-																	
-																}
-						$outlevel .= '</li>	';
-					$items_wrap .= $outlevel;						
-					 
-					}
 
+                                                $outlevel .= '</li>	';
+                                            }
 
+                                            $outlevel .= '</ul>	';
+                                        }
 
-					if ($item1['class'] == 'multicolumn_dropdown_bg'){
-						//multicolumn_dropdown with background	
-						
-						$outlevel .= '<li id="menu-item-'.$item1['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-'.$item1['id'].' multicolumn_dropdown additional_style_2 drop_to_right  submenu_default_width columns2">
-								<a title="'.$item1['label'].'" href="'.$item1['link'].'" class="item_link  with_icon"><i class="'.$item1['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item1['label'].'</span></span></a>';
-					
-																if(!empty($item1['submenu'])) {
-																$outlevel .= '<ul class="mega_dropdown" style="background-image:url(http://menu.megamain.com/wp-content/uploads/2013/10/iphone.png);background-repeat:no-repeat;background-attachment:scroll;background-position:center right;background-size:auto 100%;">';
-																	foreach($item1['submenu'] as $k1 => $item2){
-		
-																	
-																					$outlevel .= '<li id="menu-item-'.$item2['id'].'" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-'.$item2['id'].' default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:50%;">
-																						<a href="'.$item2['link'].'" class="item_link  with_icon"><i class="'.$item2['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item2['label'].'</span></span></a>';
-																						
-																						if(!empty($item2['submenu'])) {
-																						$outlevel .= '<ul class="mega_dropdown">';
-																								foreach($item2['submenu'] as $k2 => $item3){
-																								
-																								$outlevel .= '<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-'.$item3['id'].' submenu_default_width columns">
-																								<a href="'.$item3['link'].'" class="item_link  with_icon"><i class="'.$item3['icons'].'"></i> <span class="link_content"><span class="link_text">'.$item3['label'].'</span></span></a>';
-																								$outlevel .= '</li>	';
-																								}
-																						
-																						$outlevel .= '</ul>	';							
-																						}
-																					
-																					$outlevel .= '</li>	';
-																					
-																					
-																	}			
-																	$outlevel .= '</ul>	';			
-																	
-																}
-						$outlevel .= '</li>	';	
-					$items_wrap .= $outlevel;						
-					 
-					}			
-			
-			
-			}
-			
-	/*		
+                                        $outlevel .= '</li>	';
+                                    }
+
+                                    $outlevel .= '</ul>	';
+                                }
+
+                                $outlevel .= '</li>	';
+                            }
+
+                            $outlevel .= '</ul>	';
+                        }
+                        $outlevel .= '</li>	';
+                    }
+                    $outlevel .= '</ul>	';
+                }
+                $outlevel   .= '</li>	';
+                $items_wrap .= $outlevel;
+            }
+
+            if ($item1['class'] == 'multicolumn_dropdown_bg') {
+                //multicolumn_dropdown with background
+
+                $outlevel .= '<li id="menu-item-' . $item1['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-' . $item1['id'] . ' multicolumn_dropdown additional_style_2 drop_to_right  submenu_default_width columns2">
+								<a title="' . $item1['label'] . '" href="' . $item1['link'] . '" class="item_link  with_icon"><i class="' . $item1['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item1['label'] . '</span></span></a>';
+
+                if (!empty($item1['submenu'])) {
+                    $outlevel .= '<ul class="mega_dropdown" style="background-image:url(http://menu.megamain.com/wp-content/uploads/2013/10/iphone.png);background-repeat:no-repeat;background-attachment:scroll;background-position:center right;background-size:auto 100%;">';
+                    foreach ($item1['submenu'] as $k1 => $item2) {
+                        $outlevel .= '<li id="menu-item-' . $item2['id'] . '" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-' . $item2['id'] . ' default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:50%;">
+																						<a href="' . $item2['link'] . '" class="item_link  with_icon"><i class="' . $item2['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item2['label'] . '</span></span></a>';
+
+                        if (!empty($item2['submenu'])) {
+                            $outlevel .= '<ul class="mega_dropdown">';
+                            foreach ($item2['submenu'] as $k2 => $item3) {
+                                $outlevel .= '<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-' . $item3['id'] . ' submenu_default_width columns">
+																								<a href="' . $item3['link'] . '" class="item_link  with_icon"><i class="' . $item3['icons'] . '"></i> <span class="link_content"><span class="link_text">' . $item3['label'] . '</span></span></a>';
+                                $outlevel .= '</li>	';
+                            }
+
+                            $outlevel .= '</ul>	';
+                        }
+
+                        $outlevel .= '</li>	';
+                    }
+                    $outlevel .= '</ul>	';
+                }
+                $outlevel   .= '</li>	';
+                $items_wrap .= $outlevel;
+            }
+        }
+
+        /*
 			$items_wrap .= '
 <li id="menu-item-11" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-11 default_dropdown additional_style_1 drop_to_right submenu_default_width columns2">
 	<a title="Standard" href="/1" class="item_link  with_icon" tabindex="1">
-		<i class="im-icon-checkmark-3"></i> 
+		<i class="im-icon-checkmark-3"></i>
 		<span class="link_content">
 			<span class="link_text">
 				Standard
@@ -5666,7 +5274,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	<ul class="mega_dropdown">
 	<li id="menu-item-12" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-12 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/11" class="item_link  with_icon" tabindex="2">
-			<i class="fa-icon-fighter-jet"></i> 
+			<i class="fa-icon-fighter-jet"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Lorem ipsum
@@ -5676,7 +5284,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-13" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-13 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/12" class="item_link  with_icon" tabindex="3">
-			<i class="im-icon-clipboard-4"></i> 
+			<i class="im-icon-clipboard-4"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Dolor sit amet
@@ -5686,7 +5294,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		<ul class="mega_dropdown">
 		<li id="menu-item-20" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-20 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/121" class="item_link  with_icon" tabindex="4">
-				<i class="im-icon-history-2"></i> 
+				<i class="im-icon-history-2"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Ut enim ad minim
@@ -5696,7 +5304,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-21" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-21 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/122" class="item_link  with_icon" tabindex="5">
-				<i class="im-icon-google-plus-4"></i> 
+				<i class="im-icon-google-plus-4"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Veniam
@@ -5706,7 +5314,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 			<ul class="mega_dropdown">
 			<li id="menu-item-27" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-27 default_dropdown default_style drop_to_right submenu_default_width columns1">
 				<a href="/1221" class="item_link  with_icon" tabindex="6">
-					<i class="im-icon-rulers"></i> 
+					<i class="im-icon-rulers"></i>
 					<span class="link_content">
 						<span class="link_text">
 							Duis aute irure
@@ -5716,7 +5324,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 			</li>
 			<li id="menu-item-28" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-28 default_dropdown default_style drop_to_right submenu_default_width columns1">
 				<a href="/1222" class="item_link  with_icon" tabindex="7">
-					<i class="im-icon-temperature-2"></i> 
+					<i class="im-icon-temperature-2"></i>
 					<span class="link_content">
 						<span class="link_text">
 							Dolor in reprehenderit
@@ -5726,7 +5334,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 			</li>
 			<li id="menu-item-29" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-29 default_dropdown default_style drop_to_right submenu_default_width columns1">
 				<a href="/1223" class="item_link  with_icon" tabindex="8">
-					<i class="im-icon-movie"></i> 
+					<i class="im-icon-movie"></i>
 					<span class="link_content">
 						<span class="link_text">
 							In voluptate velit
@@ -5738,7 +5346,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-22" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-22 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/123" class="item_link  with_icon" tabindex="9">
-				<i class="im-icon-file-4"></i> 
+				<i class="im-icon-file-4"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Quis nostrud
@@ -5748,7 +5356,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-23" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-23 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/124" class="item_link  with_icon" tabindex="10">
-				<i class="im-icon-magnet-3"></i> 
+				<i class="im-icon-magnet-3"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Exercitation ullamco
@@ -5758,7 +5366,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-24" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-24 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/125" class="item_link  with_icon" tabindex="11">
-				<i class="im-icon-seven-segment-1"></i> 
+				<i class="im-icon-seven-segment-1"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Laboris nisi ut
@@ -5768,7 +5376,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-25" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-25 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/126" class="item_link  with_icon" tabindex="12">
-				<i class="fa-icon-file-alt"></i> 
+				<i class="fa-icon-file-alt"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Aliquip ex ea
@@ -5778,7 +5386,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-26" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-26 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/127" class="item_link  with_icon" tabindex="13">
-				<i class="fa-icon-code-fork"></i> 
+				<i class="fa-icon-code-fork"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Commodo consequat
@@ -5790,7 +5398,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-14" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-14 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/13" class="item_link  with_icon" tabindex="14">
-			<i class="im-icon-nbsp"></i> 
+			<i class="im-icon-nbsp"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Consectetur
@@ -5800,7 +5408,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-15" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/14" class="item_link  with_icon" tabindex="15">
-			<i class="im-icon-file-3"></i> 
+			<i class="im-icon-file-3"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Adipisicing elit
@@ -5810,7 +5418,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-16" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-16 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/15" class="item_link  with_icon" tabindex="16">
-			<i class="im-icon-zoom-in"></i> 
+			<i class="im-icon-zoom-in"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Sed do eiusmod
@@ -5820,7 +5428,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-17" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-17 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/16" class="item_link  with_icon" tabindex="17">
-			<i class="im-icon-folder-plus"></i> 
+			<i class="im-icon-folder-plus"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Tempor incididunt
@@ -5830,7 +5438,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-18" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-18 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/17" class="item_link  with_icon" tabindex="18">
-			<i class="im-icon-spinner-10"></i> 
+			<i class="im-icon-spinner-10"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Ut labore et
@@ -5840,7 +5448,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-19" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-19 default_dropdown default_style drop_to_right submenu_default_width columns1">
 		<a href="/18" class="item_link  with_icon" tabindex="19">
-			<i class="im-icon-arrow-4"></i> 
+			<i class="im-icon-arrow-4"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Dolore magna aliqua
@@ -5852,7 +5460,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 </li>
 <li id="menu-item-121" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-121 multicolumn_dropdown additional_style_2 drop_to_right submenu_default_width columns2">
 	<a href="/5" class="item_link  with_icon" tabindex="20">
-		<i class="im-icon-stats-up"></i> 
+		<i class="im-icon-stats-up"></i>
 		<span class="link_content">
 			<span class="link_text">
 				Promo
@@ -5862,7 +5470,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	<ul class="mega_dropdown" style="background-image:url(http://menu.megamain.com/wp-content/uploads/2013/10/iphone.png);background-repeat:no-repeat;background-attachment:scroll;background-position:center right;background-size:auto 100%;">
 	<li id="menu-item-122" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-122 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:50%;">
 		<a href="/51" class="item_link  with_icon" tabindex="21">
-			<i class="fa-icon-edit-sign"></i> 
+			<i class="fa-icon-edit-sign"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Minima veniam
@@ -5872,7 +5480,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		<ul class="mega_dropdown">
 		<li id="menu-item-123" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-123 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/52" class="item_link  with_icon" tabindex="22">
-				<i class="fa-icon-resize-vertical"></i> 
+				<i class="fa-icon-resize-vertical"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Quis nostrum
@@ -5882,7 +5490,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-124" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-124 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/53" class="item_link  with_icon" tabindex="23">
-				<i class="fa-icon-bell"></i> 
+				<i class="fa-icon-bell"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Exercitationem
@@ -5892,7 +5500,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-126" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-126 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/54" class="item_link  with_icon" tabindex="24">
-				<i class="fa-icon-filter"></i> 
+				<i class="fa-icon-filter"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Ullam corporis
@@ -5902,7 +5510,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-127" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-127 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/55" class="item_link  with_icon" tabindex="25">
-				<i class="im-icon-bubble"></i> 
+				<i class="im-icon-bubble"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Suscipit laboriosam
@@ -5912,7 +5520,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-128" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-128 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/56" class="item_link  with_icon" tabindex="26">
-				<i class="im-icon-magnet"></i> 
+				<i class="im-icon-magnet"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Nisi ut aliquid ex
@@ -5922,7 +5530,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-129" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-129 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/57" class="item_link  with_icon" tabindex="27">
-				<i class="fa-icon-beer"></i> 
+				<i class="fa-icon-beer"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Nulla pariatur
@@ -5936,7 +5544,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 </li>
 <li id="menu-item-55" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-55 tabs_dropdown additional_style_5 drop_to_left submenu_full_width columns4">
 	<a href="/3" class="item_link  with_icon" tabindex="28">
-		<i class="im-icon-list-4"></i> 
+		<i class="im-icon-list-4"></i>
 		<span class="link_content">
 			<span class="link_text">
 				Tabs
@@ -5946,7 +5554,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	<ul class="mega_dropdown">
 	<li id="menu-item-56" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-56 post_type_dropdown default_style drop_to_right submenu_default_width columns6">
 		<a href="/31" class="item_link  with_icon" tabindex="29">
-			<i class="im-icon-clipboard-4"></i> 
+			<i class="im-icon-clipboard-4"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Quis autem vel
@@ -6258,7 +5866,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-57" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-57 widgets_dropdown default_style drop_to_right submenu_default_width columns3">
 		<a href="/32" class="item_link  with_icon" tabindex="30">
-			<i class="im-icon-history-2"></i> 
+			<i class="im-icon-history-2"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Eum iure
@@ -6290,7 +5898,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-68" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-68 post_type_dropdown default_style drop_to_right submenu_default_width columns6">
 		<a href="/3-10" class="item_link  with_icon" tabindex="31">
-			<i class="im-icon-clipboard-3"></i> 
+			<i class="im-icon-clipboard-3"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Accusamus et
@@ -6602,7 +6210,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-58" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-58 multicolumn_dropdown default_style drop_to_right submenu_default_width columns3">
 		<a href="/33" class="item_link  with_icon" tabindex="32">
-			<i class="im-icon-google-plus-4"></i> 
+			<i class="im-icon-google-plus-4"></i>
 			<span class="link_content">
 				<span class="link_text">
 					Reprehenderit
@@ -6612,7 +6220,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		<ul class="mega_dropdown">
 		<li id="menu-item-59" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-59 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/34" class="item_link  with_icon" tabindex="33">
-				<i class="im-icon-rulers"></i> 
+				<i class="im-icon-rulers"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Velit esse
@@ -6622,7 +6230,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-64" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-64 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/35" class="item_link  with_icon" tabindex="34">
-				<i class="fa-icon-code-fork"></i> 
+				<i class="fa-icon-code-fork"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Quam nihil
@@ -6632,7 +6240,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-65" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-65 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/36" class="item_link  with_icon" tabindex="35">
-				<i class="im-icon-link2"></i> 
+				<i class="im-icon-link2"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Molestiae consequatur
@@ -6642,7 +6250,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-66" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-66 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/37" class="item_link  with_icon" tabindex="36">
-				<i class="im-icon-bubble"></i> 
+				<i class="im-icon-bubble"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Nulla pariatur
@@ -6652,7 +6260,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-67" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-67 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/38" class="item_link  with_icon" tabindex="37">
-				<i class="im-icon-pacman"></i> 
+				<i class="im-icon-pacman"></i>
 				<span class="link_content">
 					<span class="link_text">
 						At vero eos et
@@ -6662,7 +6270,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-70" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-70 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/39" class="item_link  with_icon" tabindex="38">
-				<i class="fa-icon-signin"></i> 
+				<i class="fa-icon-signin"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Blanditiis praesentium
@@ -6672,7 +6280,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-69" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-69 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/3-11" class="item_link  with_icon" tabindex="39">
-				<i class="im-icon-align-bottom"></i> 
+				<i class="im-icon-align-bottom"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Iusto odio dignissimos
@@ -6682,7 +6290,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-71" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-71 default_dropdown default_style drop_to_right submenu_default_width columns1" style="width:33.333333333333%;">
 			<a href="/3-12" class="item_link  with_icon" tabindex="40">
-				<i class="im-icon-file-powerpoint"></i> 
+				<i class="im-icon-file-powerpoint"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Deleniti atque corrupti
@@ -6696,7 +6304,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 </li>
 <li id="menu-item-30" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-30 multicolumn_dropdown additional_style_3 drop_to_right submenu_full_width columns4">
 	<a href="/2" class="item_link  with_icon" tabindex="41">
-		<i class="im-icon-pause-2"></i> 
+		<i class="im-icon-pause-2"></i>
 		<span class="link_content">
 			<span class="link_text">
 				Multi Column
@@ -6706,7 +6314,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	<ul class="mega_dropdown">
 	<li id="menu-item-31" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-31 default_dropdown additional_style_9 drop_to_right submenu_default_width columns1" style="width:25%;">
 		<a href="/21" class="item_link  disable_icon" tabindex="42">
-			<i class=""></i> 
+			<i class=""></i>
 			<span class="link_content">
 				<span class="link_text">
 					First Column
@@ -6716,7 +6324,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		<ul class="mega_dropdown">
 		<li id="menu-item-39" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-39 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/211" class="item_link  with_icon" tabindex="43">
-				<i class="fa-icon-signin"></i> 
+				<i class="fa-icon-signin"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Unde omnis iste
@@ -6726,7 +6334,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-40" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-40 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/212" class="item_link  with_icon" tabindex="44">
-				<i class="fa-icon-share-alt"></i> 
+				<i class="fa-icon-share-alt"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Natus error sit
@@ -6736,7 +6344,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-41" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-41 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/213" class="item_link  with_icon" tabindex="45">
-				<i class="im-icon-equalizer-3"></i> 
+				<i class="im-icon-equalizer-3"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Voluptatem
@@ -6746,7 +6354,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-42" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-42 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/214" class="item_link  with_icon" tabindex="46">
-				<i class="im-icon-camera-8"></i> 
+				<i class="im-icon-camera-8"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Accusantium
@@ -6758,7 +6366,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-32" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-32 default_dropdown additional_style_9 drop_to_right submenu_default_width columns1" style="width:25%;">
 		<a href="/22" class="item_link  disable_icon" tabindex="47">
-			<i class=""></i> 
+			<i class=""></i>
 			<span class="link_content">
 				<span class="link_text">
 					Second Column
@@ -6768,7 +6376,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		<ul class="mega_dropdown">
 		<li id="menu-item-43" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-43 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/221" class="item_link  with_icon" tabindex="48">
-				<i class="im-icon-volume-low"></i> 
+				<i class="im-icon-volume-low"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Nemo enim ipsam
@@ -6778,7 +6386,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-44" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-44 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/222" class="item_link  with_icon" tabindex="49">
-				<i class="im-icon-settings"></i> 
+				<i class="im-icon-settings"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Voluptatem
@@ -6788,7 +6396,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-45" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-45 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/223" class="item_link  with_icon" tabindex="50">
-				<i class="fa-icon-suitcase"></i> 
+				<i class="fa-icon-suitcase"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Quia voluptas sit
@@ -6798,7 +6406,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-46" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-46 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/224" class="item_link  with_icon" tabindex="51">
-				<i class="im-icon-arrow-left-9"></i> 
+				<i class="im-icon-arrow-left-9"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Aspernatur aut
@@ -6810,7 +6418,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-33" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-33 default_dropdown additional_style_9 drop_to_right submenu_default_width columns1" style="width:25%;">
 		<a href="/23" class="item_link  disable_icon" tabindex="52">
-			<i class=""></i> 
+			<i class=""></i>
 			<span class="link_content">
 				<span class="link_text">
 					Third Column
@@ -6820,7 +6428,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		<ul class="mega_dropdown">
 		<li id="menu-item-47" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-47 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/231" class="item_link  with_icon" tabindex="53">
-				<i class="im-icon-arrow-right-11"></i> 
+				<i class="im-icon-arrow-right-11"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Odit aut fugit
@@ -6830,7 +6438,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-48" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-48 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/232" class="item_link  with_icon" tabindex="54">
-				<i class="im-icon-movie"></i> 
+				<i class="im-icon-movie"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Sed quia consequuntur
@@ -6840,7 +6448,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-49" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-49 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/233" class="item_link  with_icon" tabindex="55">
-				<i class="im-icon-stack-spades"></i> 
+				<i class="im-icon-stack-spades"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Magni dolores eos
@@ -6850,7 +6458,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-50" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-50 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/234" class="item_link  with_icon" tabindex="56">
-				<i class="im-icon-flower"></i> 
+				<i class="im-icon-flower"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Qui ratione
@@ -6862,7 +6470,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 	</li>
 	<li id="menu-item-34" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-34 default_dropdown additional_style_9 drop_to_right submenu_default_width columns1" style="width:25%;">
 		<a href="/24" class="item_link  disable_icon" tabindex="57">
-			<i class=""></i> 
+			<i class=""></i>
 			<span class="link_content">
 				<span class="link_text">
 					Fourth Column
@@ -6872,7 +6480,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		<ul class="mega_dropdown">
 		<li id="menu-item-51" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-51 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/241" class="item_link  with_icon" tabindex="58">
-				<i class="im-icon-quotes-right"></i> 
+				<i class="im-icon-quotes-right"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Sequi nesciunt
@@ -6882,7 +6490,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-52" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-52 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/242" class="item_link  with_icon" tabindex="59">
-				<i class="im-icon-libreoffice"></i> 
+				<i class="im-icon-libreoffice"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Neque porro
@@ -6892,7 +6500,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-53" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-53 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/243" class="item_link  with_icon" tabindex="60">
-				<i class="fa-icon-rss"></i> 
+				<i class="fa-icon-rss"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Quisquam est
@@ -6902,7 +6510,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 		</li>
 		<li id="menu-item-54" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-54 default_dropdown default_style drop_to_right submenu_default_width columns1">
 			<a href="/244" class="item_link  with_icon" tabindex="61">
-				<i class="im-icon-checkbox-unchecked"></i> 
+				<i class="im-icon-checkbox-unchecked"></i>
 				<span class="link_content">
 					<span class="link_text">
 						Qui dolorem
@@ -6916,7 +6524,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 </li>
 <li id="menu-item-72" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-72 post_type_dropdown additional_style_4 drop_to_left submenu_default_width columns8">
 	<a href="http://4" class="item_link  with_icon" tabindex="62">
-		<i class="im-icon-bullhorn"></i> 
+		<i class="im-icon-bullhorn"></i>
 		<span class="link_content">
 			<span class="link_text">
 				Recent Posts
@@ -7328,14 +6936,14 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 </li>
 <li id="menu-item-137" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-137 widgets_dropdown additional_style_6 drop_to_left submenu_default_width columns2">
 	<a href="/6" class="item_link  with_icon" tabindex="63">
-		<i class="im-icon-puzzle"></i> 
+		<i class="im-icon-puzzle"></i>
 		<span class="link_content">
 			<span class="link_text">
 				Widgets
 			</span>
 		</span>
 	</a>
-	<ul class="mega_dropdown"><div id="text-8" class="widget widget_text"><div class="widgettitle">Contact Us</div>			<div class="textwidget"><ul class="contacts"> 
+	<ul class="mega_dropdown"><div id="text-8" class="widget widget_text"><div class="widgettitle">Contact Us</div>			<div class="textwidget"><ul class="contacts">
     <li>
         <i class="im-icon-envelop"></i><a href="#">info@megamain.com</a><br>
     </li>
@@ -7373,7 +6981,7 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 </li>
 <li id="menu-item-163" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-163 default_dropdown default_style drop_to_right submenu_default_width columns1">
 	<a href="http://extensions.megamain.com/" class="item_link  with_icon" tabindex="64">
-		<i class="im-icon-lab"></i> 
+		<i class="im-icon-lab"></i>
 		<span class="link_content">
 			<span class="link_text">
 				Extensions
@@ -7383,19 +6991,19 @@ $items_wrap .= '<ul id="mega_main_menu_ul" class="mega_main_menu_ul">';
 </li>';
 */
 
-if (is_array( $unserialise['_included_components'] ) && in_array( 'search_box', $unserialise['_included_components'] ) ){
-$items_wrap .= mmm_nav_search($arg);
-}
-if (is_array( $unserialise['_included_components'] ) && in_array( 'woo_cart', $unserialise['_included_components'] ) ){
-$items_wrap .= mmm_nav_login($arg);
-}
-if (is_array( $unserialise['_included_components'] ) && in_array( 'buddypress', $unserialise['_included_components'] ) ){
-$items_wrap .= mmm_nav_register($arg);
-}
-	
-	$items_wrap .= '</ul>'; //end ul must be after mmm_nav_extension
-	
-	/*<!--
+        if (is_array($unserialise['_included_components']) && in_array('search_box', $unserialise['_included_components'])) {
+            $items_wrap .= mmm_nav_search($arg);
+        }
+        if (is_array($unserialise['_included_components']) && in_array('woo_cart', $unserialise['_included_components'])) {
+            $items_wrap .= mmm_nav_login($arg);
+        }
+        if (is_array($unserialise['_included_components']) && in_array('buddypress', $unserialise['_included_components'])) {
+            $items_wrap .= mmm_nav_register($arg);
+        }
+
+        $items_wrap .= '</ul>'; //end ul must be after mmm_nav_extension
+
+        /*<!--
 	<li class="nav_search_box">
 	<form method="get" id="mega_main_menu_searchform" action="http://menu.megamain.com/">
 		<i class="im-icon-search-3 icosearch"></i>
@@ -7404,27 +7012,20 @@ $items_wrap .= mmm_nav_register($arg);
 	</form>
 	</li><!-- class="nav_search_box" -->
 </ul>';*/
-			
-			
-			$items_wrap .= '</div><!-- /class="menu_inner" -->';
-			$items_wrap .= '</div><!-- /class="menu_holder" -->';
-			$items_wrap .= '</div><!-- /id="mega_main_menu" -->';
 
+        $items_wrap .= '</div><!-- /class="menu_inner" -->';
+        $items_wrap .= '</div><!-- /class="menu_holder" -->';
+        $items_wrap .= '</div><!-- /id="mega_main_menu" -->';
 
-			${'MENU'.$arg .'_'. $val} = $items_wrap;
-			//$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
-			//var_dump($xoTheme);
-			$hhhh = 'MENU_'.$arg .'_'. $val;
-					$$hhhh = ${'MENU'.$arg.'_'.$val};
+        ${'MENU' . $arg . '_' . $val} = $items_wrap;
+        //$this->assign($MENU, ${'MENU'.$arg .'_'. $val});
+        //var_dump($xoTheme);
+        $hhhh  = 'MENU_' . $arg . '_' . $val;
+        ${$hhhh} = ${'MENU' . $arg . '_' . $val};
+    }
+    ////
 
 }
-
-////
-		
-		
- 
- }
- //A ajouter next version ++++ de MENU skin et theme ceci est juste pour tester l'output
-
+//A ajouter next version ++++ de MENU skin et theme ceci est juste pour tester l'output
 
 ?>

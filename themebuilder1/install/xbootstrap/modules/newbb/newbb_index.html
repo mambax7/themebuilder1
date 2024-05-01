@@ -8,7 +8,7 @@
 </h3>
 
 <p><{$index_desc}></p>
-<div class="text-right"><{includeq file="db:newbb_index_menu.html"}></div>
+<div class="text-right"><{include file="db:newbb_index_menu.html"}></div>
 
 <div class="newbb-header-icons hidden-xs">
 <{if $viewer_level gt 1}>
@@ -59,7 +59,7 @@
 </div><!-- .newbb-header -->
 
 <div class="panel-group xoops-newbb-category-list" id="accordion">
-<{foreachq item=category from=$categories}><!-- Forum categories -->
+<{foreach item=category from=$categories}><!-- Forum categories -->
     <div class="panel panel-default mb10">
         <div class="panel-heading">
             <h4 class="panel-title xoops-mewbb-forum-title">
@@ -124,7 +124,7 @@
                 <div class="col-sm-4 col-md-4"><strong><{$smarty.const._MD_LASTPOST}></strong></div>
             </div>
         <{/if}>
-    <{foreachq item=forum from=$category.forums}>
+    <{foreach item=forum from=$category.forums}>
     <div class="row xoops-newbb-list-foruns mb10">
         <div class="col-sm-6 col-md-6">
         <{if $forum.subforum}>
@@ -202,7 +202,7 @@
 
         <{if $forum.subforum}>
             <{$smarty.const._MD_SUBFORUMS}><{$img_subforum}>
-                <{foreachq item=subforum from=$forum.subforum}>
+                <{foreach item=subforum from=$forum.subforum}>
                     [<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/viewforum.php?forum=<{$subforum.forum_id}>"><{$subforum.forum_name}></a>]
                 <{/foreach}>
         <{/if}>
@@ -293,7 +293,7 @@
 <{/if}>
 
 <{if $online}>
-    <{includeq file="db:newbb_online.html"}>
+    <{include file="db:newbb_online.html"}>
 <{/if}>
 
 <ul class="list-unstyled">
@@ -305,6 +305,6 @@
 <{/if}>
 </ul>
 
-<{includeq file='db:newbb_notification_select.html'}>
+<{include file='db:newbb_notification_select.html'}>
 
 </div><!-- .xoops-newbb -->

@@ -9,100 +9,93 @@
 	mfn_wp_lang_menu();
 	echo '</div>';
 
-} else*/if( function_exists( 'icl_get_languages' ) ){
-	
-	// WPML - Custom Languages Menu
+} else*/
+if (function_exists('icl_get_languages')) {
+    // WPML - Custom Languages Menu
 
-	$lang_args = '';
-	$lang_options = $xoTheme->template->_tpl_vars[ 'header-wpml-options' ];
-	$wmpl_flags = $xoTheme->template->_tpl_vars[ 'header-wpml' ];
-						
-	if( isset( $lang_options['link-to-home'] )){
-		$lang_args .= 'skip_missing=0';
-	} else {
-		$lang_args .= 'skip_missing=1';
-	}
-	//$languages = icl_get_languages( $lang_args );
+    $lang_args    = '';
+    $lang_options = $xoTheme->template->_tpl_vars['header-wpml-options'];
+    $wmpl_flags   = $xoTheme->template->_tpl_vars['header-wpml'];
 
-	if( ( $wmpl_flags != 'hide' ) && $languages && is_array( $languages ) ){
-			
-		if( ! $wmpl_flags || $wmpl_flags == 'dropdown-name'  ){
-			// dropdown ------------
+    if (isset($lang_options['link-to-home'])) {
+        $lang_args .= 'skip_missing=0';
+    } else {
+        $lang_args .= 'skip_missing=1';
+    }
+    //$languages = icl_get_languages( $lang_args );
 
-			$active_lang = false;
-			foreach( $languages as $lang_k=>$lang ){
-				if( $lang['active'] ){
-					$active_lang = $lang;
-					unset( $languages[$lang_k] );
-				}
-			}
+    if (($wmpl_flags != 'hide') && $languages && is_array($languages)) {
+        if (!$wmpl_flags || $wmpl_flags == 'dropdown-name') {
+            // dropdown ------------
 
-			// disabled
-			if( count( $languages ) ){
-				$lang_status = 'enabled';
-			} else {
-				$lang_status = 'disabled';
-			}
+            $active_lang = false;
+            foreach ($languages as $lang_k => $lang) {
+                if ($lang['active']) {
+                    $active_lang = $lang;
+                    unset($languages[$lang_k]);
+                }
+            }
 
-			if( $active_lang ){
-				$translate[ 'wpml-no' ] = mfn_opts_get( 'translate' ) ? mfn_opts_get( 'translate-wpml-no', 'No translations available for this page' ) : __( 'No translations available for this page', 'betheme' );
+            // disabled
+            if (count($languages)) {
+                $lang_status = 'enabled';
+            } else {
+                $lang_status = 'disabled';
+            }
 
-				echo '<div class="wpml-languages '. $lang_status .'">';
-					
-				echo '<a class="active tooltip" ontouchstart="this.classList.toggle(\'hover\');" data-tooltip="'. $translate['wpml-no'] .'">';
-					
-				if( $wmpl_flags == "dropdown-name" ){
-					echo $active_lang['native_name'];
-				} else {
-					echo '<img src="'. $active_lang['country_flag_url'] .'" alt="'. $active_lang['translated_name'] .'" width="18" height="12"/>';
-				}
-					
-				if( count( $languages ) ) echo '<i class="icon-down-open-mini"></i>';
-					
-				echo '</a>';
+            if ($active_lang) {
+                $translate['wpml-no'] = mfn_opts_get('translate') ? mfn_opts_get('translate-wpml-no', 'No translations available for this page') : __('No translations available for this page', 'betheme');
 
-				if( count( $languages ) ){
-					echo '<ul class="wpml-lang-dropdown">';
-					foreach( $languages as $lang ){
-							
-						if( $wmpl_flags == 'dropdown-name' ){
-							echo '<li><a href="'. $lang['url'] .'">'. $lang['native_name'] .'</a></li>';
-						} else {
-							echo '<li><a href="'. $lang['url'] .'"><img src="'. $lang['country_flag_url'] .'" alt="'. $lang['translated_name'] .'" width="18" height="12"/></a></li>';
-						}
+                echo '<div class="wpml-languages ' . $lang_status . '">';
 
-					}
-					echo '</ul>';
-				}
+                echo '<a class="active tooltip" ontouchstart="this.classList.toggle(\'hover\');" data-tooltip="' . $translate['wpml-no'] . '">';
 
-				echo '</div>';
-			}
+                if ($wmpl_flags == "dropdown-name") {
+                    echo $active_lang['native_name'];
+                } else {
+                    echo '<img src="' . $active_lang['country_flag_url'] . '" alt="' . $active_lang['translated_name'] . '" width="18" height="12"/>';
+                }
 
-		} else {
-			// horizontal ------------
+                if (count($languages)) {
+                    echo '<i class="icon-down-open-mini"></i>';
+                }
 
-			echo '<div class="wpml-languages horizontal">';
-			echo '<ul>';
-			foreach( $languages as $lang ){
-					
-				if( $lang['active'] ){
-					$lang_class = 'lang-active';
-				} else {
-					$lang_class = false;
-				}
-					
-				if( $wmpl_flags == 'horizontal-code' ){
-					echo '<li class="'. $lang_class .'"><a href="'. $lang['url'] .'">'. strtoupper( $lang['language_code'] ) .'</a></li>';
-				} else {
-					echo '<li class="'. $lang_class .'"><a href="'. $lang['url'] .'"><img src="'. $lang['country_flag_url'] .'" alt="'. $lang['translated_name'] .'" width="18" height="12"/></a></li>';
-				}
+                echo '</a>';
 
-			}
-			echo '</ul>';
-			echo '</div>';
+                if (count($languages)) {
+                    echo '<ul class="wpml-lang-dropdown">';
+                    foreach ($languages as $lang) {
+                        if ($wmpl_flags == 'dropdown-name') {
+                            echo '<li><a href="' . $lang['url'] . '">' . $lang['native_name'] . '</a></li>';
+                        } else {
+                            echo '<li><a href="' . $lang['url'] . '"><img src="' . $lang['country_flag_url'] . '" alt="' . $lang['translated_name'] . '" width="18" height="12"/></a></li>';
+                        }
+                    }
+                    echo '</ul>';
+                }
 
-		}
-			
-	}
+                echo '</div>';
+            }
+        } else {
+            // horizontal ------------
 
+            echo '<div class="wpml-languages horizontal">';
+            echo '<ul>';
+            foreach ($languages as $lang) {
+                if ($lang['active']) {
+                    $lang_class = 'lang-active';
+                } else {
+                    $lang_class = false;
+                }
+
+                if ($wmpl_flags == 'horizontal-code') {
+                    echo '<li class="' . $lang_class . '"><a href="' . $lang['url'] . '">' . strtoupper((string) $lang['language_code']) . '</a></li>';
+                } else {
+                    echo '<li class="' . $lang_class . '"><a href="' . $lang['url'] . '"><img src="' . $lang['country_flag_url'] . '" alt="' . $lang['translated_name'] . '" width="18" height="12"/></a></li>';
+                }
+            }
+            echo '</ul>';
+            echo '</div>';
+        }
+    }
 }

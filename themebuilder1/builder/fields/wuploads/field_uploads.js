@@ -25,7 +25,7 @@ jQuery(document).ready(function($){
 
 			var page = $a.data( "page" );
 			//alert(page);
-			$.get( "admin/themebuilder/fields/uploads/ajax.php", { s: page }, function( html ) {
+			$.get( "admin/themebuilder1/fields/uploads/ajax.php", { s: page }, function( html ) {
 				input.html( html );
 
 			});

@@ -8,6 +8,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
+
 /**
  * @copyright       The XUUPS Project http://sourceforge.net/projects/xuups/
  * @license         http://www.fsf.org/copyleft/gpl.html GNU public license
@@ -19,7 +20,7 @@
  */
 defined("XOOPS_ROOT_PATH") or die("XOOPS root path not defined");
 
-include_once dirname(dirname(__FILE__)) . '/include/common.php';
+include_once dirname(__FILE__, 2) . '/include/common.php';
 
 class PublisherCategory extends XoopsObject
 {
@@ -28,7 +29,6 @@ class PublisherCategory extends XoopsObject
      * @access public
      */
     public $publisher = null;
-
     /**
      * @var array
      */
@@ -69,7 +69,7 @@ class PublisherCategory extends XoopsObject
      */
     public function __call($method, $args)
     {
-        $arg = isset($args[0]) ? $args[0] : null;
+        $arg = $args[0] ?? null;
         return $this->getVar($method, $arg);
     }
 
@@ -94,7 +94,8 @@ class PublisherCategory extends XoopsObject
         if (is_object($xoopsUser) && $xoopsUser->getVar('uid') == $this->moderator()) {
             return true;
         }
-        $categoriesGranted = $this->publisher->getHandler('permission')->getGrantedItems('category_read');
+        $categoriesGranted = $this->publisher->getHandler('permission')
+                                             ->getGrantedItems('category_read');
         if (in_array($this->categoryid(), $categoriesGranted)) {
             $ret = true;
         }
@@ -132,33 +133,31 @@ class PublisherCategory extends XoopsObject
      */
     public function getCategoryPath($withAllLink = true)
     {
-       
         if (!$this->_categoryPath) {
-	          if ($withAllLink) {
-            		
-            	if($this->getCategoryLink() != ""){
-            		$ret = "<li>".$this->getCategoryLink()."</li>";
-            	}else{
-            		$ret = $this->getCategoryLink();
-            	}	
-				
+            if ($withAllLink) {
+                if ($this->getCategoryLink() != "") {
+                    $ret = "<li>" . $this->getCategoryLink() . "</li>";
+                } else {
+                    $ret = $this->getCategoryLink();
+                }
             } else {
                 $ret = $this->name();
             }
             $parentid = $this->parentid();
             if ($parentid != 0) {
-                $parentObj = $this->publisher->getHandler('category')->get($parentid);
+                $parentObj = $this->publisher->getHandler('category')
+                                             ->get($parentid);
                 if ($parentObj->notLoaded()) {
                     exit;
                 }
-                $ret = $parentObj->getCategoryPath($withAllLink).$ret;
+                $ret = $parentObj->getCategoryPath($withAllLink) . $ret;
             }
             $this->_categoryPath = $ret;
         }
         return $this->_categoryPath;
     }
-	 
-	/* OLD Function
+
+    /* OLD Function
     public function getCategoryPath($withAllLink = true)
     {
         if (!$this->_categoryPath) {
@@ -179,21 +178,22 @@ class PublisherCategory extends XoopsObject
         }
         return $this->_categoryPath;
     }
-	*/
+    */
     /**
      * @return mixed|string
      */
     public function getCategoryPathForMetaTitle()
     {
-        $ret = '';
+        $ret      = '';
         $parentid = $this->parentid();
         if ($parentid != 0) {
-            $parentObj = $this->publisher->getHandler('category')->get($parentid);
+            $parentObj = $this->publisher->getHandler('category')
+                                         ->get($parentid);
             if ($parentObj->notLoaded()) {
                 exit('NOT LOADED');
             }
             $ret = $parentObj->getCategoryPath(false);
-            $ret = str_replace(' >', ' -', $ret);
+            $ret = str_replace(' >', ' -', (string) $ret);
         }
         return $ret;
     }
@@ -203,7 +203,8 @@ class PublisherCategory extends XoopsObject
      */
     public function getGroups_read()
     {
-        return $this->publisher->getHandler('permission')->getGrantedGroupsById('category_read', $this->categoryid());
+        return $this->publisher->getHandler('permission')
+                               ->getGrantedGroupsById('category_read', $this->categoryid());
     }
 
     /**
@@ -211,7 +212,8 @@ class PublisherCategory extends XoopsObject
      */
     public function getGroups_submit()
     {
-        return $this->publisher->getHandler('permission')->getGrantedGroupsById('item_submit', $this->categoryid());
+        return $this->publisher->getHandler('permission')
+                               ->getGrantedGroupsById('item_submit', $this->categoryid());
     }
 
     /**
@@ -219,7 +221,8 @@ class PublisherCategory extends XoopsObject
      */
     public function getGroups_moderation()
     {
-        return $this->publisher->getHandler('permission')->getGrantedGroupsById('category_moderation', $this->categoryid());
+        return $this->publisher->getHandler('permission')
+                               ->getGrantedGroupsById('category_moderation', $this->categoryid());
     }
 
     /**
@@ -252,7 +255,8 @@ class PublisherCategory extends XoopsObject
      */
     public function store($sendNotifications = true, $force = true)
     {
-        $ret = $this->publisher->getHandler('category')->insert($this, $force);
+        $ret = $this->publisher->getHandler('category')
+                               ->insert($this, $force);
         if ($sendNotifications && $ret && ($this->isNew())) {
             $this->sendNotifications();
         }
@@ -265,11 +269,12 @@ class PublisherCategory extends XoopsObject
      */
     public function sendNotifications()
     {
-        $tags = array();
-        $tags['MODULE_NAME'] = $this->publisher->getModule()->getVar('name');
+        $tags                  = [];
+        $tags['MODULE_NAME']   = $this->publisher->getModule()
+                                                 ->getVar('name');
         $tags['CATEGORY_NAME'] = $this->name();
-        $tags['CATEGORY_URL'] = $this->getCategoryUrl();
-        $notification_handler = xoops_gethandler('notification');
+        $tags['CATEGORY_URL']  = $this->getCategoryUrl();
+        $notification_handler  = xoops_gethandler('notification');
         $notification_handler->triggerEvent('global_item', 0, 'category_created', $tags);
     }
 
@@ -278,20 +283,20 @@ class PublisherCategory extends XoopsObject
      *
      * @return array
      */
-    public function ToArraySimple($category = array())
+    public function ToArraySimple($category = [])
     {
-        $category['categoryid'] = $this->categoryid();
-        $category['name'] = $this->name();
-        $category['categorylink'] = $this->getCategoryLink();
-        $category['categoryurl'] = $this->getCategoryUrl();
-        $category['total'] = ($this->getVar('itemcount') > 0) ? $this->getVar('itemcount') : '';
-        $category['description'] = $this->description();
-        $category['header'] = $this->header();
-        $category['meta_keywords'] = $this->meta_keywords();
+        $category['categoryid']       = $this->categoryid();
+        $category['name']             = $this->name();
+        $category['categorylink']     = $this->getCategoryLink();
+        $category['categoryurl']      = $this->getCategoryUrl();
+        $category['total']            = ($this->getVar('itemcount') > 0) ? $this->getVar('itemcount') : '';
+        $category['description']      = $this->description();
+        $category['header']           = $this->header();
+        $category['meta_keywords']    = $this->meta_keywords();
         $category['meta_description'] = $this->meta_description();
-        $category['short_url'] = $this->short_url();
+        $category['short_url']        = $this->short_url();
         if ($this->getVar('last_itemid') > 0) {
-            $category['last_itemid'] = $this->getVar('last_itemid', 'n');
+            $category['last_itemid']     = $this->getVar('last_itemid', 'n');
             $category['last_title_link'] = $this->getVar('last_title_link', 'n');
         }
         if ($this->image() != 'blank.png') {
@@ -308,14 +313,14 @@ class PublisherCategory extends XoopsObject
      *
      * @return array
      */
-    public function toArrayTable($category = array())
+    public function toArrayTable($category = [])
     {
-        $category['categoryid'] = $this->categoryid();
+        $category['categoryid']   = $this->categoryid();
         $category['categorylink'] = $this->getCategoryLink();
-        $category['total'] = ($this->getVar('itemcount') > 0) ? $this->getVar('itemcount') : '';
-        $category['description'] = $this->description();
+        $category['total']        = ($this->getVar('itemcount') > 0) ? $this->getVar('itemcount') : '';
+        $category['description']  = $this->description();
         if ($this->getVar('last_itemid') > 0) {
-            $category['last_itemid'] = $this->getVar('last_itemid', 'n');
+            $category['last_itemid']     = $this->getVar('last_itemid', 'n');
             $category['last_title_link'] = $this->getVar('last_title_link', 'n');
         }
         if ($this->image() != 'blank.png') {
@@ -387,7 +392,7 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
         if (isset($cats[$id])) {
             return $cats[$id];
         }
-        $obj = parent::get($id);
+        $obj       = parent::get($id);
         $cats[$id] = $obj;
         return $obj;
     }
@@ -432,7 +437,8 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
     {
         // Deleting this category ITEMs
         $criteria = new Criteria('categoryid', $category->categoryid());
-        $this->publisher->getHandler('item')->deleteAll($criteria);
+        $this->publisher->getHandler('item')
+                        ->deleteAll($criteria);
         unset($criteria);
         // Deleting the sub categories
         $subcats = $this->getCategories(0, 0, $category->categoryid());
@@ -443,7 +449,8 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
             $category->setErrors('An error while deleting.');
             return false;
         }
-        $module_id = $this->publisher->getModule()->getVar('mid');
+        $module_id = $this->publisher->getModule()
+                                     ->getVar('mid');
         xoops_groupperm_deletebymoditem($module_id, "category_read", $category->categoryid());
         xoops_groupperm_deletebymoditem($module_id, "item_submit", $category->categoryid());
         xoops_groupperm_deletebymoditem($module_id, "category_moderation", $category->categoryid());
@@ -460,7 +467,7 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
      */
     public function &getObjects($criteria = null, $id_as_key = false)
     {
-        $ret = array();
+        $ret        = [];
         $theObjects = parent::getObjects($criteria, true);
         foreach ($theObjects as $theObject) {
             if (!$id_as_key) {
@@ -493,11 +500,12 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
             $criteria->add(new Criteria('parentid', $parentid));
         }
         if (!$publisher_isAdmin) {
-            $categoriesGranted = $this->publisher->getHandler('permission')->getGrantedItems('category_read');
+            $categoriesGranted = $this->publisher->getHandler('permission')
+                                                 ->getGrantedItems('category_read');
             if (count($categoriesGranted) > 0) {
                 $criteria->add(new Criteria('categoryid', '(' . implode(',', $categoriesGranted) . ')', 'IN'));
-            }  else {
-                return array();
+            } else {
+                return [];
             }
             if (is_object($xoopsUser)) {
                 $criteria->add(new Criteria('moderator', $xoopsUser->getVar('uid')), 'OR');
@@ -528,26 +536,27 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
     public function &getCategoriesForSubmit()
     {
         global $publisher_isAdmin, $theresult, $xoopsUser;
-        $ret = array();
+        $ret      = [];
         $criteria = new CriteriaCompo();
         $criteria->setSort('name');
         $criteria->setOrder('ASC');
         if (!$publisher_isAdmin) {
-            $categoriesGranted = $this->publisher->getHandler('permission')->getGrantedItems('item_submit');
+            $categoriesGranted = $this->publisher->getHandler('permission')
+                                                 ->getGrantedItems('item_submit');
             if (count($categoriesGranted) > 0) {
                 $criteria->add(new Criteria('categoryid', '(' . implode(',', $categoriesGranted) . ')', 'IN'));
-            }  else {
+            } else {
                 return $ret;
             }
             if (is_object($xoopsUser)) {
                 $criteria->add(new Criteria('moderator', $xoopsUser->getVar('uid')), 'OR');
             }
         }
-        $categories = $this->getAll($criteria, array('categoryid', 'parentid', 'name'), false, false);
+        $categories = $this->getAll($criteria, ['categoryid', 'parentid', 'name'], false, false);
         if (count($categories) == 0) {
             return $ret;
         }
-        $cat_array = array();
+        $cat_array = [];
         foreach ($categories as $cat) {
             $cat_array[$cat['parentid']][$cat['categoryid']] = $cat;
         }
@@ -555,7 +564,7 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
         if (!isset($cat_array[0])) {
             return $ret;
         }
-        $cat_result = array();
+        $cat_result = [];
         foreach ($cat_array[0] as $thecat) {
             $level = 0;
             $this->getSubCatArray($thecat, $level, $cat_array, $cat_result);
@@ -569,12 +578,13 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
     public function &getCategoriesForSearch()
     {
         global $publisher_isAdmin, $theresult, $xoopsUser;
-        $ret = array();
+        $ret      = [];
         $criteria = new CriteriaCompo();
         $criteria->setSort('name');
         $criteria->setOrder('ASC');
         if (!$publisher_isAdmin) {
-            $categoriesGranted = $this->publisher->getHandler('permission')->getGrantedItems('category_read');
+            $categoriesGranted = $this->publisher->getHandler('permission')
+                                                 ->getGrantedItems('category_read');
             if (count($categoriesGranted) > 0) {
                 $criteria->add(new Criteria('categoryid', '(' . implode(',', $categoriesGranted) . ')', 'IN'));
             } else {
@@ -584,11 +594,11 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
                 $criteria->add(new Criteria('moderator', $xoopsUser->getVar('uid')), 'OR');
             }
         }
-        $categories = $this->getAll($criteria, array('categoryid', 'parentid', 'name'), false, false);
+        $categories = $this->getAll($criteria, ['categoryid', 'parentid', 'name'], false, false);
         if (count($categories) == 0) {
             return $ret;
         }
-        $cat_array = array();
+        $cat_array = [];
         foreach ($categories as $cat) {
             $cat_array[$cat['parentid']][$cat['categoryid']] = $cat;
         }
@@ -596,7 +606,7 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
         if (!isset($cat_array[0])) {
             return $ret;
         }
-        $cat_result = array();
+        $cat_result = [];
         foreach ($cat_array[0] as $thecat) {
             $level = 0;
             $this->getSubCatArray($thecat, $level, $cat_array, $cat_result);
@@ -619,10 +629,11 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
         if (isset($parentid) && ($parentid != -1)) {
             $criteria->add(new criteria('parentid', $parentid));
             if (!$publisher_isAdmin) {
-                $categoriesGranted = $this->publisher->getHandler('permission')->getGrantedItems('category_read');
+                $categoriesGranted = $this->publisher->getHandler('permission')
+                                                     ->getGrantedItems('category_read');
                 if (count($categoriesGranted) > 0) {
                     $criteria->add(new Criteria('categoryid', '(' . implode(',', $categoriesGranted) . ')', 'IN'));
-                }  else {
+                } else {
                     return 0;
                 }
                 if (is_object($xoopsUser)) {
@@ -644,9 +655,10 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
     {
         global $publisher_isAdmin, $xoopsUser;
         $criteria = new CriteriaCompo(new Criteria('parentid', "(" . implode(',', array_keys($categories)) . ")", 'IN'));
-        $ret = array();
+        $ret      = [];
         if (!$publisher_isAdmin) {
-            $categoriesGranted = $this->publisher->getHandler('permission')->getGrantedItems('category_read');
+            $categoriesGranted = $this->publisher->getHandler('permission')
+                                                 ->getGrantedItems('category_read');
             if (count($categoriesGranted) > 0) {
                 $criteria->add(new Criteria('categoryid', '(' . implode(',', $categoriesGranted) . ')', 'IN'));
             } else {
@@ -691,7 +703,7 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
      */
     public function publishedItemsCount($cat_id = 0)
     {
-        return $this->itemsCount($cat_id, $status = array(_PUBLISHER_STATUS_PUBLISHED));
+        return $this->itemsCount($cat_id, $status = [_PUBLISHER_STATUS_PUBLISHED]);
     }
 
     /**
@@ -702,6 +714,7 @@ class PublisherCategoryHandler extends XoopsPersistableObjectHandler
      */
     public function itemsCount($cat_id = 0, $status = '')
     {
-        return $this->publisher->getHandler('item')->getCountsByCat($cat_id, $status);
+        return $this->publisher->getHandler('item')
+                               ->getCountsByCat($cat_id, $status);
     }
 }

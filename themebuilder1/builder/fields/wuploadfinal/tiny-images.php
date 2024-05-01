@@ -9,20 +9,20 @@
 // --------------------------------------------------------------
 
 include '../../../../../../mainfile.php';
-XoopsLogger::getInstance()->activated = false;
+XoopsLogger::getInstance()->activated        = false;
 XoopsLogger::getInstance()->renderingEnabled = false;
 
-function send_message($message){
+function send_message($message): never
+{
     global $xoopsSecurity;
-    
+
     echo $message;
-    echo '<input type="hidden" id="ret-token" value="'.$xoopsSecurity->createToken().'" />';
+    echo '<input type="hidden" id="ret-token" value="' . $xoopsSecurity->createToken() . '" />';
     die();
-    
 }
 
 //$category = RMHttpRequest::post('category', 'integer', 0);
-$category = $_POST['category'];	
+$category = $_POST['category'];
 //$action = RMHttpRequest::post( 'action', 'string', '' );
 $action = $_POST['action'];
 //$cat = new RMImageCategory($category);
@@ -44,12 +44,11 @@ $editor = $_REQUEST['editor'];
 //$container = RMHttpRequest::request( 'idcontainer', 'string', '' );
 $container = $_REQUEST['idcontainer'];
 
-if ($action==''){
-	
-	/*RMTemplate::get()->add_script('jquery.min.js', 'rmcommon', array('directory' => 'include'));
+if ($action == '') {
+    /*RMTemplate::get()->add_script('jquery.min.js', 'rmcommon', array('directory' => 'include'));
     RMTemplate::get()->add_script('jquery-ui.min.js', 'rmcommon', array('directory' => 'include'));
     RMTemplate::get()->add_script('popup-images-manager.js', 'rmcommon' );*/
-	
+
     /*if (!$cat->isNew()){
         $uploader = new RMFlashUploader('files-container', 'upload.php');
         $uploader->add_setting('scriptData', array(
@@ -102,167 +101,171 @@ if ($action==''){
         RMTemplate::get()->add_head($uploader->render());
     }*/
 
-	?>
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
-<head>
-<title>Insert Image</title>
+    ?>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+    <head>
+        <title>Insert Image</title>
 
-        <script type='text/javascript' src='admin/themebuilder/fields/uploadfinal/popup-images-manager.js' ></script>
-		<script type='text/javascript' src='admin/themebuilder/fields/uploadfinal/advanced-fields.js' ></script>
-		<link rel="stylesheet" title="dark" media="screen" href="admin/themebuilder/fields/uploadfinal/popup-images-manager.css" type="text/css" />
+        <script type='text/javascript' src='admin/themebuilder1/fields/uploadfinal/popup-images-manager.js'></script>
+        <script type='text/javascript' src='admin/themebuilder1/fields/uploadfinal/advanced-fields.js'></script>
+        <link rel="stylesheet" title="dark" media="screen" href="admin/themebuilder1/fields/uploadfinal/popup-images-manager.css" type="text/css"/>
 
-    <!-- RMTemplateHeader -->
-</head>
-<body style="background: #FFF;">
-<div id="img-toolbar">
-	<a href="#" class="select" id="a-upload" onclick="show_upload(); return false;">Upload Files</a>
-	<a href="#" id="a-fromurl" onclick="return false;">From URL</a>
-	<a href="#" id="a-library" onclick="show_library(); return false;">From Library</a>
-    <?php //echo RMEvents::get()->run_event('rmcommon.imgmgr.editor.options', ''); 
-	?>
-</div>
-<div id="upload-container" class="container">
-    <div class="form-group">
-        <form name="selcat" id="select-category" method="post" action="tiny-images.php">
-        Select the category where you wish to upload images
-        <select name="category" onchange="$('#select-category').submit();" class="form-control">
-            <option value="0">Select...</option>
-            <?php foreach($categories as $catego): ?>
-                <?php if(!$catego->user_allowed_toupload($xoopsUser)) continue; ?>
-                <option value="<?php echo $catego->id(); ?>"<?php echo $cat->id()==$catego->id() ? ' selected="selected"' : ''; ?>><?php echo $catego->getVar('name'); ?></option>
-            <?php endforeach; ?>
-        </select>
-        <input type="hidden" name="type" value="<?php echo $type; ?>" />
-        <input type="hidden" name="name" value="<?php echo $en; ?>" />
-            <input type="hidden" name="target" value="<?php echo $target; ?>" />
-            <input type="hidden" name="multi" value="<?php echo $multi ? 'yes' : 'no'; ?>" />
-            <input type="hidden" name="idcontainer" value="<?php echo $container; ?>" />
-        </form>
+        <!-- RMTemplateHeader -->
+    </head>
+    <body style="background: #FFF;">
+    <div id="img-toolbar">
+        <a href="#" class="select" id="a-upload" onclick="show_upload(); return false;">Upload Files</a>
+        <a href="#" id="a-fromurl" onclick="return false;">From URL</a>
+        <a href="#" id="a-library" onclick="show_library(); return false;">From Library</a>
+        <?php //echo RMEvents::get()->run_event('rmcommon.imgmgr.editor.options', '');
+        ?>
     </div>
-    <?php //if (!$cat->isNew()): 
-	?>
-    <div id="upload-controls">
-        <div id="upload-errors"></div>
-        <div id="files-container"></div>
-    </div>
-    <div id="resizer-bar">
-        <strong>Resizing images</strong>
-        <div class="thebar">
-            <div class="indicator" id="bar-indicator">0</div>
+    <div id="upload-container" class="container">
+        <div class="form-group">
+            <form name="selcat" id="select-category" method="post" action="tiny-images.php">
+                Select the category where you wish to upload images
+                <select name="category" onchange="$('#select-category').submit();" class="form-control">
+                    <option value="0">Select...</option>
+                    <?php foreach ($categories as $catego): ?>
+                        <?php if (!$catego->user_allowed_toupload($xoopsUser)) {
+                            continue;
+                        } ?>
+                        <option value="<?php echo $catego->id(); ?>"<?php echo $cat->id() == $catego->id() ? ' selected="selected"' : ''; ?>><?php echo $catego->getVar('name'); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="type" value="<?php echo $type; ?>"/>
+                <input type="hidden" name="name" value="<?php echo $en; ?>"/>
+                <input type="hidden" name="target" value="<?php echo $target; ?>"/>
+                <input type="hidden" name="multi" value="<?php echo $multi ? 'yes' : 'no'; ?>"/>
+                <input type="hidden" name="idcontainer" value="<?php echo $container; ?>"/>
+            </form>
         </div>
-        <span class="message"></span>
-        <span>Please, do not close the window until resizing process has finished!</span>
-    </div>
-    <div id="gen-thumbnails"></div>
-    <?php //endif; 
-	?>
-</div>
-
-<div id="fromurl-container" class="container">
-    <div class="form-group row">
-        <div class="col-sm-4 col-md-2">
-            <label for="imgurl">Image URL</label>
+        <?php //if (!$cat->isNew()):
+        ?>
+        <div id="upload-controls">
+            <div id="upload-errors"></div>
+            <div id="files-container"></div>
         </div>
-        <div class="col-sm-8 col-md-10">
-            <input type="text" id="imgurl" class="form-control" size="50" value="">
+        <div id="resizer-bar">
+            <strong>Resizing images</strong>
+            <div class="thebar">
+                <div class="indicator" id="bar-indicator">0</div>
+            </div>
+            <span class="message"></span>
+            <span>Please, do not close the window until resizing process has finished!</span>
         </div>
-    </div>
-    <div class="form-group row">
-        <div class="col-sm-4 col-md-2">
-            <label for="url-title">Title:</label>
-        </div>
-        <div class="col-sm-8 col-md-10">
-            <input type="text" id="url-title" class="form-control" value="" />
-        </div>
+        <div id="gen-thumbnails"></div>
+        <?php //endif;
+        ?>
     </div>
 
-    <div class="form-group row">
-        <div class="col-sm-4 col-md-2">
-            <label for="url-alt">Alternative text:</label>
+    <div id="fromurl-container" class="container">
+        <div class="form-group row">
+            <div class="col-sm-4 col-md-2">
+                <label for="imgurl">Image URL</label>
+            </div>
+            <div class="col-sm-8 col-md-10">
+                <input type="text" id="imgurl" class="form-control" size="50" value="">
+            </div>
         </div>
-        <div class="col-sm-8 col-md-10">
-            <input type="text" id="url-alt" class="form-control" value="" />
+        <div class="form-group row">
+            <div class="col-sm-4 col-md-2">
+                <label for="url-title">Title:</label>
+            </div>
+            <div class="col-sm-8 col-md-10">
+                <input type="text" id="url-title" class="form-control" value=""/>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4 col-md-2">
+                <label for="url-alt">Alternative text:</label>
+            </div>
+            <div class="col-sm-8 col-md-10">
+                <input type="text" id="url-alt" class="form-control" value=""/>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4 col-md-2">
+                <label>Alignment:</label>
+            </div>
+            <div class="col-sm-8 col-md-10">
+                <label class="radio-inline"><input type="radio" name="align_url" value="" checked="checked"> None</label>
+                <label class="radio-inline"><input type="radio" name="align_url" value="left"> Left</label>
+                <label class="radio-inline"><input type="radio" name="align_url" value="center"> Center</label>
+                <label class="radio-inline"><input type="radio" name="align_url" value="right"> Right</label>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4 col-md-2">
+                <label for="url-alt">Link:</label>
+            </div>
+            <div class="col-sm-8 col-md-10">
+                <input type="text" id="url-link" class="form-control" value="">
+            </div>
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-4 col-md-2">
+                &nbsp;
+            </div>
+            <div class="col-sm-8 col-md-10">
+                <a href="javascript:;" class="btn btn-primary" onclick="<?php if ($type == 'exmcode'): ?>insert_from_url('xoops');<?php else: ?>insert_from_url('tiny');<?php endif; ?>">Insert Image</a>
+                <?php if ($type == 'exmcode'): ?>
+                    <a href="javascript:;" onclick="exmPopup.closePopup();" class="btn btn-default">Cancel</a>
+                <?php endif; ?>
+            </div>
+
         </div>
     </div>
 
-    <div class="form-group row">
-        <div class="col-sm-4 col-md-2">
-            <label>Alignment:</label>
+
+    <div id="library-container" class="container">
+        <div class="categories_selector">
+            Select the category where yo want to select images
+            <select name="category" id="category-field" onchange="show_library();" class="form-control">
+                <option value="0">Select...</option>
+                <?php foreach ($categories as $catego): ?>
+                    <?php if (!$catego->user_allowed_toupload($xoopsUser)) {
+                        continue;
+                    } ?>
+                    <option value="<?php echo $catego->id(); ?>"<?php echo $cat->id() == $catego->id() ? ' selected="selected"' : ''; ?>><?php echo $catego->getVar('name'); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="hidden" name="XOOPS_TOKEN_REQUEST" id="xoops-token" value="<?php echo $xoopsSecurity->createToken(); ?>"/>
         </div>
-        <div class="col-sm-8 col-md-10">
-            <label class="radio-inline"><input type="radio" name="align_url" value="" checked="checked"> None</label>
-            <label class="radio-inline"><input type="radio" name="align_url" value="left"> Left</label>
-            <label class="radio-inline"><input type="radio" name="align_url" value="center"> Center</label>
-            <label class="radio-inline"><input type="radio" name="align_url" value="right"> Right</label>
+        <div id="library-content" class="loading">
+
         </div>
     </div>
 
-    <div class="form-group row">
-        <div class="col-sm-4 col-md-2">
-            <label for="url-alt">Link:</label>
-        </div>
-        <div class="col-sm-8 col-md-10">
-            <input type="text" id="url-link" class="form-control" value="">
-        </div>
-    </div>
-
-    <div class="form-group row">
-
-        <div class="col-sm-4 col-md-2">
-            &nbsp;
-        </div>
-        <div class="col-sm-8 col-md-10">
-            <a href="javascript:;" class="btn btn-primary" onclick="<?php if($type=='exmcode'): ?>insert_from_url('xoops');<?php else: ?>insert_from_url('tiny');<?php endif; ?>">Insert Image</a>
-            <?php if($type=='exmcode'): ?>
-                <a href="javascript:;" onclick="exmPopup.closePopup();" class="btn btn-default">Cancel</a>
-            <?php endif; ?>
-        </div>
-
-    </div>
-</div>
-
-
-<div id="library-container" class="container">
-    <div class="categories_selector">
-        Select the category where yo want to select images
-        <select name="category" id="category-field" onchange="show_library();" class="form-control">
-            <option value="0">Select...</option>
-            <?php foreach($categories as $catego): ?>
-                <?php if(!$catego->user_allowed_toupload($xoopsUser)) continue; ?>
-                <option value="<?php echo $catego->id(); ?>"<?php echo $cat->id()==$catego->id() ? ' selected="selected"' : ''; ?>><?php echo $catego->getVar('name'); ?></option>
-            <?php endforeach; ?>
-        </select>
-        <input type="hidden" name="XOOPS_TOKEN_REQUEST" id="xoops-token" value="<?php echo $xoopsSecurity->createToken(); ?>" />
-    </div>
-    <div id="library-content" class="loading">
-
-    </div>
-</div>
-
-<input type="hidden" name="type" id="type" value="<?php echo $type; ?>" />
-<input type="hidden" name="editor" id="editor" value="<?php echo $editor; ?>" />
-<input type="hidden" name="name" id="name" value="<?php echo $en; ?>" />
-<input type="hidden" name="target" id="target" value="<?php echo $target; ?>" />
-<input type="hidden" name="multi" id="multi" value="<?php echo $multi ? 'yes' : 'no'; ?>" />
-<input type="hidden" name="idcontainer" id="idcontainer" value="<?php echo $container; ?>" />
-<span id="parameters">
+    <input type="hidden" name="type" id="type" value="<?php echo $type; ?>"/>
+    <input type="hidden" name="editor" id="editor" value="<?php echo $editor; ?>"/>
+    <input type="hidden" name="name" id="name" value="<?php echo $en; ?>"/>
+    <input type="hidden" name="target" id="target" value="<?php echo $target; ?>"/>
+    <input type="hidden" name="multi" id="multi" value="<?php echo $multi ? 'yes' : 'no'; ?>"/>
+    <input type="hidden" name="idcontainer" id="idcontainer" value="<?php echo $container; ?>"/>
+    <span id="parameters">
 
 
 <?php
-  //  $ev = RMEvents::get();
-   // $ev->run_event('rmcommon.imgwin.parameter');
+//  $ev = RMEvents::get();
+// $ev->run_event('rmcommon.imgwin.parameter');
 ?>
 </span>
-</body>
-</html>
-<!-- Options from other elements -->
-<?php //RMEvents::get()->run_event('rmcommon.imgmgr.editor.containers',''); 
-?>
+    </body>
+    </html>
+    <!-- Options from other elements -->
+    <?php //RMEvents::get()->run_event('rmcommon.imgmgr.editor.containers','');
+    ?>
 
-	
-<?php	
-	/*
+
+    <?php
+    /*
     $categories = RMFunctions::load_images_categories("WHERE status='open' ORDER BY id_cat DESC", true);
 
 
@@ -279,9 +282,7 @@ if ($action==''){
     RMEvents::get()->run_event('rmcommon.loading.editorimages', '');
 
     include RMTemplate::get()->get_template('rmc-editor-image.php', 'module', 'rmcommon');*/
-
-} elseif($action=='load-images'){
-
+} elseif ($action == 'load-images') {
     $db = XoopsDatabaseFactory::getDatabaseConnection();
 
     /*if (!$xoopsSecurity->check()){
@@ -289,7 +290,7 @@ if ($action==''){
         echo '<script type="text/javascript">window.location.href="tiny-images.php";</script>';
         die();
     }*/
-    
+
     // Check if some category exists
     //$catnum = RMFunctions::get_num_records("mod_rmcommon_images_categories");
     /*if ($catnum<=0){
@@ -365,159 +366,160 @@ if ($action==''){
 
     }*/
 
-   // include RMTemplate::get()->get_template('rmc-images-list-editor.php','module','rmcommon');
-	$images = array('1' => array('id' => '1',
-			'thumb' => 'http://localhost/xoops25777/modules/profile/assets/images/logo.png',
-			'title' => 'sdssdfsd'
-			),
-			'2' => array('id' => '2',
-			'thumb' => 'http://localhost/xoops25777/modules/profile/assets/images/logo.png',
-			'title' => 'sdssdfsd'
-			));
- if( empty( $images ) ): ?>
+    // include RMTemplate::get()->get_template('rmc-images-list-editor.php','module','rmcommon');
+    $images = [
+        '1' => [
+            'id'    => '1',
+            'thumb' => 'http://localhost/xoops25777/modules/profile/assets/images/logo.png',
+            'title' => 'sdssdfsd',
+        ],
+        '2' => [
+            'id'    => '2',
+            'thumb' => 'http://localhost/xoops25777/modules/profile/assets/images/logo.png',
+            'title' => 'sdssdfsd',
+        ],
+    ];
+    if (empty($images)): ?>
 
-    <div class="alert alert-info text-center">
-        There are not images yet!
-    </div>
+        <div class="alert alert-info text-center">
+            There are not images yet!
+        </div>
 
-<?php endif; ?>
+    <?php endif; ?>
 
-<?php foreach( $images as $image ): ?>
+    <?php foreach ($images as $image): ?>
 
-    <div id="thumbnail-<?php echo $image['id']; ?>" data-id="<?php echo $image['id']; ?>" class="thumbnail-item" style="background-image: url('<?php echo $image['thumb']; ?>');" alt="<?php echo $image['title']; ?>">
-        <span class="thumbnail-cover"></span>
-        <?php if( $multi ): ?>
-        <a href="#" class="add"><span class="glyphicon glyphicon-th"></span></a>
-        <span class="check"><span class="glyphicon glyphicon-ok"></span></span>
-        <?php endif; ?>
-        <a href="#" class="insert"><span class="glyphicon glyphicon-plus"></span></a>
-    </div>
+        <div id="thumbnail-<?php echo $image['id']; ?>" data-id="<?php echo $image['id']; ?>" class="thumbnail-item" style="background-image: url('<?php echo $image['thumb']; ?>');" alt="<?php echo $image['title']; ?>">
+            <span class="thumbnail-cover"></span>
+            <?php if ($multi): ?>
+                <a href="#" class="add"><span class="glyphicon glyphicon-th"></span></a>
+                <span class="check"><span class="glyphicon glyphicon-ok"></span></span>
+            <?php endif; ?>
+            <a href="#" class="insert"><span class="glyphicon glyphicon-plus"></span></a>
+        </div>
 
-<?php endforeach; ?>
+    <?php endforeach; ?>
 
-<div id="inserter-blocker"></div>
-<div id="image-inserter">
-    <div class="row content">
+    <div id="inserter-blocker"></div>
+    <div id="image-inserter">
+        <div class="row content">
 
-        <div class="image-info">
-            <span class="image"></span>
+            <div class="image-info">
+                <span class="image"></span>
 
-            <div class="media author-info">
-                <a href="#" class="pull-left" target="_blank">
-                    <img class="author-avatar img-thumbnail">
-                </a>
-                <div class="media-body">
-                    <h5 class="media-heading"><strong>Uploaded by <a href="#" target="_blank"></a></strong></h5>
-                    <small>on <span class="info-date">1999</span></small><br>
+                <div class="media author-info">
+                    <a href="#" class="pull-left" target="_blank">
+                        <img class="author-avatar img-thumbnail">
+                    </a>
+                    <div class="media-body">
+                        <h5 class="media-heading"><strong>Uploaded by <a href="#" target="_blank"></a></strong></h5>
+                        <small>on <span class="info-date">1999</span></small><br>
+                    </div>
+                </div>
+                <ul class="list-unstyled">
+                    <li>
+                        <small>Title: <code><span class="info-title">title</span></code></small>
+                    </li>
+                    <li>
+                        <small>Description: <code><span class="info-description">desc</span></code></small>
+                    </li>
+                    <li>
+                        <small>MIME type: <code><span class="info-mime">mime</span></code></small>
+                    </li>
+                    <li>
+                        <small>Original: <code><span class="info-original"></span></code></small>
+                    </li>
+                    <li>
+                        <small>File size: <code><span class="info-size"></span></code></small>
+                    </li>
+                    <li>
+                        <small>Dimensions: <code><span class="info-dimensions"></span></code></small>
+                    </li>
+                </ul>
+
+            </div>
+
+            <!-- Insert form -->
+            <div class="image-form">
+                <div class="form-group">
+                    <label>Title:</label>
+                    <input class="form-control input-sm img-title" type="text" name="title">
+                </div>
+                <div class="form-group">
+                    <label>Alternative text:</label>
+                    <input class="form-control input-sm img-alt" type="text" name="alt">
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea class="form-control input-sm img-description" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Link URL:</label>
+                    <input class="form-control input-sm img-link" type="text" name="link">
+                    <div class="btn-group btn-group-xs img-links">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Alignment:</label><br>
+                    <label class="radio-inline">
+                        <input class="img-align" type="radio" name="align" value="" checked="checked"/> None
+                    </label>
+                    <label class="radio-inline">
+                        <input class="img-align" type="radio" name="align" value="left"/> Left
+                    </label>
+                    <label class="radio-inline">
+                        <input class="img-align" type="radio" name="align" value="center"/> Center
+                    </label>
+                    <label class="radio-inline">
+                        <input class="img-align" type="radio" name="align" value="right"/> Right
+                    </label>
+                </div>
+                <div class="form-group img-sizes">
+
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="id" value="123" class="img-id">
+                    <input type="hidden" name="type" value="external" id="insert-type">
+                    <input type="hidden" name="target" value="advInsertUrl" id="insert-target">
+                    <input type="hidden" name="container" value="container2" id="insert-container">
+                    <button type="button" class="btn btn-primary btn-insert">Send Image</button>
+                    <button type="button" class="btn btn-primary btn-edit"><span class="glyphicon glyphicon-ok"></span> Set Changes</button>
+                    <button type="button" class="btn btn-success btn-edit-next">Save and Next <span class="glyphicon glyphicon-chevron-right"></span></button>
+                    <button type="button" class="btn btn-default btn-close">Close</button>
                 </div>
             </div>
-            <ul class="list-unstyled">
-                <li>
-                    <small>Title: <code><span class="info-title">title</span></code></small>
-                </li>
-                <li>
-                    <small>Description: <code><span class="info-description">desc</span></code></small>
-                </li>
-                <li>
-                    <small>MIME type: <code><span class="info-mime">mime</span></code></small>
-                </li>
-                <li>
-                    <small>Original: <code><span class="info-original"></span></code></small>
-                </li>
-                <li>
-                    <small>File size: <code><span class="info-size"></span></code></small>
-                </li>
-                <li>
-                    <small>Dimensions: <code><span class="info-dimensions"></span></code></small>
-                </li>
-            </ul>
-
-        </div>
-
-        <!-- Insert form -->
-        <div class="image-form">
-            <div class="form-group">
-                <label>Title:</label>
-                <input class="form-control input-sm img-title" type="text" name="title">
-            </div>
-            <div class="form-group">
-                <label>Alternative text:</label>
-                <input class="form-control input-sm img-alt" type="text" name="alt">
-            </div>
-            <div class="form-group">
-                <label>Description:</label>
-                <textarea class="form-control input-sm img-description" name="description"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Link URL:</label>
-                <input class="form-control input-sm img-link" type="text" name="link">
-                <div class="btn-group btn-group-xs img-links">
-
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Alignment:</label><br>
-                <label class="radio-inline">
-                    <input class="img-align" type="radio" name="align" value="" checked="checked" /> None
-                </label>
-                <label class="radio-inline">
-                    <input class="img-align" type="radio" name="align" value="left" /> Left
-                </label>
-                <label class="radio-inline">
-                    <input class="img-align" type="radio" name="align" value="center" /> Center
-                </label>
-                <label class="radio-inline">
-                    <input class="img-align" type="radio" name="align" value="right" /> Right
-                </label>
-            </div>
-            <div class="form-group img-sizes">
-
-            </div>
-            <div class="form-group">
-                <input type="hidden" name="id" value="123" class="img-id">
-                <input type="hidden" name="type" value="external" id="insert-type">
-                <input type="hidden" name="target" value="advInsertUrl" id="insert-target">
-                <input type="hidden" name="container" value="container2" id="insert-container">
-                <button type="button" class="btn btn-primary btn-insert">Send Image</button>
-                <button type="button" class="btn btn-primary btn-edit"><span class="glyphicon glyphicon-ok"></span> Set Changes</button>
-                <button type="button" class="btn btn-success btn-edit-next">Save and Next <span class="glyphicon glyphicon-chevron-right"></span></button>
-                <button type="button" class="btn btn-default btn-close">Close</button>
-            </div>
-        </div>
-        <!-- Insert form /-->
-    </div>
-</div>
-
-<div id="images-tray">
-    <div class="tray-added">
-        <div class="images">
-
+            <!-- Insert form /-->
         </div>
     </div>
-    <div class="tray-commands">
-        <button type="button" class="btn btn-primary btn-sm btn-insert"><span class="glyphicon glyphicon-ok"></span> Insert Images</button>
-        <button type="button" class="btn btn-warning btn-sm btn-clear"><span class="glyphicon glyphicon-trash"></span> Clear Selected</button>
-    </div>
-</div>
 
-<input type="hidden" name="token" id="ret-token" value="<?php //echo $xoopsSecurity->createToken(); 
-?>" />
-<?php //echo $nav->display( false ); 
-?>
-<input type="hidden" id="filesurl" value="<?php echo $filesurl; ?>" />
+    <div id="images-tray">
+        <div class="tray-added">
+            <div class="images">
+
+            </div>
+        </div>
+        <div class="tray-commands">
+            <button type="button" class="btn btn-primary btn-sm btn-insert"><span class="glyphicon glyphicon-ok"></span> Insert Images</button>
+            <button type="button" class="btn btn-warning btn-sm btn-clear"><span class="glyphicon glyphicon-trash"></span> Clear Selected</button>
+        </div>
+    </div>
+
+    <input type="hidden" name="token" id="ret-token" value="<?php //echo $xoopsSecurity->createToken();
+    ?>"/>
+    <?php //echo $nav->display( false );
+    ?>
+    <input type="hidden" id="filesurl" value="<?php echo $filesurl; ?>"/>
 
 <?php
-    
-} elseif ( $action == 'image-details' ){
-
-    function images_send_json( $data ){
-
+} elseif ($action == 'image-details') {
+    function images_send_json($data): never
+    {
         header('Cache-Control: no-cache, must-revalidate');
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Content-type: application/json');
-        echo json_encode( $data );
+        echo json_encode($data);
         die();
-
     }
 
     /*if (!$xoopsSecurity->check()){
@@ -528,7 +530,7 @@ if ($action==''){
     }*/
 
     //$id = RMHttpRequest::post( 'id', 'integer', 0 );
-	$id = $_POST['id'];
+    $id = $_POST['id'];
     /*if ( $id <= 0 )
         images_send_json( array(
             'message'   => __('No image specified', 'rmcommon'),
@@ -607,13 +609,12 @@ if ($action==''){
 
     $data = RMEvents::get()->run_event('rmcommon.loading.image.details', $data, $image, RMHttpRequest::request( 'url', 'string', '' ) );
     $data['token'] = $xoopsSecurity->createToken();*/
- $data = array(
-        'id'        => '1',
-        'title'        => 'title',
+    $data = [
+        'id'    => '1',
+        'title' => 'title',
         //'links'     => $links
-    );
+    ];
     images_send_json(
         $data
     );
-
 }

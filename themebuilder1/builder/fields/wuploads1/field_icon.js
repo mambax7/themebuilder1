@@ -26,7 +26,7 @@ var uploader = new plupload.Uploader({
 								
 		url : 'upload.php',
 								
-		flash_swf_url : 'admin/themebuilder/fields/uploads1/js/plupload.flash.swf',
+		flash_swf_url : 'admin/themebuilder1/fields/uploads1/js/plupload.flash.swf',
 		
 		multipart :	true,
 		

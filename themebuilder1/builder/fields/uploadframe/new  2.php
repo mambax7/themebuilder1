@@ -1,26 +1,26 @@
-<? 
- if (file_exists("../../mainfile.php")) {   
-include("../../mainfile.php");  
-} elseif (file_exists("../../../mainfile.php")) {   
-include("../../../mainfile.php");  
-} 
+<?
+
+if (file_exists("../../mainfile.php")) {
+    include("../../mainfile.php");
+} elseif (file_exists("../../../mainfile.php")) {
+    include("../../../mainfile.php");
+}
 
 //include XOOPS_ROOT_PATH . '/header.php';
 global $xoopsDB;
 
-	$sqlt = "SELECT * FROM ".$xoopsDB->prefix("config_theme")." WHERE conf_name = 'cssextra'";
-	$css_arr = $xoopsDB -> fetchArray( $xoopsDB -> query( $sqlt ) );
-	$unserialise = unserialize($css_arr['conf_value']);
-	//var_dump($unserialise);
-	
-	
-	//'boxedfullwidthwrapper' => string '0' 
-	$layout = ( ( $unserialise['boxedfullwidthwrapper'] == '0' ) ? 'boxed' : 'full' );
-	$this->assign('layout', $layout);
-	
-	 //'scroll_top_enabled' => string '1'
-	if($unserialise['scroll_top_enabled'] == '1'){
-	$scrolltop = '
+$sqlt        = "SELECT * FROM " . $xoopsDB->prefix("config_theme") . " WHERE conf_name = 'cssextra'";
+$css_arr     = $xoopsDB->fetchArray($xoopsDB->query($sqlt));
+$unserialise = unserialize($css_arr['conf_value']);
+//var_dump($unserialise);
+
+//'boxedfullwidthwrapper' => string '0'
+$layout = (($unserialise['boxedfullwidthwrapper'] == '0') ? 'boxed' : 'full');
+$this->assign('layout', $layout);
+
+//'scroll_top_enabled' => string '1'
+if ($unserialise['scroll_top_enabled'] == '1') {
+    $scrolltop = '
 	<script>
 $(document).ready(function(){
 
@@ -99,14 +99,14 @@ $(document).ready(function(){
 	
 	
 	';
-	}else{
-	$scrolltop = '';
-	}
-	$this->assign('scrolltop', $scrolltop);
-	
-	//'nicescroll' => string '0' 
-	if($unserialise['nicescroll'] == '1'){
-	$nicescroll ='<script src="http://areaaperta.com/nicescroll/js/jquery.nicescroll.min.js"></script>
+} else {
+    $scrolltop = '';
+}
+$this->assign('scrolltop', $scrolltop);
+
+//'nicescroll' => string '0'
+if ($unserialise['nicescroll'] == '1') {
+    $nicescroll = '<script src="http://areaaperta.com/nicescroll/js/jquery.nicescroll.min.js"></script>
 	  <script src="http://areaaperta.com/nicescroll/js/jquery.nicescroll.plus.js"></script>
 	  
 	  <script>
@@ -115,23 +115,18 @@ $(document).ready(function(){
 
 	  });
 	</script>';
-	}
-	$this->assign('nicescroll', $nicescroll);
-	
-	
-	  'facebook_og_enabled' => string '0' 
+}
+$this->assign('nicescroll', $nicescroll);
+
+'facebook_og_enabled' => string '0'
   'facebook_og_admins' => string '1111111111'
   'facebook_og_app_id' => string '222222222' 
-  if($unserialise['facebook_og_enabled'] == '1'){
-  
-  $this->assign('facebook_og_enabled', $facebook_og_enabled);
-$this->assign('facebook_og_admins', $unserialise['facebook_og_admins']);
-$this->assign('facebook_og_app_id', $unserialise['facebook_og_app_id']);
-  
-  
-  
-  
-  }else{}
+  if ($unserialise['facebook_og_enabled'] == '1') {
+      $this->assign('facebook_og_enabled', $facebook_og_enabled);
+      $this->assign('facebook_og_admins', $unserialise['facebook_og_admins']);
+      $this->assign('facebook_og_app_id', $unserialise['facebook_og_app_id']);
+  } else {
+  }
   
   
     'preloader' => string '1' 
@@ -147,9 +142,9 @@ $this->assign('facebook_og_app_id', $unserialise['facebook_og_app_id']);
   'preloader_background_color' => string '#012417' 
   
 $preloader = $unserialise['preloader'];
-if ($preloader == '1' ){
-	if ($unserialise['preloadertype'] == 'css'){
-	$preloadercode = '<link rel="stylesheet" id="pu-css3-spinner-style-css"  href="http://localhost/xoops25777/themes/themebuilder/spinners/css/'.$unserialise['preloadercssloader'].'.min.css" type="text/css" media="all" />
+if ($preloader == '1') {
+    if ($unserialise['preloadertype'] == 'css') {
+        $preloadercode = '<link rel="stylesheet" id="pu-css3-spinner-style-css"  href="http://localhost/xoops25777/themes/themebuilder/spinners/css/' . $unserialise['preloadercssloader'] . '.min.css" type="text/css" media="all" />
 	<link rel="stylesheet" id="pu-animate-style-css"  href="http://localhost/xoops25777/themes/themebuilder/css/animate.min.css" type="text/css" media="all" />
 <style>
 body.preloader-ultimate:before {
@@ -163,10 +158,10 @@ body.preloader-ultimate:before {
   right: 0; 
 	bottom: 0;
   z-index: 1000000;
-  background-color: '.$unserialise['preloader_background_color'].';
+  background-color: ' . $unserialise['preloader_background_color'] . ';
 }
 .preloader-ultimate-container{
-	background-color: '.$unserialise['preloader_background_color'].';
+	background-color: ' . $unserialise['preloader_background_color'] . ';
 	width: 100%;
 	height: 100%;
 	position: fixed;
@@ -193,28 +188,30 @@ body.preloader-ultimate:before {
 </style>
 	<script type="text/javascript" src="http://localhost/xoops25777/themes/themebuilder/js/pace.min.js"></script>
 	<script type="text/javascript">
-	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><div spinner=\"'.$unserialise['preloadercssloader'].'\" class=\"la-'.$unserialise['preloadercssloader'].' center-spin '.$unserialise['preloaderwidth'].'\" spintype=\"'.$unserialise['preloadertype'].'\" style=\"color: '.$unserialise['preloader_anim_color'].';\"><div><\/div><\/div><\/div>","delay":"'.$unserialise['preloaderdelay'].'","type":"'.$unserialise['preloadertype'].'","width":"'.$unserialise['preloaderwidth'].'","duration":"2s","exit_anim":"'.$unserialise['preloaderexit_anim'].'","text_spinner":"'.$unserialise['preloadertext_spinner'].'","entrance":"'.$unserialise['preloaderentrance_anim'].'","entrance_du":"1.5s"};
+	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><div spinner=\"' . $unserialise['preloadercssloader'] . '\" class=\"la-' . $unserialise['preloadercssloader'] . ' center-spin ' . $unserialise['preloaderwidth'] . '\" spintype=\"' . $unserialise['preloadertype'] . '\" style=\"color: ' . $unserialise['preloader_anim_color'] . ';\"><div><\/div><\/div><\/div>","delay":"' . $unserialise['preloaderdelay'] . '","type":"' . $unserialise['preloadertype'] . '","width":"' . $unserialise['preloaderwidth'] . '","duration":"2s","exit_anim":"' . $unserialise['preloaderexit_anim'] . '","text_spinner":"' . $unserialise['preloadertext_spinner'] . '","entrance":"' . $unserialise['preloaderentrance_anim'] . '","entrance_du":"1.5s"};
 	</script>
 	<script type="text/javascript" src="http://localhost/xoops25777/themes/themebuilder/js/site.js"></script>';
+    } elseif ($unserialise['preloadertype'] == 'gif') {
+        if ($unserialise['preloaderwidth'] == 'la-sm') {
+            $unserialise['preloaderwidth'] = '32';
+        }
+        if ($unserialise['preloaderwidth'] == 'la-2x' || $unserialise['preloaderwidth'] == '') {
+            $unserialise['preloaderwidth'] = '64';
+        }
+        if ($unserialise['preloaderwidth'] == 'la-3x') {
+            $unserialise['preloaderwidth'] = '128';
+        }
 
-	}elseif ($unserialise['preloadertype'] == 'gif'){
-	if($unserialise['preloaderwidth'] == 'la-sm'){$unserialise['preloaderwidth'] = '32'; }
-	if($unserialise['preloaderwidth'] == 'la-2x' || $unserialise['preloaderwidth'] == ''){$unserialise['preloaderwidth'] = '64'; }
-	if($unserialise['preloaderwidth'] == 'la-3x'){$unserialise['preloaderwidth'] = '128'; }
-
-	$preloadercode = '
+        $preloadercode = '
 	<link rel="stylesheet" id="pu-animate-style-css"  href="http://localhost/xoops25777/themes/themebuilder/css/animate.min.css" type="text/css" media="all" />
 	<link rel="stylesheet" id="pu-site-style-css"  href="http://noypitv.com/wp-content/plugins/preloader-ultimate/css/site.css?ver=4.3" type="text/css" media="all" />
 	<script type="text/javascript" src="http://localhost/xoops25777/themes/themebuilder/js/pace.min.js"></script>
 	<script type="text/javascript">
-	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><img class=\"center-spin\" src=\"http:\/\/localhost\/xoops25777\/themes\/themebuilder\/spinners\/gif\/'.$unserialise['preloaderwidth'].'\/'.$unserialise['preloadergifloader'].'.gif\" spinner=\"'.$unserialise['preloadergifloader'].'\" class=\"center-spin\" spintype=\"gif\" style=\"width: '.$unserialise['preloaderwidth'].'px;\"><\/div>","delay":"'.$unserialise['preloaderdelay'].'","type":"'.$unserialise['preloadertype'].'","width":"'.$unserialise['preloaderwidth'].'","duration":"2s","exit_anim":"'.$unserialise['preloaderexit_anim'].'","text_spinner":"'.$unserialise['preloadertext_spinner'].'","entrance":"'.$unserialise['preloaderentrance_anim'].'","entrance_du":"1.5s"};
+	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><img class=\"center-spin\" src=\"http:\/\/localhost\/xoops25777\/themes\/themebuilder\/spinners\/gif\/' . $unserialise['preloaderwidth'] . '\/' . $unserialise['preloadergifloader'] . '.gif\" spinner=\"' . $unserialise['preloadergifloader'] . '\" class=\"center-spin\" spintype=\"gif\" style=\"width: ' . $unserialise['preloaderwidth'] . 'px;\"><\/div>","delay":"' . $unserialise['preloaderdelay'] . '","type":"' . $unserialise['preloadertype'] . '","width":"' . $unserialise['preloaderwidth'] . '","duration":"2s","exit_anim":"' . $unserialise['preloaderexit_anim'] . '","text_spinner":"' . $unserialise['preloadertext_spinner'] . '","entrance":"' . $unserialise['preloaderentrance_anim'] . '","entrance_du":"1.5s"};
 	</script>
 	<script type="text/javascript" src="http://localhost/xoops25777/themes/themebuilder/js/site.js"></script>';
-
-	}else{
-
-
-	}
+    } else {
+    }
 }  
 $this->assign('preloader', $preloader);
 $this->assign('preloadercode', $preloadercode);
@@ -226,7 +223,7 @@ $this->assign('preloadercode', $preloadercode);
   'fontsize' => string '14' 
   'fonteffect' => string '5' 
   'font_apercu' => string 'lohitbengali' 
-  'body_background_img' => string 'http://localhost/xoops257sample/modules/system/admin/themebuilder/fields/uploadframe/mlib-uploads/full/181-111111.jpg' 
+  'body_background_img' => string 'http://localhost/xoops257sample/modules/system/admin/themebuilder1/fields/uploadframe/mlib-uploads/full/181-111111.jpg'
   'body_background_img_position' => string 'no-repeat;center top;;' 
   'body_background_img_size' => string 'cover' 
   'body_background_color' => string '#f0faf8' 
@@ -237,22 +234,24 @@ $this->assign('preloadercode', $preloadercode);
 
 	
 	
-	$favicon = $unserialise['fav_ico'];
-	$favico_img = $unserialise['fav_ico_img'];
-	$jsheader = $unserialise['js_header_text_extra'];
-	$jsbody = $unserialise['js_body_text_extra'];
+	$favicon                = $unserialise['fav_ico'];
+	$favico_img             = $unserialise['fav_ico_img'];
+	$jsheader               = $unserialise['js_header_text_extra'];
+	$jsbody                 = $unserialise['js_body_text_extra'];
 	$font_apercu_blockTitle = $unserialise['font_apercu_blockTitle'];
-	$google_analytique = $unserialise['google_analytique'];
-	$facebook_og_admins = $unserialise['facebook_og_admins'];
-	$facebook_og_app_id = $unserialise['facebook_og_app_id'];
+	$google_analytique      = $unserialise['google_analytique'];
+	$facebook_og_admins     = $unserialise['facebook_og_admins'];
+	$facebook_og_app_id     = $unserialise['facebook_og_app_id'];
 	
-	if($unserialise['fonteffect'] != 'none'){
-	$effect = '&effect='.$unserialise['fonteffect'].'';
-	}else{$effect = '';}
+	if ($unserialise['fonteffect'] != 'none') {
+        $effect = '&effect=' . $unserialise['fonteffect'] . '';
+    } else {
+        $effect = '';
+    }
 
-	if($font_apercu_blockTitle != ''){
-	$tttt = '<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family='.$unserialise['font_apercu_blockTitle'].''.$effect.'">';
-	}
+	if ($font_apercu_blockTitle != '') {
+        $tttt = '<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=' . $unserialise['font_apercu_blockTitle'] . '' . $effect . '">';
+    }
 	//var_dump($tttt);
 	//var_dump($unserialise['js_header_text_extra']);
 	//to add in header or in the footer
@@ -392,7 +391,7 @@ $olives .= $olive;
 $olives .= '
 </div>
 </div>
-'.$iii.'
+' . $iii . '
 <{$jsbody}>
 </body>
 </html>';

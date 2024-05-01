@@ -352,14 +352,14 @@ function mfnBuilder(){
 // popup - edit -----------------------------------------------
 	/*jQuery('.browse').click(function(){
 
-			jQuery( ".browsee" ).load( "admin/themebuilder/js/up.php" );
+			jQuery( ".browsee" ).load( "admin/themebuilder1/js/up.php" );
 			jQuery('.browse')
 			.fadeOut(500);
 	});*/
 	
 	jQuery('.thumb').click(function(){
 //alert('ggg');
-			//jQuery( ".browsee" ).load( "admin/themebuilder/js/up.php" );
+			//jQuery( ".browsee" ).load( "admin/themebuilder1/js/up.php" );
 		
 						
 			jQuery('#mfn-up').css({ "position": "fixed", "display": "block", "top": "30px", "left": "30px", "right": "30px", "bottom": "30px", "background": "#000", "opacity": "0.7", "z-index": "160000" });
@@ -384,7 +384,7 @@ jQuery('.thumb').each(
 //alert(jQuery(this).attr('id'));
 	new AjaxUpload(jQuery(this).attr('id'), {
 		//action: 'upload.php?fieldname=image'+jQuery(this).attr('id'),
-		action: 'admin/themebuilder/upload-file.php',
+		action: 'admin/themebuilder1/upload-file.php',
 		name: 'image'+jQuery(this).attr('id'), // name: 'image'+jQuery(this).attr('id'),
 		onSubmit: function(file, extension) {
 		

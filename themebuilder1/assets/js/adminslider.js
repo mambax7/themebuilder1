@@ -1058,7 +1058,7 @@
 			var image_src =slide_parent.find('.cs-elements-list .cs-element-settings.active').find('input[name="element_type_image"]').val();
 
 
-			//var image_src = 'http://localhost/xoops257sample/modules/system/admin/themebuilder/fields/uploadframe/mlib-uploads/full/7aftar-593c70f1dedd6.jpg';
+			//var image_src = 'http://localhost/xoops257sample/modules/system/admin/themebuilder1/fields/uploadframe/mlib-uploads/full/7aftar-593c70f1dedd6.jpg';
 			//console.log(image);
 			//console.log(dd);
 			//console.log(image_src);

@@ -1,57 +1,55 @@
 <?php
-class MFN_Options_pages_select extends MFN_Options{
 
-	/**
-	 * Constructor
-	 */
-	function __construct( $field = array(), $value = '', $prefix = false ){
+class MFN_Options_pages_select extends MFN_Options
+{
+    public $field;
+    public $value;
+    public $prefix;
 
-		$this->field = $field;
-		$this->value = $value;
+    /**
+     * Constructor
+     */
+    function __construct($field = [], $value = '', $prefix = false)
+    {
+        $this->field = $field;
+        $this->value = $value;
 
-		// theme options 'opt_name'
-		$this->prefix = $prefix;
+        // theme options 'opt_name'
+        $this->prefix = $prefix;
+    }
 
-	}
+    /**
+     * Render
+     */
+    function render($meta = false)
+    {
+        // class ----------------------------------------------------
+        if (isset($this->field['class'])) {
+            $class = $this->field['class'];
+        } else {
+            $class = false;
+        }
 
-	/**
-	 * Render
-	 */
-	function render( $meta = false ){
+        // name -----------------------------------------------------
+        if ($meta) {
+            // page mata & builder existing items
+            $name = 'name="' . $this->field['id'] . '"';
+        } else {
+            // theme options
+            $name = 'name="' . $this->prefix . '[' . $this->field['id'] . ']"';
+        }
 
-		// class ----------------------------------------------------
-		if( isset( $this->field['class']) ){
-			$class = $this->field['class'];
-		} else {
-			$class = false;
-		}
+        //$pages = get_pages( 'sort_column=post_title&hierarchical=0' );
 
-		// name -----------------------------------------------------
-		if( $meta ){
+        echo '<select ' . $name . ' ' . $class . ' rows="6">';
+        echo '<option value="">-- select --</option>';
+        //foreach ( $pages as $page ) {
+        //echo '<option value="'. $page->ID .'" '. selected( $this->value, $page->ID, false ). '>'. $page->post_title .'</option>';
+        //}
+        echo '</select>';
 
-			// page mata & builder existing items
-			$name = 'name="'. $this->field['id'] .'"';
-
-		} else {
-
-			// theme options
-			$name = 'name="'. $this->prefix .'['. $this->field['id'] .']"';
-
-		}
-
-		//$pages = get_pages( 'sort_column=post_title&hierarchical=0' );
-
-		echo '<select '. $name .' '. $class .' rows="6">';
-			echo '<option value="">-- select --</option>';
-			//foreach ( $pages as $page ) {
-				//echo '<option value="'. $page->ID .'" '. selected( $this->value, $page->ID, false ). '>'. $page->post_title .'</option>';
-			//}
-		echo '</select>';
-
-		if( isset( $this->field['desc'] ) ){
-			echo '<span class="description">'. $this->field['desc'] .'</span>';
-		}
-
-	}
-
+        if (isset($this->field['desc'])) {
+            echo '<span class="description">' . $this->field['desc'] . '</span>';
+        }
+    }
 }

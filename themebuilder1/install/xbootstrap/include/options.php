@@ -1,29 +1,30 @@
-<?php 
- if (file_exists("../../mainfile.php")) {   
-include("../../mainfile.php");  
-} elseif (file_exists("../../../mainfile.php")) {   
-include("../../../mainfile.php");  
-} 
+<?php
+
+if (file_exists("../../mainfile.php")) {
+    include("../../mainfile.php");
+} elseif (file_exists("../../../mainfile.php")) {
+    include("../../../mainfile.php");
+}
 
 //include XOOPS_ROOT_PATH . '/header.php';
 global $xoopsDB, $xoopsTpl, $xoTheme;
 
-	$sqlt = "SELECT * FROM ".$xoopsDB->prefix("config_theme")." WHERE conf_name = 'themebuilder_options'";
-	$css_arr = $xoopsDB -> fetchArray( $xoopsDB -> query( $sqlt ) );
-	//$unserialise = unserialize($css_arr['conf_value']);
+$sqlt    = "SELECT * FROM " . $xoopsDB->prefix("config_theme") . " WHERE conf_name = 'themebuilder_options'";
+$css_arr = $xoopsDB->fetchArray($xoopsDB->query($sqlt));
+//$unserialise = unserialize($css_arr['conf_value']);
 
-	$unserialise = unserialize( call_user_func( 'base'.'64_decode', $css_arr['conf_value'] ) );
-	
-	if( is_array($unserialise) ){
-			foreach( $unserialise as $ka => $smarty ){
-				//var_dump($ka);
-				$xoopsTpl->assign($ka, $smarty);
-			}
-		}
-	//var_dump($xoTheme->template->_tpl_vars['preloadertype']);
-if ($xoTheme->template->_tpl_vars['preloadertype'] == 'css'){
-	$preloadercode = '<link rel="stylesheet" id="pu-css3-spinner-style-css"  href="'.$xoTheme->template->_tpl_vars["xoops_imageurl"].'/spinners/css/'.$xoTheme->template->_tpl_vars['preloadercssloader'].'.min.css" type="text/css" media="all" />
-	<link rel="stylesheet" id="pu-animate-style-css"  href="'.$xoTheme->template->_tpl_vars["xoops_imageurl"].'/css/animate.min.css" type="text/css" media="all" />
+$unserialise = unserialize(call_user_func('base' . '64_decode', $css_arr['conf_value']));
+
+if (is_array($unserialise)) {
+    foreach ($unserialise as $ka => $smarty) {
+        //var_dump($ka);
+        $xoopsTpl->assign($ka, $smarty);
+    }
+}
+//var_dump($xoTheme->template->_tpl_vars['preloadertype']);
+if ($xoTheme->template->_tpl_vars['preloadertype'] == 'css') {
+    $preloadercode = '<link rel="stylesheet" id="pu-css3-spinner-style-css"  href="' . $xoTheme->template->_tpl_vars["xoops_imageurl"] . '/spinners/css/' . $xoTheme->template->_tpl_vars['preloadercssloader'] . '.min.css" type="text/css" media="all" />
+	<link rel="stylesheet" id="pu-animate-style-css"  href="' . $xoTheme->template->_tpl_vars["xoops_imageurl"] . '/css/animate.min.css" type="text/css" media="all" />
 <style>
 body.preloader-ultimate:before {
 	content: "";
@@ -36,10 +37,10 @@ body.preloader-ultimate:before {
   right: 0; 
 	bottom: 0;
   z-index: 1000000;
-  background-color: '.$xoTheme->template->_tpl_vars['preloader_background_color'].';
+  background-color: ' . $xoTheme->template->_tpl_vars['preloader_background_color'] . ';
 }
 .preloader-ultimate-container{
-	background-color: '.$xoTheme->template->_tpl_vars['preloader_background_color'].';
+	background-color: ' . $xoTheme->template->_tpl_vars['preloader_background_color'] . ';
 	width: 100%;
 	height: 100%;
 	position: fixed;
@@ -64,55 +65,40 @@ body.preloader-ultimate:before {
   text-align: center;
 }
 </style>
-	<script type="text/javascript" src="'.$xoTheme->template->_tpl_vars["xoops_imageurl"].'/js/pace.min.js"></script>
+	<script type="text/javascript" src="' . $xoTheme->template->_tpl_vars["xoops_imageurl"] . '/js/pace.min.js"></script>
 	<script type="text/javascript">
-	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><div spinner=\"'.$xoTheme->template->_tpl_vars['preloadercssloader'].'\" class=\"la-'.$xoTheme->template->_tpl_vars['preloadercssloader'].' center-spin '.$xoTheme->template->_tpl_vars['preloaderwidth'].'\" spintype=\"'.$xoTheme->template->_tpl_vars['preloadertype'].'\" style=\"color: '.$xoTheme->template->_tpl_vars['preloader_anim_color'].';\"><div><\/div><\/div><\/div>","delay":"'.$xoTheme->template->_tpl_vars['preloaderdelay'].'","type":"'.$xoTheme->template->_tpl_vars['preloadertype'].'","width":"'.$xoTheme->template->_tpl_vars['preloaderwidth'].'","duration":"2s","exit_anim":"'.$xoTheme->template->_tpl_vars['preloaderexit_anim'].'","text_spinner":"'.$xoTheme->template->_tpl_vars['preloadertext_spinner'].'","entrance":"'.$xoTheme->template->_tpl_vars['preloaderentrance_anim'].'","entrance_du":"1.5s"};
+	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><div spinner=\"' . $xoTheme->template->_tpl_vars['preloadercssloader'] . '\" class=\"la-' . $xoTheme->template->_tpl_vars['preloadercssloader'] . ' center-spin ' . $xoTheme->template->_tpl_vars['preloaderwidth'] . '\" spintype=\"' . $xoTheme->template->_tpl_vars['preloadertype'] . '\" style=\"color: ' . $xoTheme->template->_tpl_vars['preloader_anim_color'] . ';\"><div><\/div><\/div><\/div>","delay":"' . $xoTheme->template->_tpl_vars['preloaderdelay'] . '","type":"' . $xoTheme->template->_tpl_vars['preloadertype'] . '","width":"' . $xoTheme->template->_tpl_vars['preloaderwidth'] . '","duration":"2s","exit_anim":"' . $xoTheme->template->_tpl_vars['preloaderexit_anim'] . '","text_spinner":"' . $xoTheme->template->_tpl_vars['preloadertext_spinner'] . '","entrance":"' . $xoTheme->template->_tpl_vars['preloaderentrance_anim'] . '","entrance_du":"1.5s"};
 	</script>
-	<script type="text/javascript" src="'.$xoTheme->template->_tpl_vars["xoops_imageurl"].'/js/site.js"></script>';
+	<script type="text/javascript" src="' . $xoTheme->template->_tpl_vars["xoops_imageurl"] . '/js/site.js"></script>';
+} elseif ($xoTheme->template->_tpl_vars['preloadertype'] == 'gif') {
+    if ($xoTheme->template->_tpl_vars['preloaderwidth'] == 'la-sm') {
+        $xoTheme->template->_tpl_vars['preloaderwidth'] = '32';
+    }
+    if ($xoTheme->template->_tpl_vars['preloaderwidth'] == 'la-2x' || $xoTheme->template->_tpl_vars['preloaderwidth'] == '') {
+        $xoTheme->template->_tpl_vars['preloaderwidth'] = '64';
+    }
+    if ($xoTheme->template->_tpl_vars['preloaderwidth'] == 'la-3x') {
+        $xoTheme->template->_tpl_vars['preloaderwidth'] = '128';
+    }
 
-	}elseif ($xoTheme->template->_tpl_vars['preloadertype'] == 'gif'){
-	if($xoTheme->template->_tpl_vars['preloaderwidth'] == 'la-sm'){$xoTheme->template->_tpl_vars['preloaderwidth'] = '32'; }
-	if($xoTheme->template->_tpl_vars['preloaderwidth'] == 'la-2x' || $xoTheme->template->_tpl_vars['preloaderwidth'] == ''){$xoTheme->template->_tpl_vars['preloaderwidth'] = '64'; }
-	if($xoTheme->template->_tpl_vars['preloaderwidth'] == 'la-3x'){$xoTheme->template->_tpl_vars['preloaderwidth'] = '128'; }
-
-	$preloadercode = '
-	<link rel="stylesheet" id="pu-animate-style-css"  href="'.$xoTheme->template->_tpl_vars["xoops_imageurl"].'/css/animate.min.css" type="text/css" media="all" />
+    $preloadercode = '
+	<link rel="stylesheet" id="pu-animate-style-css"  href="' . $xoTheme->template->_tpl_vars["xoops_imageurl"] . '/css/animate.min.css" type="text/css" media="all" />
 	<link rel="stylesheet" id="pu-site-style-css"  href="http://noypitv.com/wp-content/plugins/preloader-ultimate/css/site.css?ver=4.3" type="text/css" media="all" />
-	<script type="text/javascript" src="'.$xoTheme->template->_tpl_vars["xoops_imageurl"].'/js/pace.min.js"></script>
+	<script type="text/javascript" src="' . $xoTheme->template->_tpl_vars["xoops_imageurl"] . '/js/pace.min.js"></script>
 	<script type="text/javascript">
-	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><img class=\"center-spin\" src=\"http:\/\/localhost\/xoops25777\/themes\/themebuilder\/spinners\/gif\/'.$xoTheme->template->_tpl_vars['preloaderwidth'].'\/'.$xoTheme->template->_tpl_vars['preloadergifloader'].'.gif\" spinner=\"'.$xoTheme->template->_tpl_vars['preloadergifloader'].'\" class=\"center-spin\" spintype=\"gif\" style=\"width: '.$xoTheme->template->_tpl_vars['preloaderwidth'].'px;\"><\/div>","delay":"'.$xoTheme->template->_tpl_vars['preloaderdelay'].'","type":"'.$xoTheme->template->_tpl_vars['preloadertype'].'","width":"'.$xoTheme->template->_tpl_vars['preloaderwidth'].'","duration":"2s","exit_anim":"'.$xoTheme->template->_tpl_vars['preloaderexit_anim'].'","text_spinner":"'.$xoTheme->template->_tpl_vars['preloadertext_spinner'].'","entrance":"'.$xoTheme->template->_tpl_vars['preloaderentrance_anim'].'","entrance_du":"1.5s"};
+	var preloader_ultimate_settings = {"spinner":"<div class=\"preloader-ultimate-container\"><img class=\"center-spin\" src=\"http:\/\/localhost\/xoops25777\/themes\/themebuilder\/spinners\/gif\/' . $xoTheme->template->_tpl_vars['preloaderwidth'] . '\/' . $xoTheme->template->_tpl_vars['preloadergifloader'] . '.gif\" spinner=\"' . $xoTheme->template->_tpl_vars['preloadergifloader'] . '\" class=\"center-spin\" spintype=\"gif\" style=\"width: ' . $xoTheme->template->_tpl_vars['preloaderwidth'] . 'px;\"><\/div>","delay":"' . $xoTheme->template->_tpl_vars['preloaderdelay'] . '","type":"' . $xoTheme->template->_tpl_vars['preloadertype'] . '","width":"' . $xoTheme->template->_tpl_vars['preloaderwidth'] . '","duration":"2s","exit_anim":"' . $xoTheme->template->_tpl_vars['preloaderexit_anim'] . '","text_spinner":"' . $xoTheme->template->_tpl_vars['preloadertext_spinner'] . '","entrance":"' . $xoTheme->template->_tpl_vars['preloaderentrance_anim'] . '","entrance_du":"1.5s"};
 	</script>
-	<script type="text/javascript" src="'.$xoTheme->template->_tpl_vars["xoops_imageurl"].'/js/site.js"></script>';
-
-	} 
-$xoopsTpl->assign('preloadercode', $preloadercode);	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	$terp1 = '222222'; 
-
-function mfn_print1($terp1){
-
-return ($terp1);
-
+	<script type="text/javascript" src="' . $xoTheme->template->_tpl_vars["xoops_imageurl"] . '/js/site.js"></script>';
 }
+$xoopsTpl->assign('preloadercode', $preloadercode);
+
+$terp1 = '222222';
+
+function mfn_print1($terp1)
+{
+    return ($terp1);
+}
+
 $xoopsTpl->assign('ok', mfn_print1($terp1));
 //echo $xoopsTpl->_tpl_vars['ok'];
 /*

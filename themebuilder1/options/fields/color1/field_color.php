@@ -1,68 +1,70 @@
 <?php
-class MFN_Options_color extends MFN_Options{
 
-	/**
-	 * Constructor
-	 */
-	function __construct( $field = array(), $value = '', $prefix = false ){
+class MFN_Options_color extends MFN_Options
+{
+    public $field;
+    public $value;
+    public $prefix;
 
-		$this->field = $field;
-		$this->value = $value;
+    /**
+     * Constructor
+     */
+    function __construct($field = [], $value = '', $prefix = false)
+    {
+        $this->field = $field;
+        $this->value = $value;
 
-		// theme options 'opt_name'
-		$this->prefix = $prefix;
+        // theme options 'opt_name'
+        $this->prefix = $prefix;
+    }
 
-	}
+    /**
+     * Render
+     */
+    function render($meta = false)
+    {
+        // name ----------------------------------------------------
+        if ($meta) {
+            $name = $this->field['id'];
+        } else {
+            $name = $this->prefix . '[' . $this->field['id'] . ']';
+        }
 
-	/**
-	 * Render
-	 */
-	function render( $meta = false ){
+        // value ----------------------------------------------------
+        if ($this->value) {
+            $value = $this->value;
+        } else {
+            $value = $this->field['std'] ?? '';
+        }
 
-		// name ----------------------------------------------------
-		if( $meta ){
-			$name = $this->field['id'];
-		} else {
-			$name = $this->prefix .'['. $this->field['id'] .']';
-		}
+        // alpha ----------------------------------------------------
+        if (isset($this->field['alpha'])) {
+            $alpha = ' data-alpha="true"';
+        } else {
+            $alpha = false;
+        }
 
-		// value ----------------------------------------------------
-		if( $this->value ){
-			$value = $this->value;
-		} else {
-			$value = isset( $this->field['std'] ) ? $this->field['std'] : '';
-		}
+        echo '<div class="mfn-field-color">';
 
-		// alpha ----------------------------------------------------
-		if( isset( $this->field[ 'alpha' ] ) ){
-			$alpha = ' data-alpha="true"';
-		} else {
-			$alpha = false;
-		}
+        echo '<input type="text" id="' . $this->field['id'] . '" name="' . $name . '" value="' . $value . '" class="has-colorpicker"' . $alpha . '/>';
 
-		echo '<div class="mfn-field-color">';
+        if (isset($this->field['desc'])) {
+            echo '<span class="description">' . $this->field['desc'] . '</span>';
+        }
 
-			echo '<input type="text" id="'. $this->field['id'] .'" name="'. $name .'" value="'. $value .'" class="has-colorpicker"'. $alpha .'/>';
+        echo '</div>';
+        echo '<script src="' . MFN_OPTIONS_URI . 'fields/color/field_color.js" type="text/javascript"></script>';
+    }
 
-			if( isset( $this->field['desc'] ) ){
-				echo '<span class="description">'. $this->field['desc'] .'</span>';
-			}
+    /**
+     * Enqueue
+     */
+    function enqueue()
+    {
+        // Add the color picker css file
+        wp_enqueue_style('wp-color-picker');
 
-		echo '</div>';
-		echo '<script src="'. MFN_OPTIONS_URI .'fields/color/field_color.js" type="text/javascript"></script>';
-	}
-
-	/**
-	 * Enqueue
-	 */
-	function enqueue(){
-
-		// Add the color picker css file
-		wp_enqueue_style( 'wp-color-picker' );
-
-		// Include our custom jQuery file with WordPress Color Picker dependency
-		wp_enqueue_script( 'mfn-opts-field-color-js', MFN_OPTIONS_URI .'fields/color/field_color.js', array( 'wp-color-picker' ), THEME_VERSION, true );
-
-	}
-
+        // Include our custom jQuery file with WordPress Color Picker dependency
+        wp_enqueue_script('mfn-opts-field-color-js', MFN_OPTIONS_URI . 'fields/color/field_color.js', ['wp-color-picker'], THEME_VERSION, true);
+    }
 }

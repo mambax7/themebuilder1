@@ -1,59 +1,58 @@
 <?php
- if (file_exists("../../mainfile.php")) {   
-include("../../mainfile.php");  
-} elseif (file_exists("../../../mainfile.php")) {   
-include("../../../mainfile.php");  
-} 
 
- global $xoopsDB;
+if (file_exists("../../mainfile.php")) {
+    include("../../mainfile.php");
+} elseif (file_exists("../../../mainfile.php")) {
+    include("../../../mainfile.php");
+}
 
-	$sql = "SELECT distinct conf_id, conf_name, conf_catid, conf_value, conf_desc FROM ".$xoopsDB->prefix("config_theme")." WHERE conf_catid = 2 ORDER BY conf_id DESC";
-	$result = $xoopsDB->query($sql); 
-	while (list($conf_id, $conf_name, $conf_catid, $conf_value, $conf_desc) = $xoopsDB->fetchRow($result)) {
+global $xoopsDB;
 
-		if ($conf_value == 'flexslider'){
+$sql    = "SELECT distinct conf_id, conf_name, conf_catid, conf_value, conf_desc FROM " . $xoopsDB->prefix("config_theme") . " WHERE conf_catid = 2 ORDER BY conf_id DESC";
+$result = $xoopsDB->query($sql);
+while ([$conf_id, $conf_name, $conf_catid, $conf_value, $conf_desc] = $xoopsDB->fetchRow($result)) {
+    if ($conf_value == 'flexslider') {
+        $SLIDER      = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg         = $conf_name;
+        $val         = $conf_id;
+        $slidediv    = 'SLIDER_' . $arg . '_' . $val;
+        $unserialise = unserialize($conf_desc);
+        //var_dump($unserialise);
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            //$i = 0;
 
-			$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-			$arg = $conf_name; 
-			$val = $conf_id;
-			$slidediv = 'SLIDER_'.$arg .'_'. $val;
-			$unserialise = unserialize($conf_desc);
-			//var_dump($unserialise);
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-			if ($count != 0) {
-				//$i = 0;
-				
-				${'SLIDER'.$arg .'_'. $val} = "<link rel='stylesheet' href='http://flexslider.woothemes.com/css/flexslider.css'>
-				<div class=".$slidediv.">
+            ${'SLIDER' . $arg . '_' . $val} = "<link rel='stylesheet' href='http://flexslider.woothemes.com/css/flexslider.css'>
+				<div class=" . $slidediv . ">
 					<ul class='slides'>";
 
-					while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-						$aaa = $video_arrtheme1['image'];
-						${'SLIDER'.$arg .'_'. $val} .= "<li>
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $aaa                            = $video_arrtheme1['image'];
+                ${'SLIDER' . $arg . '_' . $val} .= "<li>
 															<img src='$aaa'>
 														</li>";
-					}
-						${'SLIDER'.$arg .'_'. $val} .= "</ul></div>
+            }
+            ${'SLIDER' . $arg . '_' . $val} .= "</ul></div>
 														<script src='http://flexslider.woothemes.com/js/jquery.flexslider.js'></script>
 														<script type='application/javascript'>
 															jQuery(document).ready(function(){
-																jQuery('.".$slidediv."').flexslider({
-																	animation: '".$unserialise['slider_animation']."',
-																	direction: '.".$unserialise['direction'].".',
-																	animationSpeed: ".$unserialise['animationSpeed'].",
-																	slideshowSpeed: ".$unserialise['slideshowSpeed'].",
-																	controlNav: ".$unserialise['controlNav'].",
-																	pauseOnHover: ".$unserialise['pauseOnHover'].",
-																	directionNav: ".$unserialise['directionNav']."
+																jQuery('." . $slidediv . "').flexslider({
+																	animation: '" . $unserialise['slider_animation'] . "',
+																	direction: '." . $unserialise['direction'] . ".',
+																	animationSpeed: " . $unserialise['animationSpeed'] . ",
+																	slideshowSpeed: " . $unserialise['slideshowSpeed'] . ",
+																	controlNav: " . $unserialise['controlNav'] . ",
+																	pauseOnHover: " . $unserialise['pauseOnHover'] . ",
+																	directionNav: " . $unserialise['directionNav'] . "
 
 																});
 															});
 														</script>";
-			}else{
-									${'SLIDER'.$arg .'_'. $val} = "<link rel='stylesheet' href='http://flexslider.woothemes.com/css/flexslider.css'>";
-									${'SLIDER'.$arg .'_'. $val} .= '
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} = "<link rel='stylesheet' href='http://flexslider.woothemes.com/css/flexslider.css'>";
+            ${'SLIDER' . $arg . '_' . $val} .= '
 									<div class="flexslider">
           
         <div class="flex-viewport" style="overflow: hidden; position: relative;"><ul class="slides" style="width: 1200%; -webkit-transition-duration: 0.6s; transition-duration: 0.6s; -webkit-transform: translate3d(-3364px, 0px, 0px);"><li class="clone" style="width: 841px; float: left; display: block;">
@@ -83,115 +82,104 @@ $(window).load(function() {
   });
 });
 </script>					';
-									
-									
-			}
-			//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});		
-		$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};	
-		}
-		
-		elseif ($conf_value == 'orbit'){
-		
-			$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-			$arg = $conf_name; 
-			$val = $conf_id;
-			$slidediv = 'SLIDER_'.$arg .'_'. $val;
-			$unserialise = unserialize($conf_desc);
-													
-				${'SLIDER'.$arg .'_'. $val} = "<script src='https://b-templates4u-com.googlecode.com/svn/jquery.orbit-1.2.3.min.js' type='text/javascript'></script>
+        }
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'orbit') {
+        $SLIDER      = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg         = $conf_name;
+        $val         = $conf_id;
+        $slidediv    = 'SLIDER_' . $arg . '_' . $val;
+        $unserialise = unserialize($conf_desc);
+
+        ${'SLIDER' . $arg . '_' . $val} = "<script src='https://b-templates4u-com.googlecode.com/svn/jquery.orbit-1.2.3.min.js' type='text/javascript'></script>
 												<style>
 													div.orbit-wrapper{width:1px;height:1px;position:relative}div.orbit{width:1px;height:1px;position:relative;overflow:hidden}div.orbit img{position:absolute;top:0;left:0;display:none}div.orbit a img{border:none}.orbit div{position:absolute;top:0;left:0;width:100%;height:100%}div.timer{width:40px;height:40px;overflow:hidden;position:absolute;top:10px;right:10px;opacity:.6;cursor:pointer;z-index:1001}span.rotator{display:block;width:40px;height:40px;position:absolute;top:0;left:-20px;background:url(http://zurb.com/playground/playground/jquery-image-slider-plugin/orbit/rotator-black.png) no-repeat;z-index:3}span.mask{display:block;width:20px;height:40px;position:absolute;top:0;right:0;z-index:2;overflow:hidden}span.rotator.move{left:0}span.mask.move{width:40px;left:0;background:url(http://zurb.com/playground/playground/jquery-image-slider-plugin/orbit/timer-black.png) repeat 0 0}span.pause{display:block;width:40px;height:40px;position:absolute;top:0;left:0;background:url(http://zurb.com/playground/playground/jquery-image-slider-plugin/orbit/pause-black.png) no-repeat;z-index:4;opacity:0}span.pause.active{background:url(http://zurb.com/playground/playground/jquery-image-slider-plugin/orbit/pause-black.png) no-repeat 0 -40px}div.timer:hover span.pause,span.pause.active{opacity:1}.orbit-caption{display:none}.orbit-wrapper .orbit-caption{background:#000;background:rgba(0,0,0,.6);z-index:1000;color:#fff;padding:7px 10px;font-size:13px;position:absolute;right:0;bottom:0;width:920px;text-align:center}div.slider-nav{display:block}div.slider-nav span{width:78px;height:100px;text-indent:-9999px;position:absolute;z-index:1000;top:50%;margin-top:-50px;cursor:pointer}div.slider-nav span.right{background:url(http://zurb.com/playground/playground/jquery-image-slider-plugin/orbit/right-arrow.png);right:0}div.slider-nav span.leftt{background:url(http://zurb.com/playground/playground/jquery-image-slider-plugin/orbit/left-arrow.png);left:0}.orbit-bullets{position:absolute;z-index:1000;list-style:none;bottom:-40px;left:50%;margin-left:-50px;padding:0}.orbit-bullets li{float:left;margin-left:5px;cursor:pointer;color:#999;text-indent:-9999px;background:url(http://zurb.com/playground/playground/jquery-image-slider-plugin/orbit/bullets.jpg) no-repeat 4px 0;width:13px;height:12px;overflow:hidden}.orbit-bullets li.has-thumb{background:none;width:100px;height:75px}.orbit-bullets li.active{color:#222;background-position:-8px 0}.orbit-bullets li.active.has-thumb{background-position:0 0;border-top:2px solid #000}@font-face{font-family:'ChunkFiveRegular';src:url(http://zurb.com/playground/fonts/Chunkfive-webfont.eot);src:url(http://zurb.com/playground/fonts/Chunkfive-webfont.woff) format('woff'),url(/playground/playground/fonts/Chunkfive-webfont.ttf) format('truetype'),url(/playground/fonts/Chunkfive-webfont.svg#webfont90E2uSjN) format('svg');font-weight:400!important;font-style:normal!important}
 												</style>
 											<div id='feat' style='width: 900px;'>
-											<div id=".$slidediv.">";
-											$sql1 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE  image IS NOT NULL AND catmenu = '.$val.'';
-											$result1 = $xoopsDB -> query( $sql1 );
-											while ( $video_arr144 = $xoopsDB -> fetchArray( $result1 ) ) {
-											$bbb = $video_arr144['image'];
-											$bbbb = $video_arr144['label'];
-											$qq = $arr['conf_value'];
-													${'SLIDER'.$arg .'_'. $val} .= "
+											<div id=" . $slidediv . ">";
+        $sql1                           = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE  image IS NOT NULL AND catmenu = ' . $val . '';
+        $result1                        = $xoopsDB->query($sql1);
+        while ($video_arr144 = $xoopsDB->fetchArray($result1)) {
+            $bbb                            = $video_arr144['image'];
+            $bbbb                           = $video_arr144['label'];
+            $qq                             = $arr['conf_value'];
+            ${'SLIDER' . $arg . '_' . $val} .= "
 														<img src='$bbb' title='$bbbb' alt='$bbbb' />
 																	";
-											}
-												${'SLIDER'.$arg .'_'. $val} .= "</div></div> 
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= "</div></div> 
 																					<script type='application/javascript'>
 																						jQuery(document).ready(function(){
-																							jQuery('#".$slidediv."').orbit({          
-																								 animation: '".$unserialise['slider_animation']."', //fade, horizontal-slide, vertical-slide
-																								 animationSpeed: ".$unserialise['animationSpeed'].", //how fast animations are
-																								 advanceSpeed: ".$unserialise['advanceSpeed'].", //if timer advance is enabled, time between transitions 
-																								 pauseOnHover: ".$unserialise['pauseOnHover'].",
-																								 startClockOnMouseOut: ".$unserialise['startClockOnMouseOut'].", //if timer should restart on MouseOut
-																								 startClockOnMouseOutAfter: ".$unserialise['startClockOnMouseOutAfter'].", //how long after mouseout timer should start again
-																								 directionalNav: ".$unserialise['directionalNav'].", //manual advancing directional navs
-																								 captions: ".$unserialise['captions'].", //if has a title, will be placed at bottom
-																								 captionAnimation: '".$unserialise['captionAnimation']."', //how quickly to animate in caption on load and between captioned and uncaptioned photos
-																								 timer: ".$unserialise['timer'].", //if the circular timer is wanted
-																								 bullets : ".$unserialise['bullets']."
+																							jQuery('#" . $slidediv . "').orbit({          
+																								 animation: '" . $unserialise['slider_animation'] . "', //fade, horizontal-slide, vertical-slide
+																								 animationSpeed: " . $unserialise['animationSpeed'] . ", //how fast animations are
+																								 advanceSpeed: " . $unserialise['advanceSpeed'] . ", //if timer advance is enabled, time between transitions 
+																								 pauseOnHover: " . $unserialise['pauseOnHover'] . ",
+																								 startClockOnMouseOut: " . $unserialise['startClockOnMouseOut'] . ", //if timer should restart on MouseOut
+																								 startClockOnMouseOutAfter: " . $unserialise['startClockOnMouseOutAfter'] . ", //how long after mouseout timer should start again
+																								 directionalNav: " . $unserialise['directionalNav'] . ", //manual advancing directional navs
+																								 captions: " . $unserialise['captions'] . ", //if has a title, will be placed at bottom
+																								 captionAnimation: '" . $unserialise['captionAnimation'] . "', //how quickly to animate in caption on load and between captioned and uncaptioned photos
+																								 timer: " . $unserialise['timer'] . ", //if the circular timer is wanted
+																								 bullets : " . $unserialise['bullets'] . "
 																							});
 																						});
 																					</script>";
-		
-			//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}
-											
-		elseif ($conf_value == 'bxslider'){
-			$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-			$arg = $conf_name; 
-			$val = $conf_id;
-			$slidediv = 'SLIDER_'.$arg .'_'. $val;
-			$unserialise = unserialize($conf_desc);
-				//<script src='http://bxslider.com/js/jquery.min.js'></script>
-				${'SLIDER'.$arg .'_'. $val} = "<!-- bxSlider Javascript file -->
+
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'bxslider') {
+        $SLIDER      = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg         = $conf_name;
+        $val         = $conf_id;
+        $slidediv    = 'SLIDER_' . $arg . '_' . $val;
+        $unserialise = unserialize($conf_desc);
+        //<script src='http://bxslider.com/js/jquery.min.js'></script>
+        ${'SLIDER' . $arg . '_' . $val} = "<!-- bxSlider Javascript file -->
 													<script src='http://bxslider.com/lib/jquery.bxslider.js'></script>
 													<!-- bxSlider CSS file -->
 													<link href='http://bxslider.com/lib/jquery.bxslider.css' rel='stylesheet' />
-																	<ul class=".$slidediv.">";
-																	
-											$sql1 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE  image IS NOT NULL AND catmenu = '.$val.'';
-											$result1 = $xoopsDB -> query( $sql1 );
-											while ( $video_arr144 = $xoopsDB -> fetchArray( $result1 ) ) {
-											$bbb2 = $video_arr144['image'];
-											$bbbb = $video_arr144['label'];
-											$qq = $arr['conf_value'];
-													${'SLIDER'.$arg .'_'. $val} .= "
+																	<ul class=" . $slidediv . ">";
+
+        $sql1    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE  image IS NOT NULL AND catmenu = ' . $val . '';
+        $result1 = $xoopsDB->query($sql1);
+        while ($video_arr144 = $xoopsDB->fetchArray($result1)) {
+            $bbb2                           = $video_arr144['image'];
+            $bbbb                           = $video_arr144['label'];
+            $qq                             = $arr['conf_value'];
+            ${'SLIDER' . $arg . '_' . $val} .= "
 														<li>
 														<a href='http://tounes' target='_blank'><img src='$bbb2' alt='$bbbb'/></a>
 														<div class='sb-description'>
 														<h3>Creative Lifesaver</h3>
 														</div>
 														</li>";
-											}
-													${'SLIDER'.$arg .'_'. $val} .= "</ul>
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= "</ul>
 														<script type='text/javascript'>
 															jQuery(document).ready(function(){
-																  jQuery('.".$slidediv."').bxSlider({
-																  mode: '".$unserialise['mode']."', //if the circular timer is wanted
-																  animationSpeed : ".$unserialise['autoControls'].",
-																  auto: ".$unserialise['auto'].", //if the circular timer is wanted
-																  autoControls : ".$unserialise['autoControls']."
+																  jQuery('." . $slidediv . "').bxSlider({
+																  mode: '" . $unserialise['mode'] . "', //if the circular timer is wanted
+																  animationSpeed : " . $unserialise['autoControls'] . ",
+																  auto: " . $unserialise['auto'] . ", //if the circular timer is wanted
+																  autoControls : " . $unserialise['autoControls'] . "
 																  
 																});
 															});			
 														</script>";
-			//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}
-											
-		elseif ($conf_value == 'nivoslider'){ //probleme d'integration a refaire nivo-slider probleme css et js
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id;
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-											
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'nivoslider') { //probleme d'integration a refaire nivo-slider probleme css et js
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
 
-													${'SLIDER'.$arg .'_'. $val} = "
+        ${'SLIDER' . $arg . '_' . $val} = "
 													<script type='text/javascript' src='http://demo.dev7studios.com/nivo-slider/wp-content/plugins/nivo-slider/scripts/nivo-slider/jquery.nivo.slider.pack.js?ver=3.8.1'></script>
 													<link rel='stylesheet' href='http://www.100scripts.com/demo/php/nivo-slider/nivoslider/nivo-slider.css' type='text/css' media='screen' />
 																<style>
@@ -342,24 +330,24 @@ a.nivo-prevNav {
 																
 																
 																</style>
-																	<div id='".$slidediv."' class='nivoSlider'>";
-											$sql1 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE  image IS NOT NULL AND catmenu = '.$val.'';
-											$result1 = $xoopsDB -> query( $sql1 );
-											while ( $video_arr144 = $xoopsDB -> fetchArray( $result1 ) ) {
-											$bbb2 = $video_arr144['image'];
-											//var_dump($bbb2);
-														${'SLIDER'.$arg .'_'. $val} .= "				
-																		<img src='".$bbb2."' alt='' />
+																	<div id='" . $slidediv . "' class='nivoSlider'>";
+        $sql1                           = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE  image IS NOT NULL AND catmenu = ' . $val . '';
+        $result1                        = $xoopsDB->query($sql1);
+        while ($video_arr144 = $xoopsDB->fetchArray($result1)) {
+            $bbb2 = $video_arr144['image'];
+            //var_dump($bbb2);
+            ${'SLIDER' . $arg . '_' . $val} .= "				
+																		<img src='" . $bbb2 . "' alt='' />
 																		<img src='http://demo.dev7studios.com/nivo-slider/files/2013/02/3928848343_42443ae67d_o.jpg' alt='' />
 																		<img src='http://demo.dev7studios.com/nivo-slider/files/2013/02/4207529693_d4f03f6dd7_o.jpg' alt='' />
 																		<img src='http://demo.dev7studios.com/nivo-slider/files/2013/02/5896103449_fa2c7a168d_b.jpg' alt='' />
 																		<img src='http://demo.dev7studios.com/nivo-slider/files/2013/02/03037_liverpool_1920x1080.jpg' alt='' />
 ";
-											}
-																	${'SLIDER'.$arg .'_'. $val} .= "</div>
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= "</div>
 																							<script type='text/javascript'>
 																								jQuery(window).load(function(){
-																									jQuery('#".$slidediv."').nivoSlider({
+																									jQuery('#" . $slidediv . "').nivoSlider({
 																										effect:'fade',
 																										slices:10,
 																										boxCols:10,
@@ -376,94 +364,89 @@ a.nivo-prevNav {
 																								});
 																							</script>";
 
-			//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-			$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}
-										
-										
-		elseif ($conf_value == 'skitter_slider'){
-											$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-											
-											$unserialise = unserialize($conf_desc);
-											//var_dump($unserialise);
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'skitter_slider') {
+        $SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
 
-												if ( $unserialise['navigation'] == 'none'){
-												$nav = 'numbers: false,';
-												}elseif ( $unserialise['navigation'] == 'numbers'){
-												$nav = 'numbers: true,';
-												}elseif ( $unserialise['navigation'] == 'dots'){
-												$nav = 'dots: true,';
-												}elseif ( $unserialise['navigation'] == 'dots_with_preview'){
-															$nav = 'dots: true, 
+        $unserialise = unserialize($conf_desc);
+        //var_dump($unserialise);
+
+        if ($unserialise['navigation'] == 'none') {
+            $nav = 'numbers: false,';
+        } elseif ($unserialise['navigation'] == 'numbers') {
+            $nav = 'numbers: true,';
+        } elseif ($unserialise['navigation'] == 'dots') {
+            $nav = 'dots: true,';
+        } elseif ($unserialise['navigation'] == 'dots_with_preview') {
+            $nav = 'dots: true, 
 																	preview: true,';
-												}elseif ( $unserialise['navigation'] == 'thumbs'){
-												$nav = 'thumbs: true,';
-												}
+        } elseif ($unserialise['navigation'] == 'thumbs') {
+            $nav = 'thumbs: true,';
+        }
 
-												if ( $unserialise['navigation'] == 'none' ){
-												$numbers_align = '';
-												}else{
-												$numbers_align = "numbers_align: '".$unserialise['numbers_align']."',";
-												}
+        if ($unserialise['navigation'] == 'none') {
+            $numbers_align = '';
+        } else {
+            $numbers_align = "numbers_align: '" . $unserialise['numbers_align'] . "',";
+        }
 
+        if ($unserialise['label'] == 'none') {
+            $label = 'labelAnimation: false,';
+        } elseif ($unserialise['label'] == 'slideUp') {
+            $label = "labelAnimation: 'slideUp',";
+        } elseif ($unserialise['label'] == 'left') {
+            $label = "labelAnimation: 'left',";
+        } elseif ($unserialise['label'] == 'right') {
+            $label = "labelAnimation: 'right',";
+        } elseif ($unserialise['label'] == 'fixed') {
+            $label = "labelAnimation: 'fixed',";
+        }
 
-												if ( $unserialise['label'] == 'none'){
-												$label = 'labelAnimation: false,';
-												}elseif ( $unserialise['label'] == 'slideUp'){
-												$label = "labelAnimation: 'slideUp',";
-												}elseif ( $unserialise['label'] == 'left'){
-												$label = "labelAnimation: 'left',";
-												}elseif ( $unserialise['label'] == 'right'){
-															$label = "labelAnimation: 'right',";
-												}elseif ( $unserialise['label'] == 'fixed'){
-												$label = "labelAnimation: 'fixed',";
-												}
+        if ($unserialise['easing_default'] == 'null') {
+            $easing_default = '';
+        } else {
+            $easing_default = "easing_default: '" . $unserialise['easing_default'] . "',";
+        }
 
-												if ( $unserialise['easing_default'] == 'null' ){
-												$easing_default = '';
-												}else{
-												$easing_default = "easing_default: '".$unserialise['easing_default']."',";
-												}
+        if ($unserialise['animateNumberOut'] == 'null') {
+            $animateNumberOut = '';
+        } else {
+            $animateNumberOut = "animateNumberOut: '" . $unserialise['animateNumberOut'] . "',";
+        }
 
-												if ( $unserialise['animateNumberOut'] == 'null' ){
-												$animateNumberOut = '';
-												}else{
-												$animateNumberOut = "animateNumberOut: '".$unserialise['animateNumberOut']."',";
-												}
+        if ($unserialise['animateNumberOver'] == 'null') {
+            $animateNumberOver = '';
+        } else {
+            $animateNumberOver = "animateNumberOver: '" . $unserialise['animateNumberOver'] . "',";
+        }
 
-												if ( $unserialise['animateNumberOver'] == 'null' ){
-												$animateNumberOver = '';
-												}else{
-												$animateNumberOver = "animateNumberOver: '".$unserialise['animateNumberOver']."',";
-												}
+        if ($unserialise['animateNumberActive'] == 'null') {
+            $animateNumberActive = '';
+        } else {
+            $animateNumberActive = "animateNumberActive: '" . $unserialise['animateNumberActive'] . "',";
+        }
 
-												if ( $unserialise['animateNumberActive'] == 'null' ){
-												$animateNumberActive = '';
-												}else{
-												$animateNumberActive = "animateNumberActive: '".$unserialise['animateNumberActive']."',";
-												}
+        if ($unserialise['controls_position'] == 'none') {
+            $controls_position = '';
+        } else {
+            $controls_position = '
 
-												if ( $unserialise['controls_position'] == 'none' ){
-												$controls_position = '';
-												}else{
-												$controls_position = '
-
-												controls_position: "'.$unserialise['controls_position'].'",
+												controls_position: "' . $unserialise['controls_position'] . '",
 												controls: true,';
-												}
+        }
 
-												if ( $unserialise['focus_position'] == 'none' ){
-												$focus_position = '';
-												}else{
-												$focus_position = "focus_position: '".$unserialise['focus_position']."',";
-												}
+        if ($unserialise['focus_position'] == 'none') {
+            $focus_position = '';
+        } else {
+            $focus_position = "focus_position: '" . $unserialise['focus_position'] . "',";
+        }
 
-			
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													${'SLIDER'.$arg .'_'. $val} = '
+        $arg                            = $conf_name;
+        $val                            = $conf_id;
+        $slidediv                       = 'SLIDER_' . $arg . '_' . $val;
+        ${'SLIDER' . $arg . '_' . $val} = '
 													<link type="text/css" href="http://arabesk125.net/themes/maitscocorporate/skitter.styles.css" media="all" rel="stylesheet" />
 												<script type="text/javascript" src="http://arabesk125.net/themes/maitscocorporate/js/jquery.easing.1.3.js"></script>
 												<script type="text/javascript" src="http://arabesk125.net/themes/maitscocorporate/js/jquery.animate-colors-min.js"></script>
@@ -471,151 +454,129 @@ a.nivo-prevNav {
 													
 													<script type="text/javascript" language="javascript">
 													jQuery(document).ready(function() {
-														jQuery(".'.$slidediv.'").skitter({
+														jQuery(".' . $slidediv . '").skitter({
 														
-															velocity: '.$unserialise['velocity'].',
-															interval: '.$unserialise['interval'].',
-															'.$nav.'
-															'.$numbers_align.'
-															'.$label.'
-															'.$easing_default.'
-															'.$animateNumberOut.'
-															'.$animateNumberOver.'
-															'.$animateNumberActive.'
-															'.$controls_position.'
-															stop_over: '.$unserialise['stop_over'].',
-															auto_play: '.$unserialise['auto_play'].',
-															enable_navigation_keys: '.$unserialise['enable_navigation_keys'].',
-															progressbar: '.$unserialise['progressbar'].',
-															theme: "'.$unserialise['theme'].'"
+															velocity: ' . $unserialise['velocity'] . ',
+															interval: ' . $unserialise['interval'] . ',
+															' . $nav . '
+															' . $numbers_align . '
+															' . $label . '
+															' . $easing_default . '
+															' . $animateNumberOut . '
+															' . $animateNumberOver . '
+															' . $animateNumberActive . '
+															' . $controls_position . '
+															stop_over: ' . $unserialise['stop_over'] . ',
+															auto_play: ' . $unserialise['auto_play'] . ',
+															enable_navigation_keys: ' . $unserialise['enable_navigation_keys'] . ',
+															progressbar: ' . $unserialise['progressbar'] . ',
+															theme: "' . $unserialise['theme'] . '"
 														
 														});
 													});
 												</script>
 													
-													<div class="box_skitter '.$slidediv.'">
+													<div class="box_skitter ' . $slidediv . '">
 													<ul>';
-													
-													
-											$sql18 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE  image IS NOT NULL AND catmenu = '.$val.'';
-											$result18 = $xoopsDB -> query( $sql18 );
-											while ( $video_arr1448 = $xoopsDB -> fetchArray( $result18 ) ) {
-											$bbb3 = $video_arr1448['image'];
-											$bbbb = $video_arr1448['label'];
-											$bbblink = $video_arr1448['link'];
-											$qq = $arr['conf_value'];
-													/*${'SLIDER'.$arg .'_'. $val} .= "
+
+        $sql18    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE  image IS NOT NULL AND catmenu = ' . $val . '';
+        $result18 = $xoopsDB->query($sql18);
+        while ($video_arr1448 = $xoopsDB->fetchArray($result18)) {
+            $bbb3    = $video_arr1448['image'];
+            $bbbb    = $video_arr1448['label'];
+            $bbblink = $video_arr1448['link'];
+            $qq      = $arr['conf_value'];
+            /*${'SLIDER'.$arg .'_'. $val} .= "
 														<li>
 															<a href='".$bbblink."' title='test'>
 															<img src='$bbb3' title='test' alt='test' width='550' height='220' /></a>
 															<div class='sb-description'><h3>test</h3></div>
 														</li>";*/
-														
-														
-														$class_animation = (!empty($unserialise['slider_animation']) ? 'class="'.$unserialise['slider_animation'].'"' : '');
-														$image_slider = '<img src="'.$bbb3.'" '.$class_animation.' />';
-																			${'SLIDER'.$arg .'_'. $val} .= "<li>";							
-																if (!empty($bbblink)) {
-																
-																${'SLIDER'.$arg .'_'. $val} .= "<a href='".$bbblink."' title='".$bbbb."'>'".$image_slider."'</a>";
-																
-																}
-																else {
-																	${'SLIDER'.$arg .'_'. $val} .= $image_slider;
-																}
 
+            $class_animation                = (!empty($unserialise['slider_animation']) ? 'class="' . $unserialise['slider_animation'] . '"' : '');
+            $image_slider                   = '<img src="' . $bbb3 . '" ' . $class_animation . ' />';
+            ${'SLIDER' . $arg . '_' . $val} .= "<li>";
+            if (!empty($bbblink)) {
+                ${'SLIDER' . $arg . '_' . $val} .= "<a href='" . $bbblink . "' title='" . $bbbb . "'>'" . $image_slider . "'</a>";
+            } else {
+                ${'SLIDER' . $arg . '_' . $val} .= $image_slider;
+            }
 
-																if (!empty($bbbb)) {
-
-																${'SLIDER'.$arg .'_'. $val} .= "<div class='label_text'>
-																	<p>".$bbbb."</p>
+            if (!empty($bbbb)) {
+                ${'SLIDER' . $arg . '_' . $val} .= "<div class='label_text'>
+																	<p>" . $bbbb . "</p>
 																</div>";
-																
-																}
-																${'SLIDER'.$arg .'_'. $val} .= "</li>";	
-				
-														
-														
-														
-														
-											}
-												${'SLIDER'.$arg .'_'. $val} .= '
+            }
+            ${'SLIDER' . $arg . '_' . $val} .= "</li>";
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 															</ul>
 												</div>';
 
-			//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-			$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}
-				elseif ($conf_value == 'camera'){
-											$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													${'SLIDER'.$arg .'_'. $val} = '
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'camera') {
+        $SLIDER                         = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg                            = $conf_name;
+        $val                            = $conf_id;
+        $slidediv                       = 'SLIDER_' . $arg . '_' . $val;
+        ${'SLIDER' . $arg . '_' . $val} = '
 													<link type="text/css" href="http://www.webresourcesdepot.com/wp-content/uploads/file/free_bootstrap_template/css/camera.css" media="all" rel="stylesheet" />
 												<script type="text/javascript" src="http://arabesk125.net/themes/maitscocorporate/js/jquery.easing.1.3.js"></script>
 												<script type="text/javascript" src="http://www.webresourcesdepot.com/wp-content/uploads/file/free_bootstrap_template/js/camera.js"></script>
 													<script type="text/javascript" language="javascript">
 													jQuery(document).ready(function() {
-														jQuery("#'.$slidediv.'").camera();
+														jQuery("#' . $slidediv . '").camera();
 													});
 												</script>													
 													        <div id="main_slider">
-															<div class="camera_wrap" id="'.$slidediv.'">';
-															
-											$sql188 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE  image IS NOT NULL AND catmenu = '.$val.'';
-											$result188 = $xoopsDB -> query( $sql188 );
-											while ( $video_arr14488 = $xoopsDB -> fetchArray( $result188 ) ) {
-											$bbb38 = $video_arr14488['image'];
-											$bbbb8 = $video_arr14488['label'];
-											$qq = $arr['conf_value'];
-													${'SLIDER'.$arg .'_'. $val} .= "<div data-src='$bbb38'></div>";
-											}								
-															${'SLIDER'.$arg .'_'. $val} .= '
+															<div class="camera_wrap" id="' . $slidediv . '">';
+
+        $sql188    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE  image IS NOT NULL AND catmenu = ' . $val . '';
+        $result188 = $xoopsDB->query($sql188);
+        while ($video_arr14488 = $xoopsDB->fetchArray($result188)) {
+            $bbb38                          = $video_arr14488['image'];
+            $bbbb8                          = $video_arr14488['label'];
+            $qq                             = $arr['conf_value'];
+            ${'SLIDER' . $arg . '_' . $val} .= "<div data-src='$bbb38'></div>";
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 															</div><!-- #camera_wrap_1 -->
 															<div class="clear"></div>	
 														</div>  ';
-											
 
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } //A ajouter next version ++++ de slider skin
+    elseif ($conf_value == 's3Slider') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
 
-			//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-			$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}
-		
-		//A ajouter next version ++++ de slider skin
-		elseif ($conf_value == 's3Slider'){
-
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '
+        ${'SLIDER' . $arg . '_' . $val} = '
 													
 <style>
-#slider'.$val.' {
+#slider' . $val . ' {
     width: 100%; /* important to be same as image width */
     height: 300px; /* important to be same as image height */
     position: relative; /* important */
 	overflow: hidden; /* important */
 }
-#slider'.$val.'Content {
+#slider' . $val . 'Content {
     width: 100%;
     position: absolute;
 	top: 0;
 	margin-left: 0;
 }
-.slider'.$val.'Image {
+.slider' . $val . 'Image {
     float: left;
     position: relative;
 	display: none;
 }
-.slider'.$val.'Image span {
+.slider' . $val . 'Image span {
     position: absolute;
 	font: 10px/15px Arial, Helvetica, sans-serif;
     padding: 10px 13px;
@@ -665,40 +626,35 @@ a.nivo-prevNav {
 		<script type="text/javascript" src="http://s3slider-original.googlecode.com/svn/trunk/s3Slider.js"></script>
 		<script type="text/javascript">
 		    $(document).ready(function() {
-				$("#slider'.$val.'").s3Slider({
+				$("#slider' . $val . '").s3Slider({
 					timeOut: 3000
 				});
 		    });
 		</script>
                
 
-                <div id="slider'.$val.'">
-                    <ul id="slider'.$val.'Content">';
-					
-					$sql188 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE  image IS NOT NULL AND catmenu = '.$val.'';
-											$result188 = $xoopsDB -> query( $sql188 );
-											while ( $video_arr14488 = $xoopsDB -> fetchArray( $result188 ) ) {
-											$bbb38 = $video_arr14488['image'];
-											$bbbb8 = $video_arr14488['label'];
-											$qq = $arr['conf_value'];
-													${'SLIDER'.$arg .'_'. $val} .= '
-													
-													
-						<li class="slider'.$val.'Image">
-                            <img src="'.$bbb38.'" />
-                            <span class="top"><strong>Lorem ipsum dolor</strong><br />"'.$bbbb8.'"</span>
+                <div id="slider' . $val . '">
+                    <ul id="slider' . $val . 'Content">';
 
-                        </li>';		
+        $sql188    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE  image IS NOT NULL AND catmenu = ' . $val . '';
+        $result188 = $xoopsDB->query($sql188);
+        while ($video_arr14488 = $xoopsDB->fetchArray($result188)) {
+            $bbb38                          = $video_arr14488['image'];
+            $bbbb8                          = $video_arr14488['label'];
+            $qq                             = $arr['conf_value'];
+            ${'SLIDER' . $arg . '_' . $val} .= '
 													
-											}
-											
-											
-											
-					
-					
-					${'SLIDER'.$arg .'_'. $val} .= '
+													
+						<li class="slider' . $val . 'Image">
+                            <img src="' . $bbb38 . '" />
+                            <span class="top"><strong>Lorem ipsum dolor</strong><br />"' . $bbbb8 . '"</span>
 
-                        <div class="clear slider'.$val.'Image"></div>
+                        </li>';
+        }
+
+        ${'SLIDER' . $arg . '_' . $val} .= '
+
+                        <div class="clear slider' . $val . 'Image"></div>
                     </ul>
                 </div>
                 <!-- // slider0 -->
@@ -707,26 +663,19 @@ a.nivo-prevNav {
 													
 													
 													';
-													
-													${'SLIDER'.$arg .'_'. $val} .= '';
 
-		
-		
-		
-		
-		//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}elseif ($conf_value == 'wowslidersimplebasic'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '
+        ${'SLIDER' . $arg . '_' . $val} .= '';
+
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'wowslidersimplebasic') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '
 	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/simple-basic/engine1/style.css" />-->
 	<style>
@@ -735,7 +684,7 @@ a.nivo-prevNav {
  *	template Simple
  */
 @import url("http://fonts.googleapis.com/css?family=Istok+Web&subset=latin,latin-ext,cyrillic");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -745,8 +694,8 @@ a.nivo-prevNav {
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -758,7 +707,7 @@ a.nivo-prevNav {
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -767,7 +716,7 @@ a.nivo-prevNav {
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -775,47 +724,47 @@ a.nivo-prevNav {
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	font:12px/20px "Istok Web",Arial,Helvetica,sans-serif; 
 	color:#FFFFFF;
 	text-align:center;
@@ -826,11 +775,11 @@ a.nivo-prevNav {
 	float: left; 
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;	
 	color:#000000;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	background-size: 200%;
 	position:absolute;
 	display:block;
@@ -840,23 +789,23 @@ a.nivo-prevNav {
 	height: 10%;
 	background-image: url(./themes/themebuilder/icons/arrowssimplebasic.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0.00%;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 0 0;
 	left:0.00%;	
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 2.70833333333333%;
     height: 10%;
@@ -866,31 +815,31 @@ a.nivo-prevNav {
     z-index: 59;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
 	background-size: 100% 200%;
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
 	background-size: 100% 200%;
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     background-position: 100% 100% !important;
 }/* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:3em;
 	left: 0;
@@ -900,7 +849,7 @@ a.nivo-prevNav {
 	text-transform:none;
     font-family: "Istok Web",Arial,Helvetica,sans-serif;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	padding:0.5em;
 	background:#FFFFFF;
@@ -910,16 +859,16 @@ a.nivo-prevNav {
 	opacity:0.6;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=60);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:0.5em;
 	font-size: 1.6em;
 	background:#000000;
 	color:#FFFFFF;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2.2em;
-}#wowslider-container'.$val.' .ws_images ul{
+}#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 24s infinite;
 	-moz-animation: wsBasic 24s infinite;
 	-webkit-animation: wsBasic 24s infinite;
@@ -930,36 +879,36 @@ a.nivo-prevNav {
 
 
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width: 100%;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	width:240px;
 }
-#wowslider-container'.$val.' .ws_bulframe img{
+#wowslider-container' . $val . ' .ws_bulframe img{
 	width: 16.6666666666667%;
 }
 
 
 @media all and (max-width:400px){
-	#wowslider-container'.$val.':hover a.ws_playpause,
-	#wowslider-container'.$val.' a.ws_playpause,
-	#wowslider-container'.$val.':hover a.ws_prev,
-	#wowslider-container'.$val.' a.ws_prev,
-	#wowslider-container'.$val.':hover a.ws_next,
-	#wowslider-container'.$val.' a.ws_next,
-	#wowslider-container'.$val.' .ws_bullets,
-	#wowslider-container'.$val.' .ws_thumbs{
+	#wowslider-container' . $val . ':hover a.ws_playpause,
+	#wowslider-container' . $val . ' a.ws_playpause,
+	#wowslider-container' . $val . ':hover a.ws_prev,
+	#wowslider-container' . $val . ' a.ws_prev,
+	#wowslider-container' . $val . ':hover a.ws_next,
+	#wowslider-container' . $val . ' a.ws_next,
+	#wowslider-container' . $val . ' .ws_bullets,
+	#wowslider-container' . $val . ' .ws_thumbs{
 		display: none
 	}
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:25px;
@@ -969,22 +918,22 @@ a.nivo-prevNav {
     border: 3px solid #ffffff;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:100%;
 	background-color:#ffffff;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:30px;
 	overflow:visible;
@@ -995,7 +944,7 @@ a.nivo-prevNav {
 	-webkit-border-radius:2px;
     border: 3px solid #ffffff;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-10px;
@@ -1008,7 +957,7 @@ a.nivo-prevNav {
 	</style>
 	<!-- End WOWSlider.com HEAD section -->
 	<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>
 <li><img src="http://www.wowslider.com/images/demo/simple-basic/data1/images/columns.jpg" alt="Columns: image gallery code" title="Columns" id="wows1_0"/>Northern Cyprus</li>
 <li><img src="http://www.wowslider.com/images/demo/simple-basic/data1/images/flower.jpg" alt="Flower: image gallery examples" title="Flower" id="wows1_1"/>Flora of Northern Cyprus</li>
@@ -1032,7 +981,7 @@ a.nivo-prevNav {
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/simple-basic/engine1/script.js"></script>-->
 	<script type="text/javascript">
 	function ws_basic(c,a,b){this.go=function(d){b.find("ul").css("transform","translate3d(0,0,0)").stop(true).animate({left:(d?-d+"00%":(/Safari/.test(navigator.userAgent)?"0%":0))},c.duration,"easeInOutExpo");return d}};
-jQuery("#wowslider-container'.$val.'").wowSlider({
+jQuery("#wowslider-container' . $val . '").wowSlider({
 	effect:"basic", 
 	prev:"", 
 	next:"", 
@@ -1055,27 +1004,22 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	
 	<!-- End WOWSlider.com BODY section -->
 		';
-		
-		
-		
-		//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}elseif ($conf_value == 'wowsliderpremiumpage'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section1 -->
+
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'wowsliderpremiumpage') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section1 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/premium-page/engine1/style.css" />-->
 	<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/premium-page/engine1/style.mod.css"/>
 	<style>
 @import url(http://fonts.googleapis.com/css?family=Arimo&subset=latin,cyrillic,latin-ext);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -1084,8 +1028,8 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	border:5px solid rgba(220, 220, 220, 0.6);
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -1097,7 +1041,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -1106,7 +1050,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -1114,49 +1058,49 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:20px;
 	height:20px;
 	background: url(./bullet.png) left top;
@@ -1166,13 +1110,13 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	margin-left:7px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;	
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{ 
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{ 
 	background-position: 0 100%;
 }	
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -1182,25 +1126,25 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	width: 50px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:5px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:5px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 50px;
     height: 50px;
@@ -1212,29 +1156,29 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
     z-index: 59;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     background-position: 100% 100% !important;
 }/* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 30px;
@@ -1252,7 +1196,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	-moz-border-radius:0px 2px 2px 0px;
 	-webkit-border-radius:0px 2px 2px 0px;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	margin-top: 6px;
 	font-size: 16px;
 	line-height: 18px;
@@ -1260,7 +1204,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	color: #222222;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 20s infinite;
 	-moz-animation: wsBasic 20s infinite;
 	-webkit-animation: wsBasic 20s infinite;
@@ -1269,7 +1213,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 @-moz-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 20%{left:-100%} 30%{left:-100%} 40%{left:-200%} 50%{left:-200%} 60%{left:-300%} 70%{left:-300%} 80%{left:-400%} 90%{left:-400%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 20%{left:-100%} 30%{left:-100%} 40%{left:-200%} 50%{left:-200%} 60%{left:-300%} 70%{left:-300%} 80%{left:-400%} 90%{left:-400%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -1282,23 +1226,23 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	-webkit-border-radius:2px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:rgba(220, 220, 220, 0.6);
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:25px;
 	overflow:visible;
@@ -1309,7 +1253,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	-moz-border-radius:2px;
 	-webkit-border-radius:2px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-10px;
@@ -1324,53 +1268,50 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section1 -->
-	<div id="wowslider-container'.$val.'" class="playpause">
+	<div id="wowslider-container' . $val . '" class="playpause">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';									
-$i++;	
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 <li><img src="http://www.wowslider.com/images/demo/premium-page/data1/images/boat.jpg" alt="Boat at sunset: js image slider" title="Boat at sunset" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/premium-page/data1/images/coast.jpg" alt="Coast: js slider code" title="Coast" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/premium-page/data1/images/evening.jpg" alt="Evening: js slider" title="Evening" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/premium-page/data1/images/stones.jpg" alt="Stones near ocean: js Foto Slider" title="Stones near ocean" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/premium-page/data1/images/waves.jpg" alt="Ocean waves: js Slider für Bilder" title="Ocean waves" id="wows1_4"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 									<a href="#" title="Boat at sunset"><img src="http://www.wowslider.com/images/demo/premium-page/data1/tooltips/boat.jpg" alt="Boat at sunset"/>1</a>
 									<a href="#" title="Coast"><img src="http://www.wowslider.com/images/demo/premium-page/data1/tooltips/coast.jpg" alt="Coast"/>2</a>
@@ -1378,8 +1319,8 @@ $i++;
 									<a href="#" title="Stones near ocean"><img src="http://www.wowslider.com/images/demo/premium-page/data1/tooltips/stones.jpg" alt="Stones near ocean"/>4</a>
 									<a href="#" title="Ocean waves"><img src="http://www.wowslider.com/images/demo/premium-page/data1/tooltips/waves.jpg" alt="Ocean waves"/>5</a>
 									';
-							}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div></div>
@@ -1393,26 +1334,21 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 
 (function(f,g,j,b){var h=/progid:DXImageTransform\.Microsoft\.Matrix\(.*?\)/,c=/^([\+\-]=)?([\d+.\-]+)(.*)$/,q=/%/;var d=j.createElement("modernizr"),e=d.style;function n(s){return parseFloat(s)}function l(){var s={transformProperty:"",MozTransform:"-moz-",WebkitTransform:"-webkit-",OTransform:"-o-",msTransform:"-ms-"};for(var t in s){if(typeof e[t]!="undefined"){return s[t]}}return null}function r(){if(typeof(g.Modernizr)!=="undefined"){return Modernizr.csstransforms}var t=["transformProperty","WebkitTransform","MozTransform","OTransform","msTransform"];for(var s in t){if(e[t[s]]!==b){return true}}}var a=l(),i=a!==null?a+"transform":false,k=a!==null?a+"transform-origin":false;f.support.csstransforms=r();if(a=="-ms-"){i="msTransform";k="msTransformOrigin"}f.extend({transform:function(s){s.transform=this;this.$elem=f(s);this.applyingMatrix=false;this.matrix=null;this.height=null;this.width=null;this.outerHeight=null;this.outerWidth=null;this.boxSizingValue=null;this.boxSizingProperty=null;this.attr=null;this.transformProperty=i;this.transformOriginProperty=k}});f.extend(f.transform,{funcs:["matrix","origin","reflect","reflectX","reflectXY","reflectY","rotate","scale","scaleX","scaleY","skew","skewX","skewY","translate","translateX","translateY"]});f.fn.transform=function(s,t){return this.each(function(){var u=this.transform||new f.transform(this);if(s){u.exec(s,t)}})};f.transform.prototype={exec:function(s,t){t=f.extend(true,{forceMatrix:false,preserve:false},t);this.attr=null;if(t.preserve){s=f.extend(true,this.getAttrs(true,true),s)}else{s=f.extend(true,{},s)}this.setAttrs(s);if(f.support.csstransforms&&!t.forceMatrix){return this.execFuncs(s)}else{if(f.browser.msie||(f.support.csstransforms&&t.forceMatrix)){return this.execMatrix(s)}}return false},execFuncs:function(t){var s=[];for(var u in t){if(u=="origin"){this[u].apply(this,f.isArray(t[u])?t[u]:[t[u]])}else{if(f.inArray(u,f.transform.funcs)!==-1){s.push(this.createTransformFunc(u,t[u]))}}}this.$elem.css(i,s.join(" "));return true},execMatrix:function(z){var C,x,t;var F=this.$elem[0],B=this;function A(N,M){if(q.test(N)){return parseFloat(N)/100*B["safeOuter"+(M?"Height":"Width")]()}return o(F,N)}var s=/translate[X|Y]?/,u=[];for(var v in z){switch(f.type(z[v])){case"array":t=z[v];break;case"string":t=f.map(z[v].split(","),f.trim);break;default:t=[z[v]]}if(f.matrix[v]){if(f.cssAngle[v]){t=f.map(t,f.angle.toDegree)}else{if(!f.cssNumber[v]){t=f.map(t,A)}else{t=f.map(t,n)}}x=f.matrix[v].apply(this,t);if(s.test(v)){u.push(x)}else{C=C?C.x(x):x}}else{if(v=="origin"){this[v].apply(this,t)}}}C=C||f.matrix.identity();f.each(u,function(M,N){C=C.x(N)});var K=parseFloat(C.e(1,1).toFixed(6)),I=parseFloat(C.e(2,1).toFixed(6)),H=parseFloat(C.e(1,2).toFixed(6)),G=parseFloat(C.e(2,2).toFixed(6)),L=C.rows===3?parseFloat(C.e(1,3).toFixed(6)):0,J=C.rows===3?parseFloat(C.e(2,3).toFixed(6)):0;if(f.support.csstransforms&&a==="-moz-"){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+"px, "+J+"px)")}else{if(f.support.csstransforms){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+", "+J+")")}else{if(f.browser.msie){var w=", FilterType="nearest neighbor"";var D=this.$elem[0].style;var E="progid:DXImageTransform.Microsoft.Matrix(M11="+K+", M12="+H+", M21="+I+", M22="+G+", sizingMethod="auto expand""+w+")";var y=D.filter||f.css(this.$elem[0],"filter")||"";D.filter=h.test(y)?y.replace(h,E):y?y+" "+E:E;this.applyingMatrix=true;this.matrix=C;this.fixPosition(C,L,J);this.applyingMatrix=false;this.matrix=null}}}return true},origin:function(s,t){if(f.support.csstransforms){if(typeof t==="undefined"){this.$elem.css(k,s)}else{this.$elem.css(k,s+" "+t)}return true}switch(s){case"left":s="0";break;case"right":s="100%";break;case"center":case b:s="50%"}switch(t){case"top":t="0";break;case"bottom":t="100%";break;case"center":case b:t="50%"}this.setAttr("origin",[q.test(s)?s:o(this.$elem[0],s)+"px",q.test(t)?t:o(this.$elem[0],t)+"px"]);return true},createTransformFunc:function(t,u){if(t.substr(0,7)==="reflect"){var s=u?f.matrix[t]():f.matrix.identity();return"matrix("+s.e(1,1)+", "+s.e(2,1)+", "+s.e(1,2)+", "+s.e(2,2)+", 0, 0)"}if(t=="matrix"){if(a==="-moz-"){u[4]=u[4]?u[4]+"px":0;u[5]=u[5]?u[5]+"px":0}}return t+"("+(f.isArray(u)?u.join(", "):u)+")"},fixPosition:function(B,y,x,D,s){var w=new f.matrix.calc(B,this.safeOuterHeight(),this.safeOuterWidth()),C=this.getAttr("origin");var v=w.originOffset(new f.matrix.V2(q.test(C[0])?parseFloat(C[0])/100*w.outerWidth:parseFloat(C[0]),q.test(C[1])?parseFloat(C[1])/100*w.outerHeight:parseFloat(C[1])));var t=w.sides();var u=this.$elem.css("position");if(u=="static"){u="relative"}var A={top:0,left:0};var z={position:u,top:(v.top+x+t.top+A.top)+"px",left:(v.left+y+t.left+A.left)+"px",zoom:1};this.$elem.css(z)}};function o(s,u){var t=c.exec(f.trim(u));if(t[3]&&t[3]!=="px"){var w="paddingBottom",v=f.style(s,w);f.style(s,w,u);u=p(s,w);f.style(s,w,v);return u}return parseFloat(u)}function p(t,u){if(t[u]!=null&&(!t.style||t.style[u]==null)){return t[u]}var s=parseFloat(f.css(t,u));return s&&s>-10000?s:0}})(jQuery,this,this.document);(function(d,c,a,f){d.extend(d.transform.prototype,{safeOuterHeight:function(){return this.safeOuterLength("height")},safeOuterWidth:function(){return this.safeOuterLength("width")},safeOuterLength:function(l){var p="outer"+(l=="width"?"Width":"Height");if(!d.support.csstransforms&&d.browser.msie){l=l=="width"?"width":"height";if(this.applyingMatrix&&!this[p]&&this.matrix){var k=new d.matrix.calc(this.matrix,1,1),n=k.offset(),g=this.$elem[p]()/n[l];this[p]=g;return g}else{if(this.applyingMatrix&&this[p]){return this[p]}}var o={height:["top","bottom"],width:["left","right"]};var h=this.$elem[0],j=parseFloat(d.css(h,l,true)),q=this.boxSizingProperty,i=this.boxSizingValue;if(!this.boxSizingProperty){q=this.boxSizingProperty=e()||"box-sizing";i=this.boxSizingValue=this.$elem.css(q)||"content-box"}if(this[p]&&this[l]==j){return this[p]}else{this[l]=j}if(q&&(i=="padding-box"||i=="content-box")){j+=parseFloat(d.css(h,"padding-"+o[l][0],true))||0+parseFloat(d.css(h,"padding-"+o[l][1],true))||0}if(q&&i=="content-box"){j+=parseFloat(d.css(h,"border-"+o[l][0]+"-width",true))||0+parseFloat(d.css(h,"border-"+o[l][1]+"-width",true))||0}this[p]=j;return j}return this.$elem[p]()}});var b=null;function e(){if(b){return b}var h={boxSizing:"box-sizing",MozBoxSizing:"-moz-box-sizing",WebkitBoxSizing:"-webkit-box-sizing",OBoxSizing:"-o-box-sizing"},g=a.body;for(var i in h){if(typeof g.style[i]!="undefined"){b=h[i];return b}}return null}})(jQuery,this,this.document);(function(g,f,b,h){var d=/([\w\-]*?)\((.*?)\)/g,a="data-transform",e=/\s/,c=/,\s?/;g.extend(g.transform.prototype,{setAttrs:function(i){var j="",l;for(var k in i){l=i[k];if(g.isArray(l)){l=l.join(", ")}j+=" "+k+"("+l+")"}this.attr=g.trim(j);this.$elem.attr(a,this.attr)},setAttr:function(k,l){if(g.isArray(l)){l=l.join(", ")}var j=this.attr||this.$elem.attr(a);if(!j||j.indexOf(k)==-1){this.attr=g.trim(j+" "+k+"("+l+")");this.$elem.attr(a,this.attr)}else{var i=[],n;d.lastIndex=0;while(n=d.exec(j)){if(k==n[1]){i.push(k+"("+l+")")}else{i.push(n[0])}}this.attr=i.join(" ");this.$elem.attr(a,this.attr)}},getAttrs:function(){var j=this.attr||this.$elem.attr(a);if(!j){return{}}var i={},l,k;d.lastIndex=0;while((l=d.exec(j))!==null){if(l){k=l[2].split(c);i[l[1]]=k.length==1?k[0]:k}}return i},getAttr:function(j){var i=this.getAttrs();if(typeof i[j]!=="undefined"){return i[j]}if(j==="origin"&&g.support.csstransforms){return this.$elem.css(this.transformOriginProperty).split(e)}else{if(j==="origin"){return["50%","50%"]}}return g.cssDefault[j]||0}});if(typeof(g.cssAngle)=="undefined"){g.cssAngle={}}g.extend(g.cssAngle,{rotate:true,skew:true,skewX:true,skewY:true});if(typeof(g.cssDefault)=="undefined"){g.cssDefault={}}g.extend(g.cssDefault,{scale:[1,1],scaleX:1,scaleY:1,matrix:[1,0,0,1,0,0],origin:["50%","50%"],reflect:[1,0,0,1,0,0],reflectX:[1,0,0,1,0,0],reflectXY:[1,0,0,1,0,0],reflectY:[1,0,0,1,0,0]});if(typeof(g.cssMultipleValues)=="undefined"){g.cssMultipleValues={}}g.extend(g.cssMultipleValues,{matrix:6,origin:{length:2,duplicate:true},reflect:6,reflectX:6,reflectXY:6,reflectY:6,scale:{length:2,duplicate:true},skew:2,translate:2});g.extend(g.cssNumber,{matrix:true,reflect:true,reflectX:true,reflectXY:true,reflectY:true,scale:true,scaleX:true,scaleY:true});g.each(g.transform.funcs,function(j,k){g.cssHooks[k]={set:function(n,o){var l=n.transform||new g.transform(n),i={};i[k]=o;l.exec(i,{preserve:true})},get:function(n,l){var i=n.transform||new g.transform(n);return i.getAttr(k)}}});g.each(["reflect","reflectX","reflectXY","reflectY"],function(j,k){g.cssHooks[k].get=function(n,l){var i=n.transform||new g.transform(n);return i.getAttr("matrix")||g.cssDefault[k]}})})(jQuery,this,this.document);(function(f,g,h,c){var d=/^([+\-]=)?([\d+.\-]+)(.*)$/;var a=f.fn.animate;f.fn.animate=function(p,l,o,n){var k=f.speed(l,o,n),j=f.cssMultipleValues;k.complete=k.old;if(!f.isEmptyObject(p)){if(typeof k.original==="undefined"){k.original={}}f.each(p,function(s,u){if(j[s]||f.cssAngle[s]||(!f.cssNumber[s]&&f.inArray(s,f.transform.funcs)!==-1)){var t=null;if(jQuery.isArray(p[s])){var r=1,q=u.length;if(j[s]){r=(typeof j[s].length==="undefined"?j[s]:j[s].length)}if(q>r||(q<r&&q==2)||(q==2&&r==2&&isNaN(parseFloat(u[q-1])))){t=u[q-1];u.splice(q-1,1)}}k.original[s]=u.toString();p[s]=parseFloat(u)}})}return a.apply(this,[arguments[0],k])};var b="paddingBottom";function i(k,l){if(k[l]!=null&&(!k.style||k.style[l]==null)){}var j=parseFloat(f.css(k,l));return j&&j>-10000?j:0}function e(u,v,w){var y=f.cssMultipleValues[this.prop],p=f.cssAngle[this.prop];if(y||(!f.cssNumber[this.prop]&&f.inArray(this.prop,f.transform.funcs)!==-1)){this.values=[];if(!y){y=1}var x=this.options.original[this.prop],t=f(this.elem).css(this.prop),j=f.cssDefault[this.prop]||0;if(!f.isArray(t)){t=[t]}if(!f.isArray(x)){if(f.type(x)==="string"){x=x.split(",")}else{x=[x]}}var l=y.length||y,s=0;while(x.length<l){x.push(y.duplicate?x[0]:j[s]||0);s++}var k,r,q,o=this,n=o.elem.transform;orig=f.style(o.elem,b);f.each(x,function(z,A){if(t[z]){k=t[z]}else{if(j[z]&&!y.duplicate){k=j[z]}else{if(y.duplicate){k=t[0]}else{k=0}}}if(p){k=f.angle.toDegree(k)}else{if(!f.cssNumber[o.prop]){r=d.exec(f.trim(k));if(r[3]&&r[3]!=="px"){if(r[3]==="%"){k=parseFloat(r[2])/100*n["safeOuter"+(z?"Height":"Width")]()}else{f.style(o.elem,b,k);k=i(o.elem,b);f.style(o.elem,b,orig)}}}}k=parseFloat(k);r=d.exec(f.trim(A));if(r){q=parseFloat(r[2]);w=r[3]||"px";if(p){q=f.angle.toDegree(q+w);w="deg"}else{if(!f.cssNumber[o.prop]&&w==="%"){k=(k/n["safeOuter"+(z?"Height":"Width")]())*100}else{if(!f.cssNumber[o.prop]&&w!=="px"){f.style(o.elem,b,(q||1)+w);k=((q||1)/i(o.elem,b))*k;f.style(o.elem,b,orig)}}}if(r[1]){q=((r[1]==="-="?-1:1)*q)+k}}else{q=A;w=""}o.values.push({start:k,end:q,unit:w})})}}if(f.fx.prototype.custom){(function(k){var j=k.custom;k.custom=function(o,n,l){e.apply(this,arguments);return j.apply(this,arguments)}}(f.fx.prototype))}if(f.Animation&&f.Animation.tweener){f.Animation.tweener(f.transform.funcs.join(" "),function(l,k){var j=this.createTween(l,k);e.apply(j,[j.start,j.end,j.unit]);return j})}f.fx.multipleValueStep={_default:function(j){f.each(j.values,function(k,l){j.values[k].now=l.start+((l.end-l.start)*j.pos)})}};f.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(j,k){f.fx.multipleValueStep[k]=function(n){var p=n.decomposed,l=f.matrix;m=l.identity();p.now={};f.each(p.start,function(q){p.now[q]=parseFloat(p.start[q])+((parseFloat(p.end[q])-parseFloat(p.start[q]))*n.pos);if(((q==="scaleX"||q==="scaleY")&&p.now[q]===1)||(q!=="scaleX"&&q!=="scaleY"&&p.now[q]===0)){return true}m=m.x(l[q](p.now[q]))});var o;f.each(n.values,function(q){switch(q){case 0:o=parseFloat(m.e(1,1).toFixed(6));break;case 1:o=parseFloat(m.e(2,1).toFixed(6));break;case 2:o=parseFloat(m.e(1,2).toFixed(6));break;case 3:o=parseFloat(m.e(2,2).toFixed(6));break;case 4:o=parseFloat(m.e(1,3).toFixed(6));break;case 5:o=parseFloat(m.e(2,3).toFixed(6));break}n.values[q].now=o})}});f.each(f.transform.funcs,function(k,l){function j(p){var o=p.elem.transform||new f.transform(p.elem),n={};if(f.cssMultipleValues[l]||(!f.cssNumber[l]&&f.inArray(l,f.transform.funcs)!==-1)){(f.fx.multipleValueStep[p.prop]||f.fx.multipleValueStep._default)(p);n[p.prop]=[];f.each(p.values,function(q,r){n[p.prop].push(r.now+(f.cssNumber[p.prop]?"":r.unit))})}else{n[p.prop]=p.now+(f.cssNumber[p.prop]?"":p.unit)}o.exec(n,{preserve:true})}if(f.Tween&&f.Tween.propHooks){f.Tween.propHooks[l]={set:j}}if(f.fx.step){f.fx.step[l]=j}});f.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(k,l){function j(r){var q=r.elem.transform||new f.transform(r.elem),p={};if(!r.initialized){r.initialized=true;if(l!=="matrix"){var o=f.matrix[l]().elements;var s;f.each(r.values,function(t){switch(t){case 0:s=o[0];break;case 1:s=o[2];break;case 2:s=o[1];break;case 3:s=o[3];break;default:s=0}r.values[t].end=s})}r.decomposed={};var n=r.values;r.decomposed.start=f.matrix.matrix(n[0].start,n[1].start,n[2].start,n[3].start,n[4].start,n[5].start).decompose();r.decomposed.end=f.matrix.matrix(n[0].end,n[1].end,n[2].end,n[3].end,n[4].end,n[5].end).decompose()}(f.fx.multipleValueStep[r.prop]||f.fx.multipleValueStep._default)(r);p.matrix=[];f.each(r.values,function(t,u){p.matrix.push(u.now)});q.exec(p,{preserve:true})}if(f.Tween&&f.Tween.propHooks){f.Tween.propHooks[l]={set:j}}if(f.fx.step){f.fx.step[l]=j}})})(jQuery,this,this.document);(function(g,h,j,c){var d=180/Math.PI;var k=200/Math.PI;var f=Math.PI/180;var e=2/1.8;var i=0.9;var a=Math.PI/200;var b=/^([+\-]=)?([\d+.\-]+)(.*)$/;g.extend({angle:{runit:/(deg|g?rad)/,radianToDegree:function(l){return l*d},radianToGrad:function(l){return l*k},degreeToRadian:function(l){return l*f},degreeToGrad:function(l){return l*e},gradToDegree:function(l){return l*i},gradToRadian:function(l){return l*a},toDegree:function(n){var l=b.exec(n);if(l){n=parseFloat(l[2]);switch(l[3]||"deg"){case"grad":n=g.angle.gradToDegree(n);break;case"rad":n=g.angle.radianToDegree(n);break}return n}return 0}}})})(jQuery,this,this.document);(function(f,e,b,g){if(typeof(f.matrix)=="undefined"){f.extend({matrix:{}})}var d=f.matrix;f.extend(d,{V2:function(h,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,2)}else{this.elements=[h,i]}this.length=2},V3:function(h,j,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,3)}else{this.elements=[h,j,i]}this.length=3},M2x2:function(i,h,k,j){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,4)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,4)}this.rows=2;this.cols=2},M3x3:function(n,l,k,j,i,h,q,p,o){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,9)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,9)}this.rows=3;this.cols=3}});var c={e:function(k,h){var i=this.rows,j=this.cols;if(k>i||h>i||k<1||h<1){return 0}return this.elements[(k-1)*j+h-1]},decompose:function(){var v=this.e(1,1),t=this.e(2,1),q=this.e(1,2),p=this.e(2,2),o=this.e(1,3),n=this.e(2,3);if(Math.abs(v*p-t*q)<0.01){return{rotate:0+"deg",skewX:0+"deg",scaleX:1,scaleY:1,translateX:0+"px",translateY:0+"px"}}var l=o,j=n;var u=Math.sqrt(v*v+t*t);v=v/u;t=t/u;var i=v*q+t*p;q-=v*i;p-=t*i;var s=Math.sqrt(q*q+p*p);q=q/s;p=p/s;i=i/s;if((v*p-t*q)<0){v=-v;t=-t;u=-u}var w=f.angle.radianToDegree;var h=w(Math.atan2(t,v));i=w(Math.atan(i));return{rotate:h+"deg",skewX:i+"deg",scaleX:u,scaleY:s,translateX:l+"px",translateY:j+"px"}}};f.extend(d.M2x2.prototype,c,{toM3x3:function(){var h=this.elements;return new d.M3x3(h[0],h[1],0,h[2],h[3],0,0,0,1)},x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows==3){return this.toM3x3().x(j)}var i=this.elements,h=j.elements;if(k&&h.length==2){return new d.V2(i[0]*h[0]+i[1]*h[1],i[2]*h[0]+i[3]*h[1])}else{if(h.length==i.length){return new d.M2x2(i[0]*h[0]+i[1]*h[2],i[0]*h[1]+i[1]*h[3],i[2]*h[0]+i[3]*h[2],i[2]*h[1]+i[3]*h[3])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M2x2(i*h[3],i*-h[1],i*-h[2],i*h[0])},determinant:function(){var h=this.elements;return h[0]*h[3]-h[1]*h[2]}});f.extend(d.M3x3.prototype,c,{x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows<3){j=j.toM3x3()}var i=this.elements,h=j.elements;if(k&&h.length==3){return new d.V3(i[0]*h[0]+i[1]*h[1]+i[2]*h[2],i[3]*h[0]+i[4]*h[1]+i[5]*h[2],i[6]*h[0]+i[7]*h[1]+i[8]*h[2])}else{if(h.length==i.length){return new d.M3x3(i[0]*h[0]+i[1]*h[3]+i[2]*h[6],i[0]*h[1]+i[1]*h[4]+i[2]*h[7],i[0]*h[2]+i[1]*h[5]+i[2]*h[8],i[3]*h[0]+i[4]*h[3]+i[5]*h[6],i[3]*h[1]+i[4]*h[4]+i[5]*h[7],i[3]*h[2]+i[4]*h[5]+i[5]*h[8],i[6]*h[0]+i[7]*h[3]+i[8]*h[6],i[6]*h[1]+i[7]*h[4]+i[8]*h[7],i[6]*h[2]+i[7]*h[5]+i[8]*h[8])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M3x3(i*(h[8]*h[4]-h[7]*h[5]),i*(-(h[8]*h[1]-h[7]*h[2])),i*(h[5]*h[1]-h[4]*h[2]),i*(-(h[8]*h[3]-h[6]*h[5])),i*(h[8]*h[0]-h[6]*h[2]),i*(-(h[5]*h[0]-h[3]*h[2])),i*(h[7]*h[3]-h[6]*h[4]),i*(-(h[7]*h[0]-h[6]*h[1])),i*(h[4]*h[0]-h[3]*h[1]))},determinant:function(){var h=this.elements;return h[0]*(h[8]*h[4]-h[7]*h[5])-h[3]*(h[8]*h[1]-h[7]*h[2])+h[6]*(h[5]*h[1]-h[4]*h[2])}});var a={e:function(h){return this.elements[h-1]}};f.extend(d.V2.prototype,a);f.extend(d.V3.prototype,a)})(jQuery,this,this.document);(function(c,b,a,d){if(typeof(c.matrix)=="undefined"){c.extend({matrix:{}})}c.extend(c.matrix,{calc:function(e,f,g){this.matrix=e;this.outerHeight=f;this.outerWidth=g}});c.matrix.calc.prototype={coord:function(e,i,h){h=typeof(h)!=="undefined"?h:0;var g=this.matrix,f;switch(g.rows){case 2:f=g.x(new c.matrix.V2(e,i));break;case 3:f=g.x(new c.matrix.V3(e,i,h));break}return f},corners:function(e,h){var f=!(typeof(e)!=="undefined"||typeof(h)!=="undefined"),g;if(!this.c||!f){h=h||this.outerHeight;e=e||this.outerWidth;g={tl:this.coord(0,0),bl:this.coord(0,h),tr:this.coord(e,0),br:this.coord(e,h)}}else{g=this.c}if(f){this.c=g}return g},sides:function(e){var f=e||this.corners();return{top:Math.min(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),bottom:Math.max(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),left:Math.min(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1)),right:Math.max(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1))}},offset:function(e){var f=this.sides(e);return{height:Math.abs(f.bottom-f.top),width:Math.abs(f.right-f.left)}},area:function(e){var h=e||this.corners();var g={x:h.tr.e(1)-h.tl.e(1)+h.br.e(1)-h.bl.e(1),y:h.tr.e(2)-h.tl.e(2)+h.br.e(2)-h.bl.e(2)},f={x:h.bl.e(1)-h.tl.e(1)+h.br.e(1)-h.tr.e(1),y:h.bl.e(2)-h.tl.e(2)+h.br.e(2)-h.tr.e(2)};return 0.25*Math.abs(g.e(1)*f.e(2)-g.e(2)*f.e(1))},nonAffinity:function(){var f=this.sides(),g=f.top-f.bottom,e=f.left-f.right;return parseFloat(parseFloat(Math.abs((Math.pow(g,2)+Math.pow(e,2))/(f.top*f.bottom+f.left*f.right))).toFixed(8))},originOffset:function(h,g){h=h?h:new c.matrix.V2(this.outerWidth*0.5,this.outerHeight*0.5);g=g?g:new c.matrix.V2(0,0);var e=this.coord(h.e(1),h.e(2));var f=this.coord(g.e(1),g.e(2));return{top:(f.e(2)-g.e(2))-(e.e(2)-h.e(2)),left:(f.e(1)-g.e(1))-(e.e(1)-h.e(1))}}}})(jQuery,this,this.document);(function(e,d,a,f){if(typeof(e.matrix)=="undefined"){e.extend({matrix:{}})}var c=e.matrix,g=c.M2x2,b=c.M3x3;e.extend(c,{identity:function(k){k=k||2;var l=k*k,n=new Array(l),j=k+1;for(var h=0;h<l;h++){n[h]=(h%j)===0?1:0}return new c["M"+k+"x"+k](n)},matrix:function(){var h=Array.prototype.slice.call(arguments);switch(arguments.length){case 4:return new g(h[0],h[2],h[1],h[3]);case 6:return new b(h[0],h[2],h[4],h[1],h[3],h[5],0,0,1)}},reflect:function(){return new g(-1,0,0,-1)},reflectX:function(){return new g(1,0,0,-1)},reflectXY:function(){return new g(0,1,1,0)},reflectY:function(){return new g(-1,0,0,1)},rotate:function(l){var i=e.angle.degreeToRadian(l),k=Math.cos(i),n=Math.sin(i);var j=k,h=n,p=-n,o=k;return new g(j,p,h,o)},scale:function(i,h){i=i||i===0?i:1;h=h||h===0?h:i;return new g(i,0,0,h)},scaleX:function(h){return c.scale(h,1)},scaleY:function(h){return c.scale(1,h)},skew:function(k,i){k=k||0;i=i||0;var l=e.angle.degreeToRadian(k),j=e.angle.degreeToRadian(i),h=Math.tan(l),n=Math.tan(j);return new g(1,h,n,1)},skewX:function(h){return c.skew(h)},skewY:function(h){return c.skew(0,h)},translate:function(i,h){i=i||0;h=h||0;return new b(1,0,i,0,1,h,0,0,1)},translateX:function(h){return c.translate(h)},translateY:function(h){return c.translate(0,h)}})})(jQuery,this,this.document);// -----------------------------------------------------------------------------------
 jQuery.extend(jQuery.easing,{easeOutOneBounce:function(e,b,c,a,i){var g=0.8;var f=0.2;var d=g*g;if(e<0.0001){return 0}else{if(e<g){return e*e/d}else{return 1-f*f+(e-g-f)*(e-g-f)}}}});jQuery.extend(jQuery.easing,{easeOutBounce:function(e,f,a,h,g){if((f/=g)<(1/2.75)){return h*(7.5625*f*f)+a}else{if(f<(2/2.75)){return h*(7.5625*(f-=(1.5/2.75))*f+0.75)+a}else{if(f<(2.5/2.75)){return h*(7.5625*(f-=(2.25/2.75))*f+0.9375)+a}else{return h*(7.5625*(f-=(2.625/2.75))*f+0.984375)+a}}}},easeOutBack:function(c,e,a,g,d,f){if(f==undefined){f=1.70158}return g*((e=e/d-1)*e*((f+1)*e+f)+1)+a},easeOutBack2:function(c,e,a,g,d,f){if(c<f/2){jQuery.easing.easeInCirc(c,e,a,g,d,f/2)}else{return jQuery.easing.easeOutBounce(c-f/2,e,a,g,d,f/2)}}});function ws_page(d,b,a){var f=d.angle||17;var c=jQuery("<div/>").css({position:"absolute",width:"100%",height:"100%",top:"0%",overflow:"hidden"});var e=a.find("ul");c.hide().appendTo(a);this.go=function(l,j){function n(){c.find("div").stop(1,1);c.hide();c.empty()}n();e.hide();var k=jQuery("<div/>").css({position:"absolute",left:0,top:"-100%",width:"100%",height:"100%",overflow:"hidden","z-index":9}).append(jQuery(b.get(l)).clone().css({width:"100%",height:"100%"})).appendTo(c);var i=jQuery("<div/>").css({position:"absolute",left:0,top:0,width:"100%",height:"100%",overflow:"visible","z-index":10,"transform-origin":"top left","-webkit-backface-visibility":"hidden","-moz-backface-visibility":"hidden","-ms-backface-visibility":"hidden","-o-backface-visibility":"hidden","backface-visibility":"hidden"}).append(jQuery(b.get(j)).clone().css({width:"100%",height:"100%"})).appendTo(c);c.show();var p=i;var o=p.width(),m=p.height();var g=!!document.all;if(g){i.css({left:"-50%",top:"-50%"});p=i.find("img");p.css({translateX:o/2,translateY:m/2})}p.animate({rotate:f,translateX:g?Math.sqrt(o*o+m*m)*Math.sin(Math.PI*f/180)/2+o/4:0,translateY:g?Math.sqrt(o*o+m*m)*Math.cos(Math.PI*f/180)/2-m/2:0},{duration:2*d.duration/3,easing:"easeOutOneBounce"}).animate(g?{translateY:"+="+m}:{top:"100%"},{duration:d.duration/3,easing:"linear",complete:function(){$(this).hide()}});k.animate({top:"-30%"},{duration:d.duration/2}).animate({top:"0%"},{easing:"easeOutBounce",duration:d.duration/2});return l}};// -----------------------------------------------------------------------------------
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,playPause:true,stopOnHover:true,loop:false,bullets:1,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"page",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,playPause:true,stopOnHover:true,loop:false,bullets:1,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
-		//$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		$hhhh = 'SLIDER_'.$arg .'_'. $val;
-		$$hhhh = ${'SLIDER'.$arg.'_'.$val};
-		}elseif ($conf_value == 'wowsliderchessblinds'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section2 -->
+
+        //$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
+        $hhhh  = 'SLIDER_' . $arg . '_' . $val;
+        ${$hhhh} = ${'SLIDER' . $arg . '_' . $val};
+    } elseif ($conf_value == 'wowsliderchessblinds') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section2 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/chess-blinds/engine1/style.css" />-->
 	<style>
 	/*
@@ -1420,7 +1356,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
  *	template Chess
  */
 @import url("http://fonts.googleapis.com/css?family=Play&subset=latin,cyrillic,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	max-width:830px;
@@ -1429,8 +1365,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:830px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:830px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -1442,7 +1378,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -1451,7 +1387,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -1459,46 +1395,46 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
-}#wowslider-container'.$val.'  .ws_bullets { 
+}#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 3px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:21px;
 	height:21px;
 	background: url(./themes/themebuilder/icons/bullet.png) left top;
@@ -1508,10 +1444,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	margin-left:3px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -1521,32 +1457,32 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	width: 44px;
 	background-image: url(./themes/themebuilder/icons/arrows3.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:15px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:15px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
 
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom:0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 27px;
@@ -1558,60 +1494,60 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	font-size: 32px;
 	line-height: 35px;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	padding:8px;
 	margin-top:10px;
 	font-weight: normal;
 	background:#000000;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:10px;	
 	background:#FFFFFF;
 	font-size: 20px;
 	line-height: 22px;
 	color: #000000;
-}#wowslider-container'.$val.'  .ws_thumbs { 
+}#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     right: -141px;
     top: 0;
 	width:136px;
 	height:100%;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	width:100%;
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#000000;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	margin:3px;
 	text-indent:0;
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 28s infinite;
 	-moz-animation: wsBasic 28s infinite;
 	-webkit-animation: wsBasic 28s infinite;
@@ -1620,7 +1556,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 7.14%{left:-0%} 14.29%{left:-100%} 21.43%{left:-100%} 28.57%{left:-200%} 35.71%{left:-200%} 42.86%{left:-300%} 50%{left:-300%} 57.14%{left:-400%} 64.29%{left:-400%} 71.43%{left:-500%} 78.57%{left:-500%} 85.71%{left:-600%} 92.86%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 7.14%{left:-0%} 14.29%{left:-100%} 21.43%{left:-100%} 28.57%{left:-200%} 35.71%{left:-200%} 42.86%{left:-300%} 50%{left:-300%} 57.14%{left:-400%} 64.29%{left:-400%} 71.43%{left:-500%} 78.57%{left:-500%} 85.71%{left:-600%} 92.86%{left:-600%} }
 
-#wowslider-container'.$val.' .ws_shadow{
+#wowslider-container' . $val . ' .ws_shadow{
 	background: url(./themes/themebuilder/icons/shadow3.png) left 100%;
 	background-repeat: no-repeat;
 	background-size:100% 100%;
@@ -1631,15 +1567,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	bottom:-30px;
 	z-index:-1;
 }
-* html #wowslider-container'.$val.' .ws_shadow{/*ie6*/
+* html #wowslider-container' . $val . ' .ws_shadow{/*ie6*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/shadow.png", sizingMethod="scale");
 }
-*+html #wowslider-container'.$val.' .ws_shadow{/*ie7*/
+*+html #wowslider-container' . $val . ' .ws_shadow{/*ie7*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/shadow.png", sizingMethod="scale");
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -1649,23 +1585,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:120px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:25px;
 	overflow:visible;
@@ -1673,7 +1609,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	cursor:pointer;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-10px;
@@ -1688,26 +1624,24 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"page",prev:"",next:"
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section2 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-							
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Brisbane, Australia</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Brisbane, Australia</li>
 </ul></div>
-';								
-$i++;		
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 <li><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/images/airplane.jpg" alt="Landing of airplane: ansprechende Diashow" title="Landing of airplane" id="wows1_0"/>Brisbane, Australia</li>
 <li><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/images/bridge.jpg" alt="Bridge: Design für ansprechende" title="Bridge" id="wows1_1"/>Brisbane, Australia</li>
 <li><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/images/cityscape.jpg" alt="Amazing cityscape: Web-Design anspricht" title="Amazing cityscape" id="wows1_2"/>Brisbane, Australia</li>
@@ -1715,29 +1649,28 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/images/quay.jpg" alt="Quay: ansprechende Bild Diaschau" title="Quay" id="wows1_4"/>Brisbane, Australia</li>
 <li><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/images/lasershow.jpg" alt="Fantastic laser show: ansprechende Foto Slider" title="Fantastic laser show" id="wows1_5"/>Brisbane, Australia</li>
 <li><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/images/sunrise.jpg" alt="Sunrise: ansprechende Slider" title="Sunrise" id="wows1_6"/>Brisbane, Australia</li>
-						';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+						';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 <a href="#" title="Landing of airplane"><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/tooltips/airplane.jpg" alt="" /></a>
@@ -1748,9 +1681,9 @@ $i++;
 <a href="#" title="Fantastic laser show"><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/tooltips/lasershow.jpg" alt="" /></a>
 <a href="#" title="Sunrise"><img src="http://www.wowslider.com/images/demo/chess-blinds/data1/tooltips/sunrise.jpg" alt="" /></a>
 ';
-}
+        }
 
-${'SLIDER'.$arg .'_'. $val} .= '
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -1761,24 +1694,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/chess-blinds/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_blinds(c,b,a){var g=jQuery;var e=c.parts||3;var f=g("<div>");f.css({position:"absolute",width:"100%",height:"100%",left:0,top:0,"z-index":8}).hide().appendTo(a);var h=[];for(var d=0;d<e;d++){h[d]=g("<div>").css({position:"absolute",height:"100%",width:Math.ceil(100/e)+1+"%",border:"none",margin:0,overflow:"hidden",top:0,left:Math.round(100*d/e)+"%"}).appendTo(f)}this.go=function(m,p,j){var l=p>m?1:0;if(j){if(j<=-1){m=(p+1)%b.length;l=0}else{if(j>=1){m=(p-1+b.length)%b.length;l=1}else{return -1}}}f.find("img").stop(true,true);f.show();var o=g("ul",a);if(c.fadeOut){o.fadeOut((1-1/e)*c.duration)}for(var n=0;n<h.length;n++){var k=h[n];g(b.get(m)).clone().css({position:"absolute",top:0,left:(!l?(-f.width()):(f.width()-k.position().left))+"px",width:"auto",height:"100%"}).appendTo(k).animate({left:-k.position().left+"px"},(c.duration/(h.length+1))*(l?(h.length-n+1):(n+2)),((!l&&n==h.length-1||l&&!n)?function(){o.css({left:-m+"00%"}).stop(true,true).show();f.hide().find("img").remove()}:null))}return m}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next:"",duration:20*100,delay:20*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"blinds",prev:"",next:"",duration:20*100,delay:20*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidergothicdomino'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section3 -->
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidergothicdomino') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section3 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/gothic-domino/engine1/style.css" />-->
 	<style>
 	/*
@@ -1786,7 +1714,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
  *	template Gothic
  */
 @import url("http://fonts.googleapis.com/css?family=Didact+Gothic&subset=latin,latin-ext,cyrillic");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -1795,8 +1723,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -1808,7 +1736,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -1817,7 +1745,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -1825,47 +1753,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:16px;
 	height:16px;
 	background: url(./themes/themebuilder/icons/bullet4.png) left top;
@@ -1875,10 +1803,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	margin-left:7px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 } 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -1888,31 +1816,31 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	width: 40px;
 	background-image: url(./themes/themebuilder/icons/arrows4.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 0 0; 
 	left:10px;
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 25px;
@@ -1932,13 +1860,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	opacity:0.7;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=70);
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     margin-top: 6px;
 	font-size: 18px;
 	line-height: 20px;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 20s infinite;
 	-moz-animation: wsBasic 20s infinite;
 	-webkit-animation: wsBasic 20s infinite;
@@ -1947,12 +1875,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 12.5%{left:-0%} 20%{left:-100%} 32.5%{left:-100%} 40%{left:-200%} 52.5%{left:-200%} 60%{left:-300%} 72.5%{left:-300%} 80%{left:-400%} 92.5%{left:-400%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 12.5%{left:-0%} 20%{left:-100%} 32.5%{left:-100%} 40%{left:-200%} 52.5%{left:-200%} 60%{left:-300%} 72.5%{left:-300%} 80%{left:-400%} 92.5%{left:-400%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
     box-shadow: 0 0 2px #000000;	
     -moz-box-shadow: 0 0 2px #000000;
     -webkit-box-shadow: 0 0 2px #000000; 
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -1964,23 +1892,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
     -webkit-box-shadow: 0 0 2px #000000; 
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#000000;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:20px;
 	overflow:visible;
@@ -1990,7 +1918,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
     -moz-box-shadow: 0 0 2px #000000;
     -webkit-box-shadow: 0 0 2px #000000; 
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-6px;
@@ -2005,53 +1933,50 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section3 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-							
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';							
-$i++;			
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 <li><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/images/landscape.jpg" alt="Wonderful landscape: CSS3 Slider" title="Wonderful landscape" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/images/watersurface.jpg" alt="Water surface: CSS3 image slider" title="Water surface" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/images/mountains.jpg" alt="Mountains: Responsive CSS3 Slider" title="Mountains" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/images/trees.jpg" alt="Autumn trees: Diashow CSS3" title="Autumn trees" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/images/water.jpg" alt="Water and mountains: CSS3 Foto Slider" title="Water and mountains" id="wows1_4"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Wonderful landscape"><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/tooltips/landscape.jpg" alt="Wonderful landscape"/>1</a>
 <a href="#" title="Water surface"><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/tooltips/watersurface.jpg" alt="Water surface"/>2</a>
@@ -2059,8 +1984,8 @@ $i++;
 <a href="#" title="Autumn trees"><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/tooltips/trees.jpg" alt="Autumn trees"/>4</a>
 <a href="#" title="Water and mountains"><img src="http://www.wowslider.com/images/demo/gothic-domino/data1/tooltips/water.jpg" alt="Water and mountains"/>5</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div></div>
@@ -2071,24 +1996,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/gothic-domino/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_domino(d,b,a){$.extend($.easing,{easeInOutSine:function(m,l,i,j,k){return -j/2*(Math.cos(Math.PI*l/k)-1)+i}});$.extend(d,{columns:d.columns|5,rows:d.rows|2,centerRow:d.centerRow|2,centerColumn:d.centerColumn|2});var c=$("<div/>").css({position:"absolute",width:"100%",height:"100%",top:"0%",overflow:"hidden"});c.hide().appendTo(a);var e=a.find("ul");this.go=function(r,q){function s(){c.find("img").stop(1,1);c.hide();c.empty()}s();if(d.fadeOut){e.fadeOut(d.duration)}var h=c.width();var g=c.height();var p=Math.floor(h/d.columns);var n=Math.floor(g/d.rows);var l=h-p*(d.columns-1);var v=g-n*(d.rows-1);function z(j,i){return Math.random()*(i-j+1)+j}var m=[];for(var u=0;u<d.rows;u++){m[u]=[];for(var t=0;t<d.columns;t++){var k=d.duration*(1-Math.abs((d.centerRow*d.centerColumn-u*t)/(2*d.rows*d.columns)));var w=t<d.columns-1?p:l;var f=u<d.rows-1?n:v;m[u][t]=$("<div/>").css({width:w,height:f,position:"absolute",top:u*n,left:t*p,overflow:"hidden"});var y=z(u-2,u+2);var x=z(t-2,t+2);m[u][t].appendTo(c);var A=$(b.get(r)).clone().css({position:"absolute",top:-y*n,left:-x*p,width:h,opacity:0,height:g}).appendTo(m[u][t])}}var o=0;c.show();for(var u=0;u<d.rows;u++){for(var t=0;t<d.columns;t++){m[u][t].find("img").animate({top:-u*n,left:-t*p,opacity:1,deg:d.domino_rotation},{duration:k,easing:"easeInOutSine",complete:function(){o++;if(o==d.rows*d.columns){s();e.stop(1,1);e.css("left",-r*100+"%").show()}}})}}return r}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next:"",duration:15*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"domino",prev:"",next:"",duration:15*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidermetrorotate'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section4 -->
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidermetrorotate') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section4 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/metro-rotate/engine1/style.css" />-->
 	<style>
 	/*
@@ -2096,7 +2016,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
  *	template Metro
  */
 @import url("http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&subset=latin,latin-ext,cyrillic");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -2105,8 +2025,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	border:5px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -2118,7 +2038,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -2127,7 +2047,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -2135,47 +2055,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:13px;
 	height:13px;
 	background: url(./bullet.png) left top;
@@ -2185,10 +2105,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	margin-left:7px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 } 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -2199,31 +2119,31 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 	opacity:0.8;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 0 0; 
 	left:10px;
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	opacity:1; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 25px;
@@ -2239,13 +2159,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	font-weight: bold;
 	border: 2px solid #FFFFFF; 
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     margin-top: 6px;
 	font-size: 20px;
 	line-height: 22px;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 24s infinite;
 	-moz-animation: wsBasic 24s infinite;
 	-webkit-animation: wsBasic 24s infinite;
@@ -2254,12 +2174,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 8.33%{left:-0%} 16.67%{left:-100%} 25%{left:-100%} 33.33%{left:-200%} 41.67%{left:-200%} 50%{left:-300%} 58.33%{left:-300%} 66.67%{left:-400%} 75%{left:-400%} 83.33%{left:-500%} 91.67%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.33%{left:-0%} 16.67%{left:-100%} 25%{left:-100%} 33.33%{left:-200%} 41.67%{left:-200%} 50%{left:-300%} 58.33%{left:-300%} 66.67%{left:-400%} 75%{left:-400%} 83.33%{left:-500%} 91.67%{left:-500%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
     box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);	
     -moz-box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4);
     -webkit-box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.4); 
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -2269,23 +2189,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
     border: 2px solid #FFFFFF;;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:20px;
 	overflow:visible;
@@ -2293,7 +2213,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	cursor:pointer;
     border: 2px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-8px;
@@ -2308,52 +2228,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"domino",prev:"",next
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section4 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';			
-$i++;							
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/images/boats.jpg" alt="Boats in Portugal" title="Boats in Portugal" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/images/boats.jpg" alt="Boats in Portugal" title="Boats in Portugal" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/images/coast.jpg" alt="Coast" title="Coast" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/images/landscape.jpg" alt="Beautiful landscape" title="Beautiful landscape" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/images/lighthouse.jpg" alt="Lighthouse" title="Lighthouse" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/images/panorama.jpg" alt="Panorama" title="Panorama" id="wows1_4"/></li>
 <li><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/images/seascape.jpg" alt="Sea-scape" title="Sea-scape" id="wows1_5"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Boats in Portugal"><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/tooltips/boats.jpg" alt="Boats in Portugal"/>1</a>
 <a href="#" title="Coast"><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/tooltips/coast.jpg" alt="Coast"/>2</a>
@@ -2362,8 +2279,8 @@ $i++;
 <a href="#" title="Panorama"><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/tooltips/panorama.jpg" alt="Panorama"/>5</a>
 <a href="#" title="Sea-scape"><img src="http://www.wowslider.com/images/demo/metro-rotate/data1/tooltips/seascape.jpg" alt="Sea-scape"/>6</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div></div>
@@ -2375,24 +2292,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript">
 (function(f,g,j,b){var h=/progid:DXImageTransform\.Microsoft\.Matrix\(.*?\)/,c=/^([\+\-]=)?([\d+.\-]+)(.*)$/,q=/%/;var d=j.createElement("modernizr"),e=d.style;function n(s){return parseFloat(s)}function l(){var s={transformProperty:"",MozTransform:"-moz-",WebkitTransform:"-webkit-",OTransform:"-o-",msTransform:"-ms-"};for(var t in s){if(typeof e[t]!="undefined"){return s[t]}}return null}function r(){if(typeof(g.Modernizr)!=="undefined"){return Modernizr.csstransforms}var t=["transformProperty","WebkitTransform","MozTransform","OTransform","msTransform"];for(var s in t){if(e[t[s]]!==b){return true}}}var a=l(),i=a!==null?a+"transform":false,k=a!==null?a+"transform-origin":false;f.support.csstransforms=r();if(a=="-ms-"){i="msTransform";k="msTransformOrigin"}f.extend({transform:function(s){s.transform=this;this.$elem=f(s);this.applyingMatrix=false;this.matrix=null;this.height=null;this.width=null;this.outerHeight=null;this.outerWidth=null;this.boxSizingValue=null;this.boxSizingProperty=null;this.attr=null;this.transformProperty=i;this.transformOriginProperty=k}});f.extend(f.transform,{funcs:["matrix","origin","reflect","reflectX","reflectXY","reflectY","rotate","scale","scaleX","scaleY","skew","skewX","skewY","translate","translateX","translateY"]});f.fn.transform=function(s,t){return this.each(function(){var u=this.transform||new f.transform(this);if(s){u.exec(s,t)}})};f.transform.prototype={exec:function(s,t){t=f.extend(true,{forceMatrix:false,preserve:false},t);this.attr=null;if(t.preserve){s=f.extend(true,this.getAttrs(true,true),s)}else{s=f.extend(true,{},s)}this.setAttrs(s);if(f.support.csstransforms&&!t.forceMatrix){return this.execFuncs(s)}else{if(f.browser.msie||(f.support.csstransforms&&t.forceMatrix)){return this.execMatrix(s)}}return false},execFuncs:function(t){var s=[];for(var u in t){if(u=="origin"){this[u].apply(this,f.isArray(t[u])?t[u]:[t[u]])}else{if(f.inArray(u,f.transform.funcs)!==-1){s.push(this.createTransformFunc(u,t[u]))}}}this.$elem.css(i,s.join(" "));return true},execMatrix:function(z){var C,x,t;var F=this.$elem[0],B=this;function A(N,M){if(q.test(N)){return parseFloat(N)/100*B["safeOuter"+(M?"Height":"Width")]()}return o(F,N)}var s=/translate[X|Y]?/,u=[];for(var v in z){switch(f.type(z[v])){case"array":t=z[v];break;case"string":t=f.map(z[v].split(","),f.trim);break;default:t=[z[v]]}if(f.matrix[v]){if(f.cssAngle[v]){t=f.map(t,f.angle.toDegree)}else{if(!f.cssNumber[v]){t=f.map(t,A)}else{t=f.map(t,n)}}x=f.matrix[v].apply(this,t);if(s.test(v)){u.push(x)}else{C=C?C.x(x):x}}else{if(v=="origin"){this[v].apply(this,t)}}}C=C||f.matrix.identity();f.each(u,function(M,N){C=C.x(N)});var K=parseFloat(C.e(1,1).toFixed(6)),I=parseFloat(C.e(2,1).toFixed(6)),H=parseFloat(C.e(1,2).toFixed(6)),G=parseFloat(C.e(2,2).toFixed(6)),L=C.rows===3?parseFloat(C.e(1,3).toFixed(6)):0,J=C.rows===3?parseFloat(C.e(2,3).toFixed(6)):0;if(f.support.csstransforms&&a==="-moz-"){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+"px, "+J+"px)")}else{if(f.support.csstransforms){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+", "+J+")")}else{if(f.browser.msie){var w=", FilterType="nearest neighbor"";var D=this.$elem[0].style;var E="progid:DXImageTransform.Microsoft.Matrix(M11="+K+", M12="+H+", M21="+I+", M22="+G+", sizingMethod="auto expand""+w+")";var y=D.filter||f.css(this.$elem[0],"filter")||"";D.filter=h.test(y)?y.replace(h,E):y?y+" "+E:E;this.applyingMatrix=true;this.matrix=C;this.fixPosition(C,L,J);this.applyingMatrix=false;this.matrix=null}}}return true},origin:function(s,t){if(f.support.csstransforms){if(typeof t==="undefined"){this.$elem.css(k,s)}else{this.$elem.css(k,s+" "+t)}return true}switch(s){case"left":s="0";break;case"right":s="100%";break;case"center":case b:s="50%"}switch(t){case"top":t="0";break;case"bottom":t="100%";break;case"center":case b:t="50%"}this.setAttr("origin",[q.test(s)?s:o(this.$elem[0],s)+"px",q.test(t)?t:o(this.$elem[0],t)+"px"]);return true},createTransformFunc:function(t,u){if(t.substr(0,7)==="reflect"){var s=u?f.matrix[t]():f.matrix.identity();return"matrix("+s.e(1,1)+", "+s.e(2,1)+", "+s.e(1,2)+", "+s.e(2,2)+", 0, 0)"}if(t=="matrix"){if(a==="-moz-"){u[4]=u[4]?u[4]+"px":0;u[5]=u[5]?u[5]+"px":0}}return t+"("+(f.isArray(u)?u.join(", "):u)+")"},fixPosition:function(B,y,x,D,s){var w=new f.matrix.calc(B,this.safeOuterHeight(),this.safeOuterWidth()),C=this.getAttr("origin");var v=w.originOffset(new f.matrix.V2(q.test(C[0])?parseFloat(C[0])/100*w.outerWidth:parseFloat(C[0]),q.test(C[1])?parseFloat(C[1])/100*w.outerHeight:parseFloat(C[1])));var t=w.sides();var u=this.$elem.css("position");if(u=="static"){u="relative"}var A={top:0,left:0};var z={position:u,top:(v.top+x+t.top+A.top)+"px",left:(v.left+y+t.left+A.left)+"px",zoom:1};this.$elem.css(z)}};function o(s,u){var t=c.exec(f.trim(u));if(t[3]&&t[3]!=="px"){var w="paddingBottom",v=f.style(s,w);f.style(s,w,u);u=p(s,w);f.style(s,w,v);return u}return parseFloat(u)}function p(t,u){if(t[u]!=null&&(!t.style||t.style[u]==null)){return t[u]}var s=parseFloat(f.css(t,u));return s&&s>-10000?s:0}})(jQuery,this,this.document);(function(d,c,a,f){d.extend(d.transform.prototype,{safeOuterHeight:function(){return this.safeOuterLength("height")},safeOuterWidth:function(){return this.safeOuterLength("width")},safeOuterLength:function(l){var p="outer"+(l=="width"?"Width":"Height");if(!d.support.csstransforms&&d.browser.msie){l=l=="width"?"width":"height";if(this.applyingMatrix&&!this[p]&&this.matrix){var k=new d.matrix.calc(this.matrix,1,1),n=k.offset(),g=this.$elem[p]()/n[l];this[p]=g;return g}else{if(this.applyingMatrix&&this[p]){return this[p]}}var o={height:["top","bottom"],width:["left","right"]};var h=this.$elem[0],j=parseFloat(d.css(h,l,true)),q=this.boxSizingProperty,i=this.boxSizingValue;if(!this.boxSizingProperty){q=this.boxSizingProperty=e()||"box-sizing";i=this.boxSizingValue=this.$elem.css(q)||"content-box"}if(this[p]&&this[l]==j){return this[p]}else{this[l]=j}if(q&&(i=="padding-box"||i=="content-box")){j+=parseFloat(d.css(h,"padding-"+o[l][0],true))||0+parseFloat(d.css(h,"padding-"+o[l][1],true))||0}if(q&&i=="content-box"){j+=parseFloat(d.css(h,"border-"+o[l][0]+"-width",true))||0+parseFloat(d.css(h,"border-"+o[l][1]+"-width",true))||0}this[p]=j;return j}return this.$elem[p]()}});var b=null;function e(){if(b){return b}var h={boxSizing:"box-sizing",MozBoxSizing:"-moz-box-sizing",WebkitBoxSizing:"-webkit-box-sizing",OBoxSizing:"-o-box-sizing"},g=a.body;for(var i in h){if(typeof g.style[i]!="undefined"){b=h[i];return b}}return null}})(jQuery,this,this.document);(function(g,f,b,h){var d=/([\w\-]*?)\((.*?)\)/g,a="data-transform",e=/\s/,c=/,\s?/;g.extend(g.transform.prototype,{setAttrs:function(i){var j="",l;for(var k in i){l=i[k];if(g.isArray(l)){l=l.join(", ")}j+=" "+k+"("+l+")"}this.attr=g.trim(j);this.$elem.attr(a,this.attr)},setAttr:function(k,l){if(g.isArray(l)){l=l.join(", ")}var j=this.attr||this.$elem.attr(a);if(!j||j.indexOf(k)==-1){this.attr=g.trim(j+" "+k+"("+l+")");this.$elem.attr(a,this.attr)}else{var i=[],n;d.lastIndex=0;while(n=d.exec(j)){if(k==n[1]){i.push(k+"("+l+")")}else{i.push(n[0])}}this.attr=i.join(" ");this.$elem.attr(a,this.attr)}},getAttrs:function(){var j=this.attr||this.$elem.attr(a);if(!j){return{}}var i={},l,k;d.lastIndex=0;while((l=d.exec(j))!==null){if(l){k=l[2].split(c);i[l[1]]=k.length==1?k[0]:k}}return i},getAttr:function(j){var i=this.getAttrs();if(typeof i[j]!=="undefined"){return i[j]}if(j==="origin"&&g.support.csstransforms){return this.$elem.css(this.transformOriginProperty).split(e)}else{if(j==="origin"){return["50%","50%"]}}return g.cssDefault[j]||0}});if(typeof(g.cssAngle)=="undefined"){g.cssAngle={}}g.extend(g.cssAngle,{rotate:true,skew:true,skewX:true,skewY:true});if(typeof(g.cssDefault)=="undefined"){g.cssDefault={}}g.extend(g.cssDefault,{scale:[1,1],scaleX:1,scaleY:1,matrix:[1,0,0,1,0,0],origin:["50%","50%"],reflect:[1,0,0,1,0,0],reflectX:[1,0,0,1,0,0],reflectXY:[1,0,0,1,0,0],reflectY:[1,0,0,1,0,0]});if(typeof(g.cssMultipleValues)=="undefined"){g.cssMultipleValues={}}g.extend(g.cssMultipleValues,{matrix:6,origin:{length:2,duplicate:true},reflect:6,reflectX:6,reflectXY:6,reflectY:6,scale:{length:2,duplicate:true},skew:2,translate:2});g.extend(g.cssNumber,{matrix:true,reflect:true,reflectX:true,reflectXY:true,reflectY:true,scale:true,scaleX:true,scaleY:true});g.each(g.transform.funcs,function(j,k){g.cssHooks[k]={set:function(n,o){var l=n.transform||new g.transform(n),i={};i[k]=o;l.exec(i,{preserve:true})},get:function(n,l){var i=n.transform||new g.transform(n);return i.getAttr(k)}}});g.each(["reflect","reflectX","reflectXY","reflectY"],function(j,k){g.cssHooks[k].get=function(n,l){var i=n.transform||new g.transform(n);return i.getAttr("matrix")||g.cssDefault[k]}})})(jQuery,this,this.document);(function(f,g,h,c){var d=/^([+\-]=)?([\d+.\-]+)(.*)$/;var a=f.fn.animate;f.fn.animate=function(p,l,o,n){var k=f.speed(l,o,n),j=f.cssMultipleValues;k.complete=k.old;if(!f.isEmptyObject(p)){if(typeof k.original==="undefined"){k.original={}}f.each(p,function(s,u){if(j[s]||f.cssAngle[s]||(!f.cssNumber[s]&&f.inArray(s,f.transform.funcs)!==-1)){var t=null;if(jQuery.isArray(p[s])){var r=1,q=u.length;if(j[s]){r=(typeof j[s].length==="undefined"?j[s]:j[s].length)}if(q>r||(q<r&&q==2)||(q==2&&r==2&&isNaN(parseFloat(u[q-1])))){t=u[q-1];u.splice(q-1,1)}}k.original[s]=u.toString();p[s]=parseFloat(u)}})}return a.apply(this,[arguments[0],k])};var b="paddingBottom";function i(k,l){if(k[l]!=null&&(!k.style||k.style[l]==null)){}var j=parseFloat(f.css(k,l));return j&&j>-10000?j:0}function e(u,v,w){var y=f.cssMultipleValues[this.prop],p=f.cssAngle[this.prop];if(y||(!f.cssNumber[this.prop]&&f.inArray(this.prop,f.transform.funcs)!==-1)){this.values=[];if(!y){y=1}var x=this.options.original[this.prop],t=f(this.elem).css(this.prop),j=f.cssDefault[this.prop]||0;if(!f.isArray(t)){t=[t]}if(!f.isArray(x)){if(f.type(x)==="string"){x=x.split(",")}else{x=[x]}}var l=y.length||y,s=0;while(x.length<l){x.push(y.duplicate?x[0]:j[s]||0);s++}var k,r,q,o=this,n=o.elem.transform;orig=f.style(o.elem,b);f.each(x,function(z,A){if(t[z]){k=t[z]}else{if(j[z]&&!y.duplicate){k=j[z]}else{if(y.duplicate){k=t[0]}else{k=0}}}if(p){k=f.angle.toDegree(k)}else{if(!f.cssNumber[o.prop]){r=d.exec(f.trim(k));if(r[3]&&r[3]!=="px"){if(r[3]==="%"){k=parseFloat(r[2])/100*n["safeOuter"+(z?"Height":"Width")]()}else{f.style(o.elem,b,k);k=i(o.elem,b);f.style(o.elem,b,orig)}}}}k=parseFloat(k);r=d.exec(f.trim(A));if(r){q=parseFloat(r[2]);w=r[3]||"px";if(p){q=f.angle.toDegree(q+w);w="deg"}else{if(!f.cssNumber[o.prop]&&w==="%"){k=(k/n["safeOuter"+(z?"Height":"Width")]())*100}else{if(!f.cssNumber[o.prop]&&w!=="px"){f.style(o.elem,b,(q||1)+w);k=((q||1)/i(o.elem,b))*k;f.style(o.elem,b,orig)}}}if(r[1]){q=((r[1]==="-="?-1:1)*q)+k}}else{q=A;w=""}o.values.push({start:k,end:q,unit:w})})}}if(f.fx.prototype.custom){(function(k){var j=k.custom;k.custom=function(o,n,l){e.apply(this,arguments);return j.apply(this,arguments)}}(f.fx.prototype))}if(f.Animation&&f.Animation.tweener){f.Animation.tweener(f.transform.funcs.join(" "),function(l,k){var j=this.createTween(l,k);e.apply(j,[j.start,j.end,j.unit]);return j})}f.fx.multipleValueStep={_default:function(j){f.each(j.values,function(k,l){j.values[k].now=l.start+((l.end-l.start)*j.pos)})}};f.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(j,k){f.fx.multipleValueStep[k]=function(n){var p=n.decomposed,l=f.matrix;m=l.identity();p.now={};f.each(p.start,function(q){p.now[q]=parseFloat(p.start[q])+((parseFloat(p.end[q])-parseFloat(p.start[q]))*n.pos);if(((q==="scaleX"||q==="scaleY")&&p.now[q]===1)||(q!=="scaleX"&&q!=="scaleY"&&p.now[q]===0)){return true}m=m.x(l[q](p.now[q]))});var o;f.each(n.values,function(q){switch(q){case 0:o=parseFloat(m.e(1,1).toFixed(6));break;case 1:o=parseFloat(m.e(2,1).toFixed(6));break;case 2:o=parseFloat(m.e(1,2).toFixed(6));break;case 3:o=parseFloat(m.e(2,2).toFixed(6));break;case 4:o=parseFloat(m.e(1,3).toFixed(6));break;case 5:o=parseFloat(m.e(2,3).toFixed(6));break}n.values[q].now=o})}});f.each(f.transform.funcs,function(k,l){function j(p){var o=p.elem.transform||new f.transform(p.elem),n={};if(f.cssMultipleValues[l]||(!f.cssNumber[l]&&f.inArray(l,f.transform.funcs)!==-1)){(f.fx.multipleValueStep[p.prop]||f.fx.multipleValueStep._default)(p);n[p.prop]=[];f.each(p.values,function(q,r){n[p.prop].push(r.now+(f.cssNumber[p.prop]?"":r.unit))})}else{n[p.prop]=p.now+(f.cssNumber[p.prop]?"":p.unit)}o.exec(n,{preserve:true})}if(f.Tween&&f.Tween.propHooks){f.Tween.propHooks[l]={set:j}}if(f.fx.step){f.fx.step[l]=j}});f.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(k,l){function j(r){var q=r.elem.transform||new f.transform(r.elem),p={};if(!r.initialized){r.initialized=true;if(l!=="matrix"){var o=f.matrix[l]().elements;var s;f.each(r.values,function(t){switch(t){case 0:s=o[0];break;case 1:s=o[2];break;case 2:s=o[1];break;case 3:s=o[3];break;default:s=0}r.values[t].end=s})}r.decomposed={};var n=r.values;r.decomposed.start=f.matrix.matrix(n[0].start,n[1].start,n[2].start,n[3].start,n[4].start,n[5].start).decompose();r.decomposed.end=f.matrix.matrix(n[0].end,n[1].end,n[2].end,n[3].end,n[4].end,n[5].end).decompose()}(f.fx.multipleValueStep[r.prop]||f.fx.multipleValueStep._default)(r);p.matrix=[];f.each(r.values,function(t,u){p.matrix.push(u.now)});q.exec(p,{preserve:true})}if(f.Tween&&f.Tween.propHooks){f.Tween.propHooks[l]={set:j}}if(f.fx.step){f.fx.step[l]=j}})})(jQuery,this,this.document);(function(g,h,j,c){var d=180/Math.PI;var k=200/Math.PI;var f=Math.PI/180;var e=2/1.8;var i=0.9;var a=Math.PI/200;var b=/^([+\-]=)?([\d+.\-]+)(.*)$/;g.extend({angle:{runit:/(deg|g?rad)/,radianToDegree:function(l){return l*d},radianToGrad:function(l){return l*k},degreeToRadian:function(l){return l*f},degreeToGrad:function(l){return l*e},gradToDegree:function(l){return l*i},gradToRadian:function(l){return l*a},toDegree:function(n){var l=b.exec(n);if(l){n=parseFloat(l[2]);switch(l[3]||"deg"){case"grad":n=g.angle.gradToDegree(n);break;case"rad":n=g.angle.radianToDegree(n);break}return n}return 0}}})})(jQuery,this,this.document);(function(f,e,b,g){if(typeof(f.matrix)=="undefined"){f.extend({matrix:{}})}var d=f.matrix;f.extend(d,{V2:function(h,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,2)}else{this.elements=[h,i]}this.length=2},V3:function(h,j,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,3)}else{this.elements=[h,j,i]}this.length=3},M2x2:function(i,h,k,j){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,4)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,4)}this.rows=2;this.cols=2},M3x3:function(n,l,k,j,i,h,q,p,o){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,9)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,9)}this.rows=3;this.cols=3}});var c={e:function(k,h){var i=this.rows,j=this.cols;if(k>i||h>i||k<1||h<1){return 0}return this.elements[(k-1)*j+h-1]},decompose:function(){var v=this.e(1,1),t=this.e(2,1),q=this.e(1,2),p=this.e(2,2),o=this.e(1,3),n=this.e(2,3);if(Math.abs(v*p-t*q)<0.01){return{rotate:0+"deg",skewX:0+"deg",scaleX:1,scaleY:1,translateX:0+"px",translateY:0+"px"}}var l=o,j=n;var u=Math.sqrt(v*v+t*t);v=v/u;t=t/u;var i=v*q+t*p;q-=v*i;p-=t*i;var s=Math.sqrt(q*q+p*p);q=q/s;p=p/s;i=i/s;if((v*p-t*q)<0){v=-v;t=-t;u=-u}var w=f.angle.radianToDegree;var h=w(Math.atan2(t,v));i=w(Math.atan(i));return{rotate:h+"deg",skewX:i+"deg",scaleX:u,scaleY:s,translateX:l+"px",translateY:j+"px"}}};f.extend(d.M2x2.prototype,c,{toM3x3:function(){var h=this.elements;return new d.M3x3(h[0],h[1],0,h[2],h[3],0,0,0,1)},x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows==3){return this.toM3x3().x(j)}var i=this.elements,h=j.elements;if(k&&h.length==2){return new d.V2(i[0]*h[0]+i[1]*h[1],i[2]*h[0]+i[3]*h[1])}else{if(h.length==i.length){return new d.M2x2(i[0]*h[0]+i[1]*h[2],i[0]*h[1]+i[1]*h[3],i[2]*h[0]+i[3]*h[2],i[2]*h[1]+i[3]*h[3])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M2x2(i*h[3],i*-h[1],i*-h[2],i*h[0])},determinant:function(){var h=this.elements;return h[0]*h[3]-h[1]*h[2]}});f.extend(d.M3x3.prototype,c,{x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows<3){j=j.toM3x3()}var i=this.elements,h=j.elements;if(k&&h.length==3){return new d.V3(i[0]*h[0]+i[1]*h[1]+i[2]*h[2],i[3]*h[0]+i[4]*h[1]+i[5]*h[2],i[6]*h[0]+i[7]*h[1]+i[8]*h[2])}else{if(h.length==i.length){return new d.M3x3(i[0]*h[0]+i[1]*h[3]+i[2]*h[6],i[0]*h[1]+i[1]*h[4]+i[2]*h[7],i[0]*h[2]+i[1]*h[5]+i[2]*h[8],i[3]*h[0]+i[4]*h[3]+i[5]*h[6],i[3]*h[1]+i[4]*h[4]+i[5]*h[7],i[3]*h[2]+i[4]*h[5]+i[5]*h[8],i[6]*h[0]+i[7]*h[3]+i[8]*h[6],i[6]*h[1]+i[7]*h[4]+i[8]*h[7],i[6]*h[2]+i[7]*h[5]+i[8]*h[8])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M3x3(i*(h[8]*h[4]-h[7]*h[5]),i*(-(h[8]*h[1]-h[7]*h[2])),i*(h[5]*h[1]-h[4]*h[2]),i*(-(h[8]*h[3]-h[6]*h[5])),i*(h[8]*h[0]-h[6]*h[2]),i*(-(h[5]*h[0]-h[3]*h[2])),i*(h[7]*h[3]-h[6]*h[4]),i*(-(h[7]*h[0]-h[6]*h[1])),i*(h[4]*h[0]-h[3]*h[1]))},determinant:function(){var h=this.elements;return h[0]*(h[8]*h[4]-h[7]*h[5])-h[3]*(h[8]*h[1]-h[7]*h[2])+h[6]*(h[5]*h[1]-h[4]*h[2])}});var a={e:function(h){return this.elements[h-1]}};f.extend(d.V2.prototype,a);f.extend(d.V3.prototype,a)})(jQuery,this,this.document);(function(c,b,a,d){if(typeof(c.matrix)=="undefined"){c.extend({matrix:{}})}c.extend(c.matrix,{calc:function(e,f,g){this.matrix=e;this.outerHeight=f;this.outerWidth=g}});c.matrix.calc.prototype={coord:function(e,i,h){h=typeof(h)!=="undefined"?h:0;var g=this.matrix,f;switch(g.rows){case 2:f=g.x(new c.matrix.V2(e,i));break;case 3:f=g.x(new c.matrix.V3(e,i,h));break}return f},corners:function(e,h){var f=!(typeof(e)!=="undefined"||typeof(h)!=="undefined"),g;if(!this.c||!f){h=h||this.outerHeight;e=e||this.outerWidth;g={tl:this.coord(0,0),bl:this.coord(0,h),tr:this.coord(e,0),br:this.coord(e,h)}}else{g=this.c}if(f){this.c=g}return g},sides:function(e){var f=e||this.corners();return{top:Math.min(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),bottom:Math.max(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),left:Math.min(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1)),right:Math.max(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1))}},offset:function(e){var f=this.sides(e);return{height:Math.abs(f.bottom-f.top),width:Math.abs(f.right-f.left)}},area:function(e){var h=e||this.corners();var g={x:h.tr.e(1)-h.tl.e(1)+h.br.e(1)-h.bl.e(1),y:h.tr.e(2)-h.tl.e(2)+h.br.e(2)-h.bl.e(2)},f={x:h.bl.e(1)-h.tl.e(1)+h.br.e(1)-h.tr.e(1),y:h.bl.e(2)-h.tl.e(2)+h.br.e(2)-h.tr.e(2)};return 0.25*Math.abs(g.e(1)*f.e(2)-g.e(2)*f.e(1))},nonAffinity:function(){var f=this.sides(),g=f.top-f.bottom,e=f.left-f.right;return parseFloat(parseFloat(Math.abs((Math.pow(g,2)+Math.pow(e,2))/(f.top*f.bottom+f.left*f.right))).toFixed(8))},originOffset:function(h,g){h=h?h:new c.matrix.V2(this.outerWidth*0.5,this.outerHeight*0.5);g=g?g:new c.matrix.V2(0,0);var e=this.coord(h.e(1),h.e(2));var f=this.coord(g.e(1),g.e(2));return{top:(f.e(2)-g.e(2))-(e.e(2)-h.e(2)),left:(f.e(1)-g.e(1))-(e.e(1)-h.e(1))}}}})(jQuery,this,this.document);(function(e,d,a,f){if(typeof(e.matrix)=="undefined"){e.extend({matrix:{}})}var c=e.matrix,g=c.M2x2,b=c.M3x3;e.extend(c,{identity:function(k){k=k||2;var l=k*k,n=new Array(l),j=k+1;for(var h=0;h<l;h++){n[h]=(h%j)===0?1:0}return new c["M"+k+"x"+k](n)},matrix:function(){var h=Array.prototype.slice.call(arguments);switch(arguments.length){case 4:return new g(h[0],h[2],h[1],h[3]);case 6:return new b(h[0],h[2],h[4],h[1],h[3],h[5],0,0,1)}},reflect:function(){return new g(-1,0,0,-1)},reflectX:function(){return new g(1,0,0,-1)},reflectXY:function(){return new g(0,1,1,0)},reflectY:function(){return new g(-1,0,0,1)},rotate:function(l){var i=e.angle.degreeToRadian(l),k=Math.cos(i),n=Math.sin(i);var j=k,h=n,p=-n,o=k;return new g(j,p,h,o)},scale:function(i,h){i=i||i===0?i:1;h=h||h===0?h:i;return new g(i,0,0,h)},scaleX:function(h){return c.scale(h,1)},scaleY:function(h){return c.scale(1,h)},skew:function(k,i){k=k||0;i=i||0;var l=e.angle.degreeToRadian(k),j=e.angle.degreeToRadian(i),h=Math.tan(l),n=Math.tan(j);return new g(1,h,n,1)},skewX:function(h){return c.skew(h)},skewY:function(h){return c.skew(0,h)},translate:function(i,h){i=i||0;h=h||0;return new b(1,0,i,0,1,h,0,0,1)},translateX:function(h){return c.translate(h)},translateY:function(h){return c.translate(0,h)}})})(jQuery,this,this.document);
 function ws_rotate(c,a,b){var f=jQuery;var d=f("ul",b);var g={position:"absolute",left:0,top:0,width:"100%"};var e;this.go=function(h,i){if(e){e.stop(true,true)}e=f(a.get(h)).clone().css(g).hide().appendTo(b);if(!c.noCross){var j=f(a.get(i)).clone().css(g).appendTo(b);d.hide();j.animate({rotate:c.rotateOut||180,scale:c.scaleOut||10,opacity:"hide"},{duration:c.duration,easing:"easeInOutExpo",complete:function(){f(this).remove()}})}e.css({scale:c.scaleIn||10,rotate:-(c.rotateIn||180),zIndex:10});e.animate({opacity:"show",rotate:0,scale:1},{duration:c.duration,easing:"easeInOutExpo",queue:false,complete:function(){d.css({left:-h+"00%"}).show();f(this).remove();e=0}});return h}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"rotate",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderelegantlinear'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section5 -->
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderelegantlinear') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section5 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/elegant-linear/engine1/style.css" />-->
 	<style>
 	/*
@@ -2400,7 +2312,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
  *	template Elegant
  */
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -2409,8 +2321,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	border:1px solid #3399FF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -2422,7 +2334,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -2431,7 +2343,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -2439,46 +2351,46 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
-}#wowslider-container'.$val.'  .ws_bullets { 
+}#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left:6px;
 	width:13px;
 	height:13px;
@@ -2488,10 +2400,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -2501,32 +2413,32 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	width: 32px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:5px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:5px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	bottom:-5px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
 /* separate */
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	display:block; 
 	bottom:25px;
@@ -2539,7 +2451,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	line-height: 28px;
 
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{ 
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{ 
 	display:inline-block; 
 	margin-top:10px;
 	padding:10px;
@@ -2550,7 +2462,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);	
 
 }
-#wowslider-container'.$val.' .ws-title div{ 
+#wowslider-container' . $val . ' .ws-title div{ 
 	display:block;
 	margin-top:10px; 
 	font-size: 18px;
@@ -2559,48 +2471,48 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	color: #3399FF;
 }
 
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     bottom: -111px;
     left: 0;
 	width:100%;
 	height:106px;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	height:100%;
 	letter-spacing:-4px;
 	width:2048px; 
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#3399FF;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	margin:3px;
 	text-indent:0;
     border: 1px solid #FFFFFF;
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 32s infinite;
 	-moz-animation: wsBasic 32s infinite;
 	-webkit-animation: wsBasic 32s infinite;
@@ -2609,7 +2521,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 6.25%{left:-0%} 12.5%{left:-100%} 18.75%{left:-100%} 25%{left:-200%} 31.25%{left:-200%} 37.5%{left:-300%} 43.75%{left:-300%} 50%{left:-400%} 56.25%{left:-400%} 62.5%{left:-500%} 68.75%{left:-500%} 75%{left:-600%} 81.25%{left:-600%} 87.5%{left:-700%} 93.75%{left:-700%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.25%{left:-0%} 12.5%{left:-100%} 18.75%{left:-100%} 25%{left:-200%} 31.25%{left:-200%} 37.5%{left:-300%} 43.75%{left:-300%} 50%{left:-400%} 56.25%{left:-400%} 62.5%{left:-500%} 68.75%{left:-500%} 75%{left:-600%} 81.25%{left:-600%} 87.5%{left:-700%} 93.75%{left:-700%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -2619,23 +2531,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
     border: 1px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:20px;
 	overflow:visible;
@@ -2643,7 +2555,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	cursor:pointer;
     border: 1px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-8px;
@@ -2658,24 +2570,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section5 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Rio de Janeiro, Brazil</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Rio de Janeiro, Brazil</li>
 ';
-$i++;				
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/coast.jpg" alt="Coast" title="Coast" id="wows1_0"/>Rio de Janeiro, Brazil</li>
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/coast.jpg" alt="Coast" title="Coast" id="wows1_0"/>Rio de Janeiro, Brazil</li>
 <li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/christtheredeemer.jpg" alt="Christ the Redeemer" title="Christ the Redeemer" id="wows1_1"/>Rio de Janeiro, Brazil</li>
 <li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/nightlights.jpg" alt="Night lights" title="Night lights" id="wows1_2"/>Rio de Janeiro, Brazil</li>
 <li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/panorama.jpg" alt="Panorama" title="Panorama" id="wows1_3"/>Rio de Janeiro, Brazil</li>
@@ -2683,30 +2593,29 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/view.jpg" alt="View of the city" title="View of the city" id="wows1_5"/>Rio de Janeiro, Brazil</li>
 <li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/waterscape.jpg" alt="Waterscape" title="Waterscape" id="wows1_6"/>Rio de Janeiro, Brazil</li>
 <li><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/images/night.jpg" alt="City ​​at night" title="City ​​at night" id="wows1_7"/>Rio de Janeiro, Brazil</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Coast"><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/tooltips/coast.jpg" alt="" /></a>
 <a href="#" title="Christ the Redeemer"><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/tooltips/christtheredeemer.jpg" alt="" /></a>
@@ -2717,8 +2626,8 @@ $i++;
 <a href="#" title="Waterscape"><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/tooltips/waterscape.jpg" alt="" /></a>
 <a href="#" title="City ​​at night"><img src="http://www.wowslider.com/images/demo/elegant-linear/data1/tooltips/night.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div>
@@ -2730,24 +2639,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/elegant-linear/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_basic_linear(c,a,b){var d=jQuery;var e=d("<div></div>").css({position:"absolute",display:"none","z-index":2,width:"200%",height:"100%"}).appendTo(b);this.go=function(f,j){e.stop(1,1);var g=(!!((f-j+1)%a.length)^c.revers?"left":"right");d(a[j]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,0);d(a[f]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,"50%").show();e.css({left:"auto",right:"auto",top:0}).css(g,0).show();var h=b.find("ul").hide();var i={};i[g]="-100%";e.animate(i,c.duration,"easeInOutExpo",function(){h.css({left:-f+"00%"}).show();d(this).hide().html("")});return f}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"basic_linear",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidergeometrickenburns'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section6 -->
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidergeometrickenburns') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '		<!-- Start WOWSlider.com HEAD section6 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/geometric-kenburns/engine1/style.css" -->
 	<style>
 	/*
@@ -2755,7 +2659,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
  *	template Geometric
  */
 @import url(http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext,cyrillic);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -2764,8 +2668,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	border:1px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -2777,7 +2681,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -2786,7 +2690,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -2794,47 +2698,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:40px;
 	height:8px;
 	background: none;
@@ -2846,11 +2750,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	margin-top: 5px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	outline:  1px solid #FFFFFF;
 }
 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	z-index:60;
@@ -2864,34 +2768,34 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
     -o-transition: all 0.2s;
     transition: all 0.2s;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	border-width: 1px 1px 0 0;
 	top:50px;
 	right:50px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	border-width: 0 0 1px 1px;
 	right:50px;
 	bottom:50px;
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	border-width: 2px 2px 0 0;
 	margin: -5px -5px 0 0;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	border-width: 0 0 2px 2px;
 	margin: 0 5px -5px 0;
 }
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	bottom:0;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:50px;
 	left: 50px;
@@ -2906,13 +2810,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	text-transform: uppercase;
 	border: 1px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     margin-top: 10px;
 	font-size: 14px;
 	line-height: 16px;
 	text-transform: none;
 }
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 19.6s infinite;
 	-moz-animation: wsBasic 19.6s infinite;
 	-webkit-animation: wsBasic 19.6s infinite;
@@ -2921,7 +2825,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 @-moz-keyframes wsBasic{0%{left:-0%} 10.2%{left:-0%} 14.29%{left:-100%} 24.49%{left:-100%} 28.57%{left:-200%} 38.78%{left:-200%} 42.86%{left:-300%} 53.06%{left:-300%} 57.14%{left:-400%} 67.35%{left:-400%} 71.43%{left:-500%} 81.63%{left:-500%} 85.71%{left:-600%} 95.92%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 10.2%{left:-0%} 14.29%{left:-100%} 24.49%{left:-100%} 28.57%{left:-200%} 38.78%{left:-200%} 42.86%{left:-300%} 53.06%{left:-300%} 57.14%{left:-400%} 67.35%{left:-400%} 71.43%{left:-500%} 81.63%{left:-500%} 85.71%{left:-600%} 95.92%{left:-600%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:15px;
@@ -2931,23 +2835,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
     border: 1px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:20px;
 	margin-left:20px;
@@ -2961,53 +2865,50 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	<!-- End WOWSlider.com HEAD section -->
 
 		<!-- Start WOWSlider.com BODY section6 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';	
-$i++;									
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/architecture.jpg" alt="Japanese architecture" title="Japanese architecture" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/architecture.jpg" alt="Japanese architecture" title="Japanese architecture" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/branches.jpg" alt="Branches with flowers" title="Branches with flowers" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/landscape.jpg" alt="Amazing landscape" title="Amazing landscape" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/cherry_blossom.jpg" alt="Cherry blossom" title="Cherry blossom" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/garden.jpg" alt="Japanese garden" title="Japanese garden" id="wows1_4"/></li>
 <li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/flower.jpg" alt="Pink flowers" title="Pink flowers" id="wows1_5"/></li>
 <li><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/images/rock_garden.jpg" alt="The Japanese rock garden" title="The Japanese rock garden" id="wows1_6"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Japanese architecture"><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/tooltips/architecture.jpg" alt="Japanese architecture"/>1</a>
 <a href="#" title="Branches with flowers"><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/tooltips/branches.jpg" alt="Branches with flowers"/>2</a>
@@ -3017,8 +2918,8 @@ $i++;
 <a href="#" title="Pink flowers"><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/tooltips/flower.jpg" alt="Pink flowers"/>6</a>
 <a href="#" title="The Japanese rock garden"><img src="http://www.wowslider.com/images/demo/geometric-kenburns/data1/tooltips/rock_garden.jpg" alt="The Japanese rock garden"/>7</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display: none;" href="http://wowslider.com">rotateur bannière</a>
@@ -3028,30 +2929,28 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/geometric-kenburns/engine1/script.js"></script>-->
 	
 	<script type="text/javascript">
-function ws_kenburns(q,k,d){var f=jQuery;var b=document.createElement("canvas").getContext;var p=q.paths||[{from:[0,0,1],to:[0,0,1.2]},{from:[0,0,1.2],to:[0,0,1]},{from:[1,0,1],to:[1,0,1.2]},{from:[0,1,1.2],to:[0,1,1]},{from:[1,1,1],to:[1,1,1.2]},{from:[0.5,1,1],to:[0.5,1,1.3]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[1,0.5,1],to:[1,0.5,1.2]},{from:[0,0.5,1.2],to:[0,0.5,1]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[0.5,0.5,1],to:[0.5,0.5,1.2]},{from:[0.5,0.5,1.3],to:[0.5,0.5,1]},{from:[0.5,1,1],to:[0.5,0,1.15]}];function r(h){return p[h?Math.floor(Math.random()*(b?p.length:Math.min(5,p.length))):0]}function e(w,t){var v,h=0,s=40/t;var x=setInterval(function(){if(h<1){if(!v){v=1;w(h);v=0}h+=s}else{u(1)}},40);function u(y){clearInterval(x);if(y){w(1)}}return{stop:u}}var n=q.width,g=q.height;var j,a;var o,m;function i(){o=f("<div style="width:100%;height:100%"></div>").css({"z-index":8,position:"absolute",left:0,top:0}).appendTo(d)}i();function c(v,s,h){var t={width:100*v[2]+"%"};t[s?"right":"left"]=-100*(v[2]-1)*(s?(1-v[0]):v[0])+"%";t[h?"bottom":"top"]=-100*(v[2]-1)*(h?(1-v[1]):v[1])+"%";if(!b){for(var u in t){if(/\%/.test(t[u])){t[u]=(/right|left|width/.test(u)?n:g)*parseFloat(t[u])/100+"px"}}}return t}function l(t,y,v){if(b){if(a){a.stop(1)}a=j}if(m){m.remove()}m=o;i();if(v){o.hide();m.stop(true,true)}if(b){var s,h;var u,x;u=f("<canvas width="'+n+'" height="'+g+'"/>");u.css({position:"absolute",left:0,top:0,width:"100%",height:"100%"}).appendTo(o);s=u.get(0).getContext("2d");x=u.clone().appendTo(o);h=x.get(0).getContext("2d");j=new e(function(z){var B=[y.from[0]*(1-z)+z*y.to[0],y.from[1]*(1-z)+z*y.to[1],y.from[2]*(1-z)+z*y.to[2]];h.drawImage(t,-n*(B[2]-1)*B[0],-g*(B[2]-1)*B[1],n*B[2],g*B[2]);s.clearRect(0,0,n,g);var A=s;s=h;h=A},q.duration+q.delay*2)}else{var w=f("<img src="'+t.src+'"/>").css({position:"absolute",left:"auto",right:"auto",top:"auto",bottom:"auto"}).appendTo(o).css(c(y.from,y.from[0]>0.5,y.from[1]>0.5)).animate(c(y.to,y.from[0]>0.5,y.from[1]>0.5),{easing:"linear",queue:false,duration:(1.5*q.duration+q.delay)})}if(v){o.fadeIn(q.duration)}}k.each(function(h){f(this).css({visibility:"hidden"});if(h==q.startSlide){l(this,r(0),0)}});this.go=function(h,s){l(k.get(h),r(h),1);return h}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",next:"",duration:8*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
+function ws_kenburns(q,k,d){var f=jQuery;var b=document.createElement("canvas").getContext;var p=q.paths||[{from:[0,0,1],to:[0,0,1.2]},{from:[0,0,1.2],to:[0,0,1]},{from:[1,0,1],to:[1,0,1.2]},{from:[0,1,1.2],to:[0,1,1]},{from:[1,1,1],to:[1,1,1.2]},{from:[0.5,1,1],to:[0.5,1,1.3]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[1,0.5,1],to:[1,0.5,1.2]},{from:[0,0.5,1.2],to:[0,0.5,1]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[0.5,0.5,1],to:[0.5,0.5,1.2]},{from:[0.5,0.5,1.3],to:[0.5,0.5,1]},{from:[0.5,1,1],to:[0.5,0,1.15]}];function r(h){return p[h?Math.floor(Math.random()*(b?p.length:Math.min(5,p.length))):0]}function e(w,t){var v,h=0,s=40/t;var x=setInterval(function(){if(h<1){if(!v){v=1;w(h);v=0}h+=s}else{u(1)}},40);function u(y){clearInterval(x);if(y){w(1)}}return{stop:u}}var n=q.width,g=q.height;var j,a;var o,m;function i(){o=f("<div style="width:100%;height:100%"></div>").css({"z-index":8,position:"absolute",left:0,top:0}).appendTo(d)}i();function c(v,s,h){var t={width:100*v[2]+"%"};t[s?"right":"left"]=-100*(v[2]-1)*(s?(1-v[0]):v[0])+"%";t[h?"bottom":"top"]=-100*(v[2]-1)*(h?(1-v[1]):v[1])+"%";if(!b){for(var u in t){if(/\%/.test(t[u])){t[u]=(/right|left|width/.test(u)?n:g)*parseFloat(t[u])/100+"px"}}}return t}function l(t,y,v){if(b){if(a){a.stop(1)}a=j}if(m){m.remove()}m=o;i();if(v){o.hide();m.stop(true,true)}if(b){var s,h;var u,x;u=f("<canvas width="' + \N + '" height="' + \G + '"/>");u.css({position:"absolute",left:0,top:0,width:"100%",height:"100%"}).appendTo(o);s=u.get(0).getContext("2d");x=u.clone().appendTo(o);h=x.get(0).getContext("2d");j=new e(function(z){var B=[y.from[0]*(1-z)+z*y.to[0],y.from[1]*(1-z)+z*y.to[1],y.from[2]*(1-z)+z*y.to[2]];h.drawImage(t,-n*(B[2]-1)*B[0],-g*(B[2]-1)*B[1],n*B[2],g*B[2]);s.clearRect(0,0,n,g);var A=s;s=h;h=A},q.duration+q.delay*2)}else{var w=f("<img src="' + \T . \SRC + '"/>").css({position:"absolute",left:"auto",right:"auto",top:"auto",bottom:"auto"}).appendTo(o).css(c(y.from,y.from[0]>0.5,y.from[1]>0.5)).animate(c(y.to,y.from[0]>0.5,y.from[1]>0.5),{easing:"linear",queue:false,duration:(1.5*q.duration+q.delay)})}if(v){o.fadeIn(q.duration)}}k.each(function(h){f(this).css({visibility:"hidden"});if(h==q.startSlide){l(this,r(0),0)}});this.go=function(h,s){l(k.get(h),r(h),1);return h}};
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"kenburns",prev:"",next:"",duration:8*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		/*}elseif ($conf_value == 'wowslidersurfaceblur'){
-		
-		
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+        /*}elseif ($conf_value == 'wowslidersurfaceblur'){
+
+
 													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
+													$arg = $conf_name;
+													$val = $conf_id;
 													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
+
+
 													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section7 -->
 	<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/surface-blur/engine1/style.css" />
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/jquery.js"></script>
 	<!-- End WOWSlider.com HEAD section -->
 
-	
+
 		<!-- Start WOWSlider.com BODY section7 -->
 	<div id="wowslider-container'.$val.'">
 	<div class="ws_images"><ul>
@@ -3081,20 +2980,17 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
+
+
+
 		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});*/
-		}elseif ($conf_value == 'wowslidervernisagestackv'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section8 -->
+    } elseif ($conf_value == 'wowslidervernisagestackv') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section8 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/vernisage-stack-v/engine1/style.css" />-->
 	<style>
 	/*
@@ -3102,7 +2998,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
  *	template Vernisage
  */
 @import url(http://fonts.googleapis.com/css?family=Economica&subset=latin,latin-ext);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	max-width:830px;
@@ -3111,8 +3007,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:830px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:830px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -3124,7 +3020,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -3133,7 +3029,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -3141,46 +3037,46 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
-}#wowslider-container'.$val.'  .ws_bullets { 
+}#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:8px;
 	height:8px;
 	background: url(./bullet.png) left top;
@@ -3190,10 +3086,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	margin-left:6px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -3203,32 +3099,32 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	width: 18px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:7px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:7px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 5%;
@@ -3240,7 +3136,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	font-size: 27px;
 	line-height: 29px;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	background:#FFFFFF;
 	display:inline-block;
 	padding:7px;
@@ -3250,46 +3146,46 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90); 
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:10px;
 	color: #000000;
     font-size: 20px;
 	line-height: 22px;	
 	font-weight: normal;	
-}#wowslider-container'.$val.'  .ws_thumbs { 
+}#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     left: -161px;
     top: 0;
 	width:136px;
 	height:100%;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	width:100%;
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#959695;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	text-indent:0;
     -moz-box-shadow: 0 0 5px #999999;
     box-shadow: 0 0 5px #999999;
@@ -3298,7 +3194,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 29.4s infinite;
 	-moz-animation: wsBasic 29.4s infinite;
 	-webkit-animation: wsBasic 29.4s infinite;
@@ -3307,7 +3203,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 8.5%{left:-0%} 14.29%{left:-100%} 22.79%{left:-100%} 28.57%{left:-200%} 37.07%{left:-200%} 42.86%{left:-300%} 51.36%{left:-300%} 57.14%{left:-400%} 65.65%{left:-400%} 71.43%{left:-500%} 79.93%{left:-500%} 85.71%{left:-600%} 94.22%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.5%{left:-0%} 14.29%{left:-100%} 22.79%{left:-100%} 28.57%{left:-200%} 37.07%{left:-200%} 42.86%{left:-300%} 51.36%{left:-300%} 57.14%{left:-400%} 65.65%{left:-400%} 71.43%{left:-500%} 79.93%{left:-500%} 85.71%{left:-600%} 94.22%{left:-600%} }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
@@ -3318,15 +3214,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	width:104.81%;
 	height:112.77%;
 }
-* html #wowslider-container'.$val.' .ws_shadow{/*ie6*/
+* html #wowslider-container' . $val . ' .ws_shadow{/*ie6*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1//bg.png", sizingMethod="scale");
 }
-*+html #wowslider-container'.$val.' .ws_shadow{/*ie7*/
+*+html #wowslider-container' . $val . ' .ws_shadow{/*ie7*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1//bg.png", sizingMethod="scale");
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:15px;
@@ -3338,23 +3234,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:52px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:120px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:16px;
 	overflow:visible;
@@ -3364,7 +3260,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
     box-shadow: 0 0 5px #999999;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-11px;
@@ -3379,54 +3275,51 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section8 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>The Bullfinch is a small passerine bird</li>
-';						
-$i++;				
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/bullfinch.jpg" alt="Bullfinch" title="Bullfinch" id="wows1_0"/>The Bullfinch is a small passerine bird</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>The Bullfinch is a small passerine bird</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/bullfinch.jpg" alt="Bullfinch" title="Bullfinch" id="wows1_0"/>The Bullfinch is a small passerine bird</li>
 <li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/duck.jpg" alt="Duck" title="Duck" id="wows1_1"/>Ducks may be found in both fresh water and sea water</li>
 <li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/seagull.jpg" alt="Seagull" title="Seagull" id="wows1_2"/>Gulls are typically medium to large birds</li>
 <li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/raven.jpg" alt="Raven" title="Raven" id="wows1_3"/>Raven is a large, all-black passerine bird.</li>
 <li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/robin.jpg" alt="Robin" title="Robin" id="wows1_4"/>Robin is a small insectivorous passerine bird</li>
 <li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/seagulls.jpg" alt="Seagulls" title="Seagulls" id="wows1_5"/>Gulls nest in large, densely packed noisy colonies</li>
 <li><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/images/stork.jpg" alt="Stork" title="Stork" id="wows1_6"/>European White Stork</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Bullfinch"><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/tooltips/bullfinch.jpg" alt="" /></a>
 <a href="#" title="Duck"><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/tooltips/duck.jpg" alt="" /></a>
@@ -3436,8 +3329,8 @@ $i++;
 <a href="#" title="Seagulls"><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/tooltips/seagulls.jpg" alt="" /></a>
 <a href="#" title="Stork"><img src="http://www.wowslider.com/images/demo/vernisage-stack-v/data1/tooltips/stork.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -3448,23 +3341,21 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/vernisage-stack-v/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_stack_vertical(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=(k-h+1)%c.length;if(Math.abs(m)>=1){g=(m>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?1:-1)+"00%";c.each(function(o){if(g&&o!=h){this.style.zIndex=(Math.max(0,this.style.zIndex-1))}});var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,top:(g?i:l)});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){j.stop(true,true).hide().css({left:-k+"00%"});if(d.fadeOut){j.fadeIn(d.duration)}else{j.show()}}else{if(d.fadeOut){j.fadeOut(d.duration)}}f.animate({top:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"}).stop(true,true).show()}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev:"",next:"",duration:17*100,delay:25*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack_vertical",prev:"",next:"",duration:17*100,delay:25*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 ';
-		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		/*}elseif ($conf_value == 'wowsliderplasticsquares'){
-		
-		
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+        /*}elseif ($conf_value == 'wowsliderplasticsquares'){
+
+
 													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
+													$arg = $conf_name;
+													$val = $conf_id;
 													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
+
+
 													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section9 -->
 	<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/plastic-squares/engine1/style.css" />
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/jquery.js"></script>
@@ -3501,20 +3392,18 @@ function ws_squares(c,a,b){var g=jQuery;var e=b.find("ul").get(0);e.id="wowslide
 wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",next:"",duration:12*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
+';
+
+
 		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		*/}elseif ($conf_value == 'wowsliderflatslices'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section10 -->
+		*/
+    } elseif ($conf_value == 'wowsliderflatslices') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section10 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/flat-slices/engine1/style.css" />-->
 	<style>
 	/*
@@ -3522,7 +3411,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
  *	template Flat
  */
 @import url("http://fonts.googleapis.com/css?family=Signika&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -3531,8 +3420,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	border:4px solid #F71277;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -3544,7 +3433,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -3553,7 +3442,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -3561,50 +3450,50 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
-}#wowslider-container'.$val.' { 
+}#wowslider-container' . $val . ' { 
 	border-left: 0px;
 	border-right: 0px;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:40px;
 	height:4px;
 	background: url(./bullet.png) left top;
@@ -3614,13 +3503,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	margin-left:0px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -3630,29 +3519,29 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	width: 40px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom right */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	right: 6px;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 20px;
@@ -3665,21 +3554,21 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	line-height: 22px;
 	text-transform: uppercase;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	background:#F71277;
 	padding:8px;
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:10px;
 	font-size: 14px;
 	line-height: 16px;
 	background:#444444;
 	text-transform: none;
-}#wowslider-container'.$val.' .ws_images ul{
+}#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 23.4s infinite;
 	-moz-animation: wsBasic 23.4s infinite;
 	-webkit-animation: wsBasic 23.4s infinite;
@@ -3688,7 +3577,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 @-moz-keyframes wsBasic{0%{left:-0%} 9.4%{left:-0%} 16.67%{left:-100%} 26.07%{left:-100%} 33.33%{left:-200%} 42.74%{left:-200%} 50%{left:-300%} 59.4%{left:-300%} 66.67%{left:-400%} 76.07%{left:-400%} 83.33%{left:-500%} 92.74%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 9.4%{left:-0%} 16.67%{left:-100%} 26.07%{left:-100%} 33.33%{left:-200%} 42.74%{left:-200%} 50%{left:-300%} 59.4%{left:-300%} 66.67%{left:-400%} 76.07%{left:-400%} 83.33%{left:-500%} 92.74%{left:-500%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -3700,23 +3589,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
     border: 4px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:48px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:128px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:11px;
 	margin-left:15px;
@@ -3727,7 +3616,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
     -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
     border: 4px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-10px;
@@ -3742,52 +3631,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section10 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Amazing nature, Norway</li>
-';								
-$i++;		
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/flat-slices/data1/images/fiord.jpg" alt="Fiord" title="Fiord" id="wows1_0"/>Amazing nature, Norway</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Amazing nature, Norway</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/flat-slices/data1/images/fiord.jpg" alt="Fiord" title="Fiord" id="wows1_0"/>Amazing nature, Norway</li>
 <li><img src="http://www.wowslider.com/images/demo/flat-slices/data1/images/ice.jpg" alt="Ice" title="Ice" id="wows1_1"/>In the mountains of Norway</li>
 <li><img src="http://www.wowslider.com/images/demo/flat-slices/data1/images/kjeragbolten.jpg" alt="Kjeragbolten" title="Kjeragbolten" id="wows1_2"/>Kjeragbolten is a boulder wedged in a mountain crevasse</li>
 <li><img src="http://www.wowslider.com/images/demo/flat-slices/data1/images/norway.jpg" alt="Norway" title="Norway" id="wows1_3"/>City in Norway</li>
 <li><img src="http://www.wowslider.com/images/demo/flat-slices/data1/images/town.jpg" alt="Town" title="Town" id="wows1_4"/>Town by the sea</li>
 <li><img src="http://www.wowslider.com/images/demo/flat-slices/data1/images/winter.jpg" alt="Winter" title="Winter" id="wows1_5"/>Snowy landscape</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Fiord"><img src="http://www.wowslider.com/images/demo/flat-slices/data1/tooltips/fiord.jpg" alt="Fiord"/>1</a>
 <a href="#" title="Ice"><img src="http://www.wowslider.com/images/demo/flat-slices/data1/tooltips/ice.jpg" alt="Ice"/>2</a>
@@ -3797,8 +3683,8 @@ $i++;
 <a href="#" title="Winter"><img src="http://www.wowslider.com/images/demo/flat-slices/data1/tooltips/winter.jpg" alt="Winter"/>6</a>
 
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div></div>
@@ -3809,23 +3695,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/flat-slices/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_slices(i,f,g){var c=jQuery;var e=function(p,v){var o=c.extend({},{effect:"random",slices:15,animSpeed:500,pauseTime:3000,startSlide:0,container:null,onEffectEnd:0},v);var r={currentSlide:0,currentImage:"",totalSlides:0,randAnim:"",stop:false};var m=c(p);m.data("wow:vars",r);if(!/absolute|relative/.test(m.css("position"))){m.css("position","relative")}var k=v.container||m;var n=m.children();r.totalSlides=n.length;if(o.startSlide>0){if(o.startSlide>=r.totalSlides){o.startSlide=r.totalSlides-1}r.currentSlide=o.startSlide}if(c(n[r.currentSlide]).is("img")){r.currentImage=c(n[r.currentSlide])}else{r.currentImage=c(n[r.currentSlide]).find("img:first")}if(c(n[r.currentSlide]).is("a")){c(n[r.currentSlide]).css("display","block")}for(var q=0;q<o.slices;q++){var u=Math.round(k.width()/o.slices);var t=c("<div class="wow-slice"></div>").css({left:u*q+"px",overflow:"hidden",width:((q==o.slices-1)?(k.width()-(u*q)):u)+"px",position:"absolute"}).appendTo(k);c("<img>").css({position:"absolute",left:0,top:0}).appendTo(t)}var l=0;this.sliderRun=function(w,x){if(r.busy){return false}o.effect=x||o.effect;r.currentSlide=w-1;s(m,n,o,false);return true};var j=function(){if(o.onEffectEnd){o.onEffectEnd(r.currentSlide)}k.hide();r.busy=0};var s=function(w,x,z,B){var C=w.data("wow:vars");if((!C||C.stop)&&!B){return false}C.busy=1;C.currentSlide++;if(C.currentSlide==C.totalSlides){C.currentSlide=0}if(C.currentSlide<0){C.currentSlide=(C.totalSlides-1)}C.currentImage=c(x[C.currentSlide]);if(!C.currentImage.is("img")){C.currentImage=C.currentImage.find("img:first")}c(".wow-slice",k).each(function(H){var J=c(this),G=c("img",J);var I=Math.round(k.width()/z.slices);G.width(k.width());G.attr("src",C.currentImage.attr("src"));G.css({left:-I*H+"px"});J.css({height:"0px",opacity:"0",left:I*H+"px",width:((H==z.slices-1)?(k.width()-(I*H)):I)+"px"})});k.show();if(z.effect=="random"){var D=new Array("sliceDownRight","sliceDownLeft","sliceUpRight","sliceUpLeft","sliceUpDownRight","sliceUpDownLeft","fold","fade");C.randAnim=D[Math.floor(Math.random()*(D.length+1))];if(C.randAnim==undefined){C.randAnim="fade"}}if(z.effect.indexOf(",")!=-1){var D=z.effect.split(",");C.randAnim=c.trim(D[Math.floor(Math.random()*D.length)])}if(z.effect=="sliceDown"||z.effect=="sliceDownRight"||C.randAnim=="sliceDownRight"||z.effect=="sliceDownLeft"||C.randAnim=="sliceDownLeft"){var y=0;var A=0;var F=c(".wow-slice",k);if(z.effect=="sliceDownLeft"||C.randAnim=="sliceDownLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);G.css({top:0,bottom:""});if(A==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="sliceUp"||z.effect=="sliceUpRight"||C.randAnim=="sliceUpRight"||z.effect=="sliceUpLeft"||C.randAnim=="sliceUpLeft"){var y=0;var A=0;var F=c(".wow-slice",k);if(z.effect=="sliceUpLeft"||C.randAnim=="sliceUpLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);G.css({top:"",bottom:0});if(A==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="sliceUpDown"||z.effect=="sliceUpDownRight"||C.randAnim=="sliceUpDownRight"||z.effect=="sliceUpDownLeft"||C.randAnim=="sliceUpDownLeft"){var y=0;var A=0;var E=0;var F=c(".wow-slice",k);if(z.effect=="sliceUpDownLeft"||C.randAnim=="sliceUpDownLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);if(A==0){G.css({top:0,bottom:""});A++}else{G.css({top:"",bottom:0});A=0}if(E==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;E++})}else{if(z.effect=="fold"||C.randAnim=="fold"){var y=0;var A=0;c(".wow-slice",k).each(function(){var G=c(this);var H=G.width();G.css({top:"0px",height:"100%",width:"0px"});if(A==z.slices-1){setTimeout(function(){G.animate({width:H,opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({width:H,opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="fade"||C.randAnim=="fade"){var A=0;c(".wow-slice",k).each(function(){c(this).css("height","100%");if(A==z.slices-1){c(this).animate({opacity:"1.0"},(z.animSpeed*2),j)}else{c(this).animate({opacity:"1.0"},(z.animSpeed*2))}A++})}}}}}}};c.fn._reverse=[].reverse;var a=c("li",g);var d=c("ul",g);var b=c("<div></div>").css({left:0,top:0,"z-index":8,width:"100%",height:"100%",position:"absolute"}).appendTo(g);var h=new e(d,{keyboardNav:false,caption:0,effect:"sliceDownRight,sliceDownLeft,sliceUpRight,sliceUpLeft,sliceUpDownRight,sliceUpDownLeft,sliceUpDownRight,sliceUpDownLeft,fold,fold,fold",animSpeed:i.duration,startSlide:i.startSlide,container:b,onEffectEnd:function(j){d.css({left:-j+"00%"}).stop(true,true).show()}});this.go=function(k,j){var l=h.sliderRun(k);if(l){if(i.fadeOut){d.fadeOut(i.duration)}return k}else{return -1}}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next:"",duration:17*100,delay:22*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"slices",prev:"",next:"",duration:17*100,delay:22*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderstudiofade'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section11 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderstudiofade') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section11 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/studio-fade/engine1/style.css" media="screen" />-->
 	<style>
 	/*
@@ -3833,7 +3715,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
  *	template Studio
  */
 @import url("http://fonts.googleapis.com/css?family=Simonetta&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -3842,8 +3724,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	border:9px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -3855,7 +3737,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -3864,7 +3746,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -3872,46 +3754,46 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
-}#wowslider-container'.$val.'  .ws_bullets { 
+}#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left:5px;
 	width:20px;
 	height:19px;
@@ -3921,10 +3803,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%; 
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -3935,34 +3817,34 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 	opacity: 0.8; 
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:10px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 	opacity: 1; 
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 	opacity: 1; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	bottom:-45px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
 /* default */
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:0;
 	left: 0;
@@ -3982,49 +3864,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);	
 	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 15px;
 	line-height: 17px;
 	text-transform:none; 
 }
-#wowslider-container'.$val.':hover .ws-title {
+#wowslider-container' . $val . ':hover .ws-title {
 	opacity:0.8;
-}#wowslider-container'.$val.'  .ws_thumbs { 
+}#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     bottom: -120px;
     left: 0;
 	width:100%;
 	height:106px;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	height:100%;
 	letter-spacing:-4px;
 	width:1328px; 
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	opacity: 1;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	margin:3px;
 	text-indent:0;
 	border:4px solid #FFFFFF;
@@ -4033,7 +3915,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	opacity: 0.5;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 35.2s infinite;
 	-moz-animation: wsBasic 35.2s infinite;
 	-webkit-animation: wsBasic 35.2s infinite;
@@ -4042,10 +3924,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 6.82%{left:-0%} 12.5%{left:-100%} 19.32%{left:-100%} 25%{left:-200%} 31.82%{left:-200%} 37.5%{left:-300%} 44.32%{left:-300%} 50%{left:-400%} 56.82%{left:-400%} 62.5%{left:-500%} 69.32%{left:-500%} 75%{left:-600%} 81.82%{left:-600%} 87.5%{left:-700%} 94.32%{left:-700%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.82%{left:-0%} 12.5%{left:-100%} 19.32%{left:-100%} 25%{left:-200%} 31.82%{left:-200%} 37.5%{left:-300%} 44.32%{left:-300%} 50%{left:-400%} 56.82%{left:-400%} 62.5%{left:-500%} 69.32%{left:-500%} 75%{left:-600%} 81.82%{left:-600%} 87.5%{left:-700%} 94.32%{left:-700%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	box-shadow: 0 1px 1px #FFFFFF inset, 0 1px 3px rgba(0, 0, 0, 0.4); 
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:16px;
@@ -4057,23 +3939,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
     box-shadow: 0 0 5px #000000; 
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:150px;
 	background-color:#ffffff;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:24px;
 	overflow:visible;
@@ -4083,7 +3965,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	-moz-box-shadow: 0 0 5px #000000;
     box-shadow: 0 0 5px #000000; 
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-10px;
@@ -4098,24 +3980,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section11 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-					//var_dump($count);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>';
-								$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        //var_dump($count);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 										<li><img src="http://www.wowslider.com/images/demo/studio-fade/data1/images/bay.jpg" alt="Boats in the bay" title="Boats in the bay" id="wows1_0"/></li>
 										<li><img src="http://www.wowslider.com/images/demo/studio-fade/data1/images/ocean.jpg" alt="Palms and ocean" title="Palms and ocean" id="wows1_1"/></li>
 										<li><img src="http://www.wowslider.com/images/demo/studio-fade/data1/images/sun.jpg" alt="Amazing sunset" title="Amazing sunset" id="wows1_2"/></li>
@@ -4125,30 +4005,29 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 										<li><img src="http://www.wowslider.com/images/demo/studio-fade/data1/images/sunset.jpg" alt="Coast at sunset" title="Coast at sunset" id="wows1_6"/></li>
 										<li><img src="http://www.wowslider.com/images/demo/studio-fade/data1/images/palms.jpg" alt="Palms and blue sky" title="Palms and blue sky" id="wows1_7"/></li>
 							
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Boats in the bay"><img src="http://www.wowslider.com/images/demo/studio-fade/data1/tooltips/bay.jpg" alt="" /></a>
 <a href="#" title="Palms and ocean"><img src="http://www.wowslider.com/images/demo/studio-fade/data1/tooltips/ocean.jpg" alt="" /></a>
@@ -4159,8 +4038,8 @@ $i++;
 <a href="#" title="Coast at sunset"><img src="http://www.wowslider.com/images/demo/studio-fade/data1/tooltips/sunset.jpg" alt="" /></a>
 <a href="#" title="Palms and blue sky"><img src="http://www.wowslider.com/images/demo/studio-fade/data1/tooltips/palms.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -4171,23 +4050,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/studio-fade/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_fade(c,a,b){var e=jQuery;var d=e("ul",b);var f={position:"absolute",left:0,top:0,width:"100%",height:"100%"};this.go=function(g,h){var i=e(a.get(g)).clone().css(f).hide().appendTo(b);if(!c.noCross){var j=e(a.get(h)).clone().css(f).appendTo(b);d.hide();j.fadeOut(c.duration,function(){j.remove()})}i.fadeIn(c.duration,function(){d.css({left:-g+"00%"}).show();i.remove()});return g}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"",duration:20*100,delay:24*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"fade",prev:"",next:"",duration:20*100,delay:24*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderpushstack'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section12 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderpushstack') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section12 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/push-stack/engine1/style.css" media="screen" />-->
 	<style>
 	/*
@@ -4195,7 +4070,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
  *	template Push
  */
 @import url("http://fonts.googleapis.com/css?family=Inder&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -4204,8 +4079,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	border:8px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -4217,7 +4092,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -4226,7 +4101,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -4234,47 +4109,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:40px;
 	height:20px;
 	background: url(./bullet.png) left top;
@@ -4284,13 +4159,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	margin-left:7px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -4300,31 +4175,31 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	width: 50px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:10px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 0px;
@@ -4346,13 +4221,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	box-shadow: 0 3px 2px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 0 3px 2px rgba(0, 0, 0, 0.5);
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     margin-top: 10px;
 	font-size: 14px;
 	line-height: 15px;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 28.7s infinite;
 	-moz-animation: wsBasic 28.7s infinite;
 	-webkit-animation: wsBasic 28.7s infinite;
@@ -4361,14 +4236,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 8.71%{left:-0%} 14.29%{left:-100%} 23%{left:-100%} 28.57%{left:-200%} 37.28%{left:-200%} 42.86%{left:-300%} 51.57%{left:-300%} 57.14%{left:-400%} 65.85%{left:-400%} 71.43%{left:-500%} 80.14%{left:-500%} 85.71%{left:-600%} 94.43%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.71%{left:-0%} 14.29%{left:-100%} 23%{left:-100%} 28.57%{left:-200%} 37.28%{left:-200%} 42.86%{left:-300%} 51.57%{left:-300%} 57.14%{left:-400%} 65.85%{left:-400%} 71.43%{left:-500%} 80.14%{left:-500%} 85.71%{left:-600%} 94.43%{left:-600%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	box-shadow: 0 3px 2px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 0 3px 2px rgba(0, 0, 0, 0.5);
 	border-radius:4px;
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -4383,23 +4258,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	-webkit-border-radius:4px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:24px;
 	margin-left:15px;
@@ -4413,7 +4288,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-10px;
@@ -4428,53 +4303,50 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section12 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/mountains.jpg" alt="Mountains" title="Mountains" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/mountains.jpg" alt="Mountains" title="Mountains" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/alps_range_france.jpg" alt="Alps range" title="Alps range" id="wows1_1"/>France</li>
 <li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/elbrus_mountain_russia.jpg" alt="Elbrus mountain" title="Elbrus mountain" id="wows1_2"/>Russia</li>
 <li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/everest_nepal.jpg" alt="Peak of Everest" title="Peak of Everest" id="wows1_3"/>Nepal</li>
 <li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/snow_on_the_top.jpg" alt="Snow on the top of a mountain" title="Snow on the top of a mountain" id="wows1_4"/></li>
 <li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/the_peak_of_mountain_lhotse_nepal.jpg" alt="The peak of mountain Lhotse" title="The peak of mountain Lhotse" id="wows1_5"/>Nepal</li>
 <li><img src="http://www.wowslider.com/images/demo/push-stack/data1/images/trees.jpg" alt="Trees" title="Trees" id="wows1_6"/>Trees in the mountains</li>
-						';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+						';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Mountains"><img src="http://www.wowslider.com/images/demo/push-stack/data1/tooltips/mountains.jpg" alt="Mountains"/>1</a>
 <a href="#" title="Alps range"><img src="http://www.wowslider.com/images/demo/push-stack/data1/tooltips/alps_range_france.jpg" alt="Alps range"/>2</a>
@@ -4484,8 +4356,8 @@ $i++;
 <a href="#" title="The peak of mountain Lhotse"><img src="http://www.wowslider.com/images/demo/push-stack/data1/tooltips/the_peak_of_mountain_lhotse_nepal.jpg" alt="The peak of mountain Lhotse"/>6</a>
 <a href="#" title="Trees"><img src="http://www.wowslider.com/images/demo/push-stack/data1/tooltips/trees.jpg" alt="Trees"/>7</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div></div>
@@ -4497,23 +4369,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	
 	<script type="text/javascript">
 function ws_stack(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=c.length>2?(k-h+1)%c.length:1;if(Math.abs(n)>=1){g=(n>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?-1:1)+"00%";var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,left:((g?i:l))});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){j.hide().css({left:-k+"00%"});if(d.fadeOut){j.stop(true,true).fadeIn(d.duration)}else{j.show()}}else{if(d.fadeOut){j.fadeOut(d.duration)}}f.animate({left:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"}).stop(true,true).show()}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:"",duration:16*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack",prev:"",next:"",duration:16*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderbalanceblast'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section13 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderbalanceblast') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section13 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/balance-blast/engine1/style.css" />-->
 	<style>
 	/*
@@ -4521,7 +4389,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
  *	template Balance
  */
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	max-width:830px;
@@ -4530,8 +4398,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	border:2px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:830px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:830px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -4543,7 +4411,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -4552,7 +4420,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -4560,43 +4428,43 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left:4px;
 	width:9px;
 	height:9px;
@@ -4606,10 +4474,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: right 50%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -4619,30 +4487,30 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	width: 48px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:5px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:5px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.' .ws_bullets {
+#wowslider-container' . $val . ' .ws_bullets {
 	top:0;
     right: 0;
 }
 
 /* separate */
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	display:block; 
 	bottom:25px;
@@ -4655,7 +4523,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	line-height: 30px;
 
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{ 
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{ 
 	display:inline-block; 
 	margin-top:10px;
 	padding:10px;
@@ -4666,7 +4534,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);	
 
 }
-#wowslider-container'.$val.' .ws-title div{ 
+#wowslider-container' . $val . ' .ws-title div{ 
 	display:block;
 	margin-top:10px; 
 	font-size: 25px;
@@ -4674,46 +4542,46 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	color: #FFFFFF;
 }
 
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     right: -141px;
     top: 0;
 	width:136px;
 	height:100%;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	width:100%;
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#6cbe42;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	margin:3px;
 	text-indent:0;
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 26.6s infinite;
 	-moz-animation: wsBasic 26.6s infinite;
 	-webkit-animation: wsBasic 26.6s infinite;
@@ -4722,7 +4590,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 9.4%{left:-0%} 14.29%{left:-100%} 23.68%{left:-100%} 28.57%{left:-200%} 37.97%{left:-200%} 42.86%{left:-300%} 52.26%{left:-300%} 57.14%{left:-400%} 66.54%{left:-400%} 71.43%{left:-500%} 80.83%{left:-500%} 85.71%{left:-600%} 95.11%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 9.4%{left:-0%} 14.29%{left:-100%} 23.68%{left:-100%} 28.57%{left:-200%} 37.97%{left:-200%} 42.86%{left:-300%} 52.26%{left:-300%} 57.14%{left:-400%} 66.54%{left:-400%} 71.43%{left:-500%} 80.83%{left:-500%} 85.71%{left:-600%} 95.11%{left:-600%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:16px;
@@ -4732,23 +4600,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:120px;
 	background-color:#DEDEDE;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:15px;
 	overflow:visible;
@@ -4756,7 +4624,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	cursor:pointer;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-11px;
@@ -4772,54 +4640,51 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 
 
 	<!-- Start WOWSlider.com BODY section13 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>The dahlia was declared the national flower of Mexico in 1963.</li>
-';									
-$i++;	
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/dahlia.jpg" alt="Dahlia" title="Dahlia" id="wows1_0"/>The dahlia was declared the national flower of Mexico in 1963.</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>The dahlia was declared the national flower of Mexico in 1963.</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/dahlia.jpg" alt="Dahlia" title="Dahlia" id="wows1_0"/>The dahlia was declared the national flower of Mexico in 1963.</li>
 <li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/daisy.jpg" alt="European Michaelmas Daisy" title="European Michaelmas Daisy" id="wows1_1"/>The genus name (Aster) comes from the Greek and means "star-shaped flower."</li>
 <li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/flower.jpg" alt="Yellow flower" title="Yellow flower" id="wows1_2"/>Yellow petals and green leafs</li>
 <li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/lily.jpg" alt="Lily" title="Lily" id="wows1_3"/>White lily is native to the Balkans and West Asia.</li>
 <li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/chrysanthemums.jpg" alt="Chrysanthemums" title="Chrysanthemums" id="wows1_4"/>The name "chrysanthemum" is derived from the Greek words, chrysos (gold) and anthemon (flower).</li>
 <li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/marigold.jpg" alt="Marigold" title="Marigold" id="wows1_5"/>The genus is native to North and South America, but some species have become naturalized around the world.</li>
 <li><img src="http://www.wowslider.com/images/demo/balance-blast/data1/images/yellow.jpg" alt="Flower" title="Flower" id="wows1_6"/>Pretty yellow flower</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Dahlia"><img src="http://www.wowslider.com/images/demo/balance-blast/data1/tooltips/dahlia.jpg" alt="" /></a>
 <a href="#" title="European Michaelmas Daisy"><img src="http://www.wowslider.com/images/demo/balance-blast/data1/tooltips/daisy.jpg" alt="" /></a>
@@ -4829,8 +4694,8 @@ $i++;
 <a href="#" title="Marigold"><img src="http://www.wowslider.com/images/demo/balance-blast/data1/tooltips/marigold.jpg" alt="" /></a>
 <a href="#" title="Flower"><img src="http://www.wowslider.com/images/demo/balance-blast/data1/tooltips/yellow.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -4841,23 +4706,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/balance-blast/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_blast(l,e,h){var d=jQuery;var a=l.distance||1;h=h.parent();var f=d("<div>").addClass("ws_effect");h.css({overflow:"visible"}).append(f);f.css({position:"absolute",left:0,top:0,width:"100%",height:"100%","z-index":8});var c=l.cols;var k=l.rows;var g=[];var b=[];function i(){var p=Math.max((l.width||f.width())/(l.height||f.height())||3,3);c=c||Math.round(p<1?3:3*p);k=k||Math.round(p<1?3/p:3);for(var n=0;n<c*k;n++){var o=n%c;var m=Math.floor(n/c);d([b[n]=document.createElement("div"),g[n]=document.createElement("div")]).css({position:"absolute",overflow:"hidden"}).appendTo(f).append(d("<img>").css({position:"absolute"}))}g=d(g);b=d(b);j(g);j(b,true)}function j(r,p,m){var q=f.width();var o=f.height();var n={left:d(window).scrollLeft(),top:d(window).scrollTop(),width:d(window).width(),height:d(window).height()};d(r).each(function(x){var w=x%c;var u=Math.floor(x/c);if(p){var A=a*q*(2*Math.random()-1)+q/2;var y=a*o*(2*Math.random()-1)+o/2;var z=f.offset();z.left+=A;z.top+=y;if(z.left<n.left){A-=z.left+n.left}if(z.top<n.top){y-=z.top+n.top}var v=(n.left+n.width)-z.left-q/c;if(0>v){A+=v}var t=(n.top+n.height)-z.top-o/k;if(0>t){y+=t}}else{var A=q*w/c;var y=o*u/k}d(this).find("img").css({left:-(q*w/c)+"px",top:-(o*u/k)+"px",width:q+"px",height:o+"px"});var s={left:A+"px",top:y+"px",width:q/c+"px",height:o/k+"px"};if(m){d(this).animate(s,{queue:false,duration:l.duration})}else{d(this).css(s)}})}this.go=function(m,p){if(!g.length){i()}f.show();d(g).stop(1).css({opacity:1,"z-index":3}).find("img").attr("src",e.get(p).src);d(b).stop(1).css({opacity:0,"z-index":2}).find("img").attr("src",e.get(m).src);var o=h.find("ul");if(l.fadeOut){o.fadeOut(l.duration)}j(b,false,true);d(b).animate({opacity:1},{queue:false,easing:"easeInOutExpo",duration:l.duration});j(g,true,true);d(g).animate({opacity:0},{queue:false,easing:"easeInOutExpo",duration:l.duration,complete:function(){o.css({left:-m+"00%"}).stop(true,true).show();f.hide()}});var n=b;b=g;g=n;return m}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:"",duration:13*100,delay:25*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"blast",prev:"",next:"",duration:13*100,delay:25*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidercloudfly'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section14 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidercloudfly') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section14 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/cloud-fly/engine1/style.css" />-->
 	<style>
 	/*
@@ -4865,7 +4726,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
  *	template Cloud
  */
 @import url(http://fonts.googleapis.com/css?family=Donegal+One&subset=latin,latin-ext);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -4874,8 +4735,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -4887,7 +4748,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -4896,7 +4757,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -4904,43 +4765,43 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left:5px;
 	width:13px;
 	height:13px;
@@ -4950,13 +4811,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 } 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -4966,33 +4827,33 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	width: 18px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0; 
 	right:15px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:15px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block} /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block} /* bottom center */
+#wowslider-container' . $val . '  .ws_bullets {
     bottom:-2px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws_bullets .ws_bulframe {
+#wowslider-container' . $val . ' .ws_bullets .ws_bulframe {
 	bottom: 20px;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:25px;
 	left: 18px;
@@ -5015,13 +4876,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	-moz-border-radius:0 1px 1px rgba(225, 225, 225, 0.3) inset, 0 1px 3px rgba(0, 0, 0, 0.8);
 	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	margin-top:5px;
 	font-size: 16px;
 	font-weight: normal;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 22.2s infinite;
 	-moz-animation: wsBasic 22.2s infinite;
 	-webkit-animation: wsBasic 22.2s infinite;
@@ -5030,17 +4891,17 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 9.01%{left:-0%} 16.67%{left:-100%} 25.68%{left:-100%} 33.33%{left:-200%} 42.34%{left:-200%} 50%{left:-300%} 59.01%{left:-300%} 66.67%{left:-400%} 75.68%{left:-400%} 83.33%{left:-500%} 92.34%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 9.01%{left:-0%} 16.67%{left:-100%} 25.68%{left:-100%} 33.33%{left:-200%} 42.34%{left:-200%} 50%{left:-300%} 59.01%{left:-300%} 66.67%{left:-400%} 75.68%{left:-400%} 83.33%{left:-500%} 92.34%{left:-500%} }
 
-#wowslider-container'.$val.' .ws_images {
+#wowslider-container' . $val . ' .ws_images {
 	border-radius:5px;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
-#wowslider-container'.$val.' .ws_effect img{
+#wowslider-container' . $val . ' .ws_effect img{
 	border-radius:5px;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
-#wowslider-container'.$val.' .ws_frame{
+#wowslider-container' . $val . ' .ws_frame{
 	display:block;
 	position: absolute;
 	left:0;
@@ -5055,7 +4916,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	-moz-border-radius:0 0 15px rgba(0, 0, 0, 0.7) inset;
 	z-index:9;
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:15px;
@@ -5070,23 +4931,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#818285;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	overflow:visible;
 	position:absolute;
@@ -5098,7 +4959,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-9px;
@@ -5113,52 +4974,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section14 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/images/alder.jpg" alt="Alder branches" title="Alder branches" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/images/alder.jpg" alt="Alder branches" title="Alder branches" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/images/ashberry.jpg" alt="Frozen rowan berries" title="Frozen rowan berries" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/images/autumn.jpg" alt="Bright autumn leaves" title="Bright autumn leaves" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/images/branch.jpg" alt="Branch and rowan leaf" title="Branch and rowan leaf" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/images/leaf.jpg" alt="Autumn leaf in the water" title="Autumn leaf in the water" id="wows1_4"/></li>
 <li><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/images/leaves.jpg" alt="Maple leafs" title="Maple leafs" id="wows1_5"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;
-}	
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Alder branches"><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/tooltips/alder.jpg" alt="Alder branches"/>1</a>
 <a href="#" title="Frozen rowan berries"><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/tooltips/ashberry.jpg" alt="Frozen rowan berries"/>2</a>
@@ -5167,8 +5025,8 @@ $i++;
 <a href="#" title="Autumn leaf in the water"><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/tooltips/leaf.jpg" alt="Autumn leaf in the water"/>5</a>
 <a href="#" title="Maple leafs"><img src="http://www.wowslider.com/images/demo/cloud-fly/data1/tooltips/leaves.jpg" alt="Maple leafs"/>6</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">Diaporama pour photo</a>
@@ -5178,22 +5036,18 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/cloud-fly/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_fly(c,a,b){var d=jQuery;var f={position:"absolute",left:0,top:0,width:"100%",height:"100%"};var e=d("<div>").addClass("ws_effect").css(f).css({overflow:"visible"}).appendTo(b.parent());this.go=function(m,j,p){var i=!!c.revers;if(p){if(p>=1){i=1}if(p<=-1){i=0}}var h=-(c.distance||e.width()/4),k=Math.min(-h,Math.max(0,d(window).width()-e.offset().left-e.width())),g=(i?k:h),n=(i?h:k);var o=d(a.get(j)).clone().css(f).css({"z-index":1}).appendTo(e);var l=d(a.get(m)).clone().css(f).css({opacity:0,left:g,"z-index":3}).appendTo(e).show();l.animate({opacity:1},{duration:c.duration,queue:false});l.animate({left:0},{duration:2*c.duration/3,queue:false});setTimeout(function(){var q=b.find("ul").hide();o.animate({left:n,opacity:0},2*c.duration/3,function(){o.remove();q.css({left:-m+"00%"}).show();l.remove()})},c.duration/3);return m}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:"",duration:17*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"fly",prev:"",next:"",duration:17*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
 	</script>
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderdriverotate'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section15 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderdriverotate') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section15 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/drive-rotate/engine1/style.css" />-->
 	<style>
 	/*
@@ -5201,7 +5055,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
  *	template Drive
  */
 @import url("http://fonts.googleapis.com/css?family=Oswald&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -5210,8 +5064,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	border:6px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -5223,7 +5077,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -5232,7 +5086,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -5240,47 +5094,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	border-left: 0px;
 	border-right: 0px;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:22px;
 	height:20px;
 	background: url(./bullet.png) left top;
@@ -5290,10 +5144,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	margin-left:0;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 } 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	bottom:0;
@@ -5303,31 +5157,31 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	width: 30px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:1px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	right:32px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 35px;
@@ -5346,12 +5200,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	border-radius:0;
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 16px;
 	line-height: 18px;
 }
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 24s infinite;
 	-moz-animation: wsBasic 24s infinite;
 	-webkit-animation: wsBasic 24s infinite;
@@ -5360,7 +5214,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 @-moz-keyframes wsBasic{0%{left:-0%} 8.33%{left:-0%} 16.67%{left:-100%} 25%{left:-100%} 33.33%{left:-200%} 41.67%{left:-200%} 50%{left:-300%} 58.33%{left:-300%} 66.67%{left:-400%} 75%{left:-400%} 83.33%{left:-500%} 91.67%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.33%{left:-0%} 16.67%{left:-100%} 25%{left:-100%} 33.33%{left:-200%} 41.67%{left:-200%} 50%{left:-300%} 58.33%{left:-300%} 66.67%{left:-400%} 75%{left:-400%} 83.33%{left:-500%} 91.67%{left:-500%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:16px;
@@ -5370,23 +5224,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
     border: 4px solid #5b5c61;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#5b5c61;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:21px;
 	overflow:visible;
@@ -5394,7 +5248,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	cursor:pointer;
     border: 4px solid #5b5c61;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-9px;
@@ -5409,52 +5263,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section15 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Forest lake</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/images/forest.jpg" alt="Nature" title="Nature" id="wows1_0"/>Forest lake</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Forest lake</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/images/forest.jpg" alt="Nature" title="Nature" id="wows1_0"/>Forest lake</li>
 <li><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/images/nature.jpg" alt="Wonderful nature" title="Wonderful nature" id="wows1_1"/>Several trees near the water</li>
 <li><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/images/stream.jpg" alt="Water stream" title="Water stream" id="wows1_2"/>Water stream flows through the forest</li>
 <li><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/images/lake.jpg" alt="Shore of the lake" title="Shore of the lake" id="wows1_3"/>Return to nature</li>
 <li><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/images/twilight.jpg" alt="Twilight" title="Twilight" id="wows1_4"/>Twilight on the lake</li>
 <li><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/images/water.jpg" alt="Shore" title="Shore" id="wows1_5"/>Near the water</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Nature"><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/tooltips/forest.jpg" alt="Nature"/>1</a>
 <a href="#" title="Wonderful nature"><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/tooltips/nature.jpg" alt="Wonderful nature"/>2</a>
@@ -5463,8 +5314,8 @@ $i++;
 <a href="#" title="Twilight"><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/tooltips/twilight.jpg" alt="Twilight"/>5</a>
 <a href="#" title="Shore"><img src="http://www.wowslider.com/images/demo/drive-rotate/data1/tooltips/water.jpg" alt="Shore"/>6</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div></div>
@@ -5476,23 +5327,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript">
 (function(f,g,j,b){var h=/progid:DXImageTransform\.Microsoft\.Matrix\(.*?\)/,c=/^([\+\-]=)?([\d+.\-]+)(.*)$/,q=/%/;var d=j.createElement("modernizr"),e=d.style;function n(s){return parseFloat(s)}function l(){var s={transformProperty:"",MozTransform:"-moz-",WebkitTransform:"-webkit-",OTransform:"-o-",msTransform:"-ms-"};for(var t in s){if(typeof e[t]!="undefined"){return s[t]}}return null}function r(){if(typeof(g.Modernizr)!=="undefined"){return Modernizr.csstransforms}var t=["transformProperty","WebkitTransform","MozTransform","OTransform","msTransform"];for(var s in t){if(e[t[s]]!==b){return true}}}var a=l(),i=a!==null?a+"transform":false,k=a!==null?a+"transform-origin":false;f.support.csstransforms=r();if(a=="-ms-"){i="msTransform";k="msTransformOrigin"}f.extend({transform:function(s){s.transform=this;this.$elem=f(s);this.applyingMatrix=false;this.matrix=null;this.height=null;this.width=null;this.outerHeight=null;this.outerWidth=null;this.boxSizingValue=null;this.boxSizingProperty=null;this.attr=null;this.transformProperty=i;this.transformOriginProperty=k}});f.extend(f.transform,{funcs:["matrix","origin","reflect","reflectX","reflectXY","reflectY","rotate","scale","scaleX","scaleY","skew","skewX","skewY","translate","translateX","translateY"]});f.fn.transform=function(s,t){return this.each(function(){var u=this.transform||new f.transform(this);if(s){u.exec(s,t)}})};f.transform.prototype={exec:function(s,t){t=f.extend(true,{forceMatrix:false,preserve:false},t);this.attr=null;if(t.preserve){s=f.extend(true,this.getAttrs(true,true),s)}else{s=f.extend(true,{},s)}this.setAttrs(s);if(f.support.csstransforms&&!t.forceMatrix){return this.execFuncs(s)}else{if(f.browser.msie||(f.support.csstransforms&&t.forceMatrix)){return this.execMatrix(s)}}return false},execFuncs:function(t){var s=[];for(var u in t){if(u=="origin"){this[u].apply(this,f.isArray(t[u])?t[u]:[t[u]])}else{if(f.inArray(u,f.transform.funcs)!==-1){s.push(this.createTransformFunc(u,t[u]))}}}this.$elem.css(i,s.join(" "));return true},execMatrix:function(z){var C,x,t;var F=this.$elem[0],B=this;function A(N,M){if(q.test(N)){return parseFloat(N)/100*B["safeOuter"+(M?"Height":"Width")]()}return o(F,N)}var s=/translate[X|Y]?/,u=[];for(var v in z){switch(f.type(z[v])){case"array":t=z[v];break;case"string":t=f.map(z[v].split(","),f.trim);break;default:t=[z[v]]}if(f.matrix[v]){if(f.cssAngle[v]){t=f.map(t,f.angle.toDegree)}else{if(!f.cssNumber[v]){t=f.map(t,A)}else{t=f.map(t,n)}}x=f.matrix[v].apply(this,t);if(s.test(v)){u.push(x)}else{C=C?C.x(x):x}}else{if(v=="origin"){this[v].apply(this,t)}}}C=C||f.matrix.identity();f.each(u,function(M,N){C=C.x(N)});var K=parseFloat(C.e(1,1).toFixed(6)),I=parseFloat(C.e(2,1).toFixed(6)),H=parseFloat(C.e(1,2).toFixed(6)),G=parseFloat(C.e(2,2).toFixed(6)),L=C.rows===3?parseFloat(C.e(1,3).toFixed(6)):0,J=C.rows===3?parseFloat(C.e(2,3).toFixed(6)):0;if(f.support.csstransforms&&a==="-moz-"){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+"px, "+J+"px)")}else{if(f.support.csstransforms){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+", "+J+")")}else{if(f.browser.msie){var w=", FilterType="nearest neighbor"";var D=this.$elem[0].style;var E="progid:DXImageTransform.Microsoft.Matrix(M11="+K+", M12="+H+", M21="+I+", M22="+G+", sizingMethod="auto expand""+w+")";var y=D.filter||f.css(this.$elem[0],"filter")||"";D.filter=h.test(y)?y.replace(h,E):y?y+" "+E:E;this.applyingMatrix=true;this.matrix=C;this.fixPosition(C,L,J);this.applyingMatrix=false;this.matrix=null}}}return true},origin:function(s,t){if(f.support.csstransforms){if(typeof t==="undefined"){this.$elem.css(k,s)}else{this.$elem.css(k,s+" "+t)}return true}switch(s){case"left":s="0";break;case"right":s="100%";break;case"center":case b:s="50%"}switch(t){case"top":t="0";break;case"bottom":t="100%";break;case"center":case b:t="50%"}this.setAttr("origin",[q.test(s)?s:o(this.$elem[0],s)+"px",q.test(t)?t:o(this.$elem[0],t)+"px"]);return true},createTransformFunc:function(t,u){if(t.substr(0,7)==="reflect"){var s=u?f.matrix[t]():f.matrix.identity();return"matrix("+s.e(1,1)+", "+s.e(2,1)+", "+s.e(1,2)+", "+s.e(2,2)+", 0, 0)"}if(t=="matrix"){if(a==="-moz-"){u[4]=u[4]?u[4]+"px":0;u[5]=u[5]?u[5]+"px":0}}return t+"("+(f.isArray(u)?u.join(", "):u)+")"},fixPosition:function(B,y,x,D,s){var w=new f.matrix.calc(B,this.safeOuterHeight(),this.safeOuterWidth()),C=this.getAttr("origin");var v=w.originOffset(new f.matrix.V2(q.test(C[0])?parseFloat(C[0])/100*w.outerWidth:parseFloat(C[0]),q.test(C[1])?parseFloat(C[1])/100*w.outerHeight:parseFloat(C[1])));var t=w.sides();var u=this.$elem.css("position");if(u=="static"){u="relative"}var A={top:0,left:0};var z={position:u,top:(v.top+x+t.top+A.top)+"px",left:(v.left+y+t.left+A.left)+"px",zoom:1};this.$elem.css(z)}};function o(s,u){var t=c.exec(f.trim(u));if(t[3]&&t[3]!=="px"){var w="paddingBottom",v=f.style(s,w);f.style(s,w,u);u=p(s,w);f.style(s,w,v);return u}return parseFloat(u)}function p(t,u){if(t[u]!=null&&(!t.style||t.style[u]==null)){return t[u]}var s=parseFloat(f.css(t,u));return s&&s>-10000?s:0}})(jQuery,this,this.document);(function(d,c,a,f){d.extend(d.transform.prototype,{safeOuterHeight:function(){return this.safeOuterLength("height")},safeOuterWidth:function(){return this.safeOuterLength("width")},safeOuterLength:function(l){var p="outer"+(l=="width"?"Width":"Height");if(!d.support.csstransforms&&d.browser.msie){l=l=="width"?"width":"height";if(this.applyingMatrix&&!this[p]&&this.matrix){var k=new d.matrix.calc(this.matrix,1,1),n=k.offset(),g=this.$elem[p]()/n[l];this[p]=g;return g}else{if(this.applyingMatrix&&this[p]){return this[p]}}var o={height:["top","bottom"],width:["left","right"]};var h=this.$elem[0],j=parseFloat(d.css(h,l,true)),q=this.boxSizingProperty,i=this.boxSizingValue;if(!this.boxSizingProperty){q=this.boxSizingProperty=e()||"box-sizing";i=this.boxSizingValue=this.$elem.css(q)||"content-box"}if(this[p]&&this[l]==j){return this[p]}else{this[l]=j}if(q&&(i=="padding-box"||i=="content-box")){j+=parseFloat(d.css(h,"padding-"+o[l][0],true))||0+parseFloat(d.css(h,"padding-"+o[l][1],true))||0}if(q&&i=="content-box"){j+=parseFloat(d.css(h,"border-"+o[l][0]+"-width",true))||0+parseFloat(d.css(h,"border-"+o[l][1]+"-width",true))||0}this[p]=j;return j}return this.$elem[p]()}});var b=null;function e(){if(b){return b}var h={boxSizing:"box-sizing",MozBoxSizing:"-moz-box-sizing",WebkitBoxSizing:"-webkit-box-sizing",OBoxSizing:"-o-box-sizing"},g=a.body;for(var i in h){if(typeof g.style[i]!="undefined"){b=h[i];return b}}return null}})(jQuery,this,this.document);(function(g,f,b,h){var d=/([\w\-]*?)\((.*?)\)/g,a="data-transform",e=/\s/,c=/,\s?/;g.extend(g.transform.prototype,{setAttrs:function(i){var j="",l;for(var k in i){l=i[k];if(g.isArray(l)){l=l.join(", ")}j+=" "+k+"("+l+")"}this.attr=g.trim(j);this.$elem.attr(a,this.attr)},setAttr:function(k,l){if(g.isArray(l)){l=l.join(", ")}var j=this.attr||this.$elem.attr(a);if(!j||j.indexOf(k)==-1){this.attr=g.trim(j+" "+k+"("+l+")");this.$elem.attr(a,this.attr)}else{var i=[],n;d.lastIndex=0;while(n=d.exec(j)){if(k==n[1]){i.push(k+"("+l+")")}else{i.push(n[0])}}this.attr=i.join(" ");this.$elem.attr(a,this.attr)}},getAttrs:function(){var j=this.attr||this.$elem.attr(a);if(!j){return{}}var i={},l,k;d.lastIndex=0;while((l=d.exec(j))!==null){if(l){k=l[2].split(c);i[l[1]]=k.length==1?k[0]:k}}return i},getAttr:function(j){var i=this.getAttrs();if(typeof i[j]!=="undefined"){return i[j]}if(j==="origin"&&g.support.csstransforms){return this.$elem.css(this.transformOriginProperty).split(e)}else{if(j==="origin"){return["50%","50%"]}}return g.cssDefault[j]||0}});if(typeof(g.cssAngle)=="undefined"){g.cssAngle={}}g.extend(g.cssAngle,{rotate:true,skew:true,skewX:true,skewY:true});if(typeof(g.cssDefault)=="undefined"){g.cssDefault={}}g.extend(g.cssDefault,{scale:[1,1],scaleX:1,scaleY:1,matrix:[1,0,0,1,0,0],origin:["50%","50%"],reflect:[1,0,0,1,0,0],reflectX:[1,0,0,1,0,0],reflectXY:[1,0,0,1,0,0],reflectY:[1,0,0,1,0,0]});if(typeof(g.cssMultipleValues)=="undefined"){g.cssMultipleValues={}}g.extend(g.cssMultipleValues,{matrix:6,origin:{length:2,duplicate:true},reflect:6,reflectX:6,reflectXY:6,reflectY:6,scale:{length:2,duplicate:true},skew:2,translate:2});g.extend(g.cssNumber,{matrix:true,reflect:true,reflectX:true,reflectXY:true,reflectY:true,scale:true,scaleX:true,scaleY:true});g.each(g.transform.funcs,function(j,k){g.cssHooks[k]={set:function(n,o){var l=n.transform||new g.transform(n),i={};i[k]=o;l.exec(i,{preserve:true})},get:function(n,l){var i=n.transform||new g.transform(n);return i.getAttr(k)}}});g.each(["reflect","reflectX","reflectXY","reflectY"],function(j,k){g.cssHooks[k].get=function(n,l){var i=n.transform||new g.transform(n);return i.getAttr("matrix")||g.cssDefault[k]}})})(jQuery,this,this.document);(function(f,g,h,c){var d=/^([+\-]=)?([\d+.\-]+)(.*)$/;var a=f.fn.animate;f.fn.animate=function(p,l,o,n){var k=f.speed(l,o,n),j=f.cssMultipleValues;k.complete=k.old;if(!f.isEmptyObject(p)){if(typeof k.original==="undefined"){k.original={}}f.each(p,function(s,u){if(j[s]||f.cssAngle[s]||(!f.cssNumber[s]&&f.inArray(s,f.transform.funcs)!==-1)){var t=null;if(jQuery.isArray(p[s])){var r=1,q=u.length;if(j[s]){r=(typeof j[s].length==="undefined"?j[s]:j[s].length)}if(q>r||(q<r&&q==2)||(q==2&&r==2&&isNaN(parseFloat(u[q-1])))){t=u[q-1];u.splice(q-1,1)}}k.original[s]=u.toString();p[s]=parseFloat(u)}})}return a.apply(this,[arguments[0],k])};var b="paddingBottom";function i(k,l){if(k[l]!=null&&(!k.style||k.style[l]==null)){}var j=parseFloat(f.css(k,l));return j&&j>-10000?j:0}function e(u,v,w){var y=f.cssMultipleValues[this.prop],p=f.cssAngle[this.prop];if(y||(!f.cssNumber[this.prop]&&f.inArray(this.prop,f.transform.funcs)!==-1)){this.values=[];if(!y){y=1}var x=this.options.original[this.prop],t=f(this.elem).css(this.prop),j=f.cssDefault[this.prop]||0;if(!f.isArray(t)){t=[t]}if(!f.isArray(x)){if(f.type(x)==="string"){x=x.split(",")}else{x=[x]}}var l=y.length||y,s=0;while(x.length<l){x.push(y.duplicate?x[0]:j[s]||0);s++}var k,r,q,o=this,n=o.elem.transform;orig=f.style(o.elem,b);f.each(x,function(z,A){if(t[z]){k=t[z]}else{if(j[z]&&!y.duplicate){k=j[z]}else{if(y.duplicate){k=t[0]}else{k=0}}}if(p){k=f.angle.toDegree(k)}else{if(!f.cssNumber[o.prop]){r=d.exec(f.trim(k));if(r[3]&&r[3]!=="px"){if(r[3]==="%"){k=parseFloat(r[2])/100*n["safeOuter"+(z?"Height":"Width")]()}else{f.style(o.elem,b,k);k=i(o.elem,b);f.style(o.elem,b,orig)}}}}k=parseFloat(k);r=d.exec(f.trim(A));if(r){q=parseFloat(r[2]);w=r[3]||"px";if(p){q=f.angle.toDegree(q+w);w="deg"}else{if(!f.cssNumber[o.prop]&&w==="%"){k=(k/n["safeOuter"+(z?"Height":"Width")]())*100}else{if(!f.cssNumber[o.prop]&&w!=="px"){f.style(o.elem,b,(q||1)+w);k=((q||1)/i(o.elem,b))*k;f.style(o.elem,b,orig)}}}if(r[1]){q=((r[1]==="-="?-1:1)*q)+k}}else{q=A;w=""}o.values.push({start:k,end:q,unit:w})})}}if(f.fx.prototype.custom){(function(k){var j=k.custom;k.custom=function(o,n,l){e.apply(this,arguments);return j.apply(this,arguments)}}(f.fx.prototype))}if(f.Animation&&f.Animation.tweener){f.Animation.tweener(f.transform.funcs.join(" "),function(l,k){var j=this.createTween(l,k);e.apply(j,[j.start,j.end,j.unit]);return j})}f.fx.multipleValueStep={_default:function(j){f.each(j.values,function(k,l){j.values[k].now=l.start+((l.end-l.start)*j.pos)})}};f.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(j,k){f.fx.multipleValueStep[k]=function(n){var p=n.decomposed,l=f.matrix;m=l.identity();p.now={};f.each(p.start,function(q){p.now[q]=parseFloat(p.start[q])+((parseFloat(p.end[q])-parseFloat(p.start[q]))*n.pos);if(((q==="scaleX"||q==="scaleY")&&p.now[q]===1)||(q!=="scaleX"&&q!=="scaleY"&&p.now[q]===0)){return true}m=m.x(l[q](p.now[q]))});var o;f.each(n.values,function(q){switch(q){case 0:o=parseFloat(m.e(1,1).toFixed(6));break;case 1:o=parseFloat(m.e(2,1).toFixed(6));break;case 2:o=parseFloat(m.e(1,2).toFixed(6));break;case 3:o=parseFloat(m.e(2,2).toFixed(6));break;case 4:o=parseFloat(m.e(1,3).toFixed(6));break;case 5:o=parseFloat(m.e(2,3).toFixed(6));break}n.values[q].now=o})}});f.each(f.transform.funcs,function(k,l){function j(p){var o=p.elem.transform||new f.transform(p.elem),n={};if(f.cssMultipleValues[l]||(!f.cssNumber[l]&&f.inArray(l,f.transform.funcs)!==-1)){(f.fx.multipleValueStep[p.prop]||f.fx.multipleValueStep._default)(p);n[p.prop]=[];f.each(p.values,function(q,r){n[p.prop].push(r.now+(f.cssNumber[p.prop]?"":r.unit))})}else{n[p.prop]=p.now+(f.cssNumber[p.prop]?"":p.unit)}o.exec(n,{preserve:true})}if(f.Tween&&f.Tween.propHooks){f.Tween.propHooks[l]={set:j}}if(f.fx.step){f.fx.step[l]=j}});f.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(k,l){function j(r){var q=r.elem.transform||new f.transform(r.elem),p={};if(!r.initialized){r.initialized=true;if(l!=="matrix"){var o=f.matrix[l]().elements;var s;f.each(r.values,function(t){switch(t){case 0:s=o[0];break;case 1:s=o[2];break;case 2:s=o[1];break;case 3:s=o[3];break;default:s=0}r.values[t].end=s})}r.decomposed={};var n=r.values;r.decomposed.start=f.matrix.matrix(n[0].start,n[1].start,n[2].start,n[3].start,n[4].start,n[5].start).decompose();r.decomposed.end=f.matrix.matrix(n[0].end,n[1].end,n[2].end,n[3].end,n[4].end,n[5].end).decompose()}(f.fx.multipleValueStep[r.prop]||f.fx.multipleValueStep._default)(r);p.matrix=[];f.each(r.values,function(t,u){p.matrix.push(u.now)});q.exec(p,{preserve:true})}if(f.Tween&&f.Tween.propHooks){f.Tween.propHooks[l]={set:j}}if(f.fx.step){f.fx.step[l]=j}})})(jQuery,this,this.document);(function(g,h,j,c){var d=180/Math.PI;var k=200/Math.PI;var f=Math.PI/180;var e=2/1.8;var i=0.9;var a=Math.PI/200;var b=/^([+\-]=)?([\d+.\-]+)(.*)$/;g.extend({angle:{runit:/(deg|g?rad)/,radianToDegree:function(l){return l*d},radianToGrad:function(l){return l*k},degreeToRadian:function(l){return l*f},degreeToGrad:function(l){return l*e},gradToDegree:function(l){return l*i},gradToRadian:function(l){return l*a},toDegree:function(n){var l=b.exec(n);if(l){n=parseFloat(l[2]);switch(l[3]||"deg"){case"grad":n=g.angle.gradToDegree(n);break;case"rad":n=g.angle.radianToDegree(n);break}return n}return 0}}})})(jQuery,this,this.document);(function(f,e,b,g){if(typeof(f.matrix)=="undefined"){f.extend({matrix:{}})}var d=f.matrix;f.extend(d,{V2:function(h,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,2)}else{this.elements=[h,i]}this.length=2},V3:function(h,j,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,3)}else{this.elements=[h,j,i]}this.length=3},M2x2:function(i,h,k,j){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,4)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,4)}this.rows=2;this.cols=2},M3x3:function(n,l,k,j,i,h,q,p,o){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,9)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,9)}this.rows=3;this.cols=3}});var c={e:function(k,h){var i=this.rows,j=this.cols;if(k>i||h>i||k<1||h<1){return 0}return this.elements[(k-1)*j+h-1]},decompose:function(){var v=this.e(1,1),t=this.e(2,1),q=this.e(1,2),p=this.e(2,2),o=this.e(1,3),n=this.e(2,3);if(Math.abs(v*p-t*q)<0.01){return{rotate:0+"deg",skewX:0+"deg",scaleX:1,scaleY:1,translateX:0+"px",translateY:0+"px"}}var l=o,j=n;var u=Math.sqrt(v*v+t*t);v=v/u;t=t/u;var i=v*q+t*p;q-=v*i;p-=t*i;var s=Math.sqrt(q*q+p*p);q=q/s;p=p/s;i=i/s;if((v*p-t*q)<0){v=-v;t=-t;u=-u}var w=f.angle.radianToDegree;var h=w(Math.atan2(t,v));i=w(Math.atan(i));return{rotate:h+"deg",skewX:i+"deg",scaleX:u,scaleY:s,translateX:l+"px",translateY:j+"px"}}};f.extend(d.M2x2.prototype,c,{toM3x3:function(){var h=this.elements;return new d.M3x3(h[0],h[1],0,h[2],h[3],0,0,0,1)},x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows==3){return this.toM3x3().x(j)}var i=this.elements,h=j.elements;if(k&&h.length==2){return new d.V2(i[0]*h[0]+i[1]*h[1],i[2]*h[0]+i[3]*h[1])}else{if(h.length==i.length){return new d.M2x2(i[0]*h[0]+i[1]*h[2],i[0]*h[1]+i[1]*h[3],i[2]*h[0]+i[3]*h[2],i[2]*h[1]+i[3]*h[3])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M2x2(i*h[3],i*-h[1],i*-h[2],i*h[0])},determinant:function(){var h=this.elements;return h[0]*h[3]-h[1]*h[2]}});f.extend(d.M3x3.prototype,c,{x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows<3){j=j.toM3x3()}var i=this.elements,h=j.elements;if(k&&h.length==3){return new d.V3(i[0]*h[0]+i[1]*h[1]+i[2]*h[2],i[3]*h[0]+i[4]*h[1]+i[5]*h[2],i[6]*h[0]+i[7]*h[1]+i[8]*h[2])}else{if(h.length==i.length){return new d.M3x3(i[0]*h[0]+i[1]*h[3]+i[2]*h[6],i[0]*h[1]+i[1]*h[4]+i[2]*h[7],i[0]*h[2]+i[1]*h[5]+i[2]*h[8],i[3]*h[0]+i[4]*h[3]+i[5]*h[6],i[3]*h[1]+i[4]*h[4]+i[5]*h[7],i[3]*h[2]+i[4]*h[5]+i[5]*h[8],i[6]*h[0]+i[7]*h[3]+i[8]*h[6],i[6]*h[1]+i[7]*h[4]+i[8]*h[7],i[6]*h[2]+i[7]*h[5]+i[8]*h[8])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M3x3(i*(h[8]*h[4]-h[7]*h[5]),i*(-(h[8]*h[1]-h[7]*h[2])),i*(h[5]*h[1]-h[4]*h[2]),i*(-(h[8]*h[3]-h[6]*h[5])),i*(h[8]*h[0]-h[6]*h[2]),i*(-(h[5]*h[0]-h[3]*h[2])),i*(h[7]*h[3]-h[6]*h[4]),i*(-(h[7]*h[0]-h[6]*h[1])),i*(h[4]*h[0]-h[3]*h[1]))},determinant:function(){var h=this.elements;return h[0]*(h[8]*h[4]-h[7]*h[5])-h[3]*(h[8]*h[1]-h[7]*h[2])+h[6]*(h[5]*h[1]-h[4]*h[2])}});var a={e:function(h){return this.elements[h-1]}};f.extend(d.V2.prototype,a);f.extend(d.V3.prototype,a)})(jQuery,this,this.document);(function(c,b,a,d){if(typeof(c.matrix)=="undefined"){c.extend({matrix:{}})}c.extend(c.matrix,{calc:function(e,f,g){this.matrix=e;this.outerHeight=f;this.outerWidth=g}});c.matrix.calc.prototype={coord:function(e,i,h){h=typeof(h)!=="undefined"?h:0;var g=this.matrix,f;switch(g.rows){case 2:f=g.x(new c.matrix.V2(e,i));break;case 3:f=g.x(new c.matrix.V3(e,i,h));break}return f},corners:function(e,h){var f=!(typeof(e)!=="undefined"||typeof(h)!=="undefined"),g;if(!this.c||!f){h=h||this.outerHeight;e=e||this.outerWidth;g={tl:this.coord(0,0),bl:this.coord(0,h),tr:this.coord(e,0),br:this.coord(e,h)}}else{g=this.c}if(f){this.c=g}return g},sides:function(e){var f=e||this.corners();return{top:Math.min(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),bottom:Math.max(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),left:Math.min(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1)),right:Math.max(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1))}},offset:function(e){var f=this.sides(e);return{height:Math.abs(f.bottom-f.top),width:Math.abs(f.right-f.left)}},area:function(e){var h=e||this.corners();var g={x:h.tr.e(1)-h.tl.e(1)+h.br.e(1)-h.bl.e(1),y:h.tr.e(2)-h.tl.e(2)+h.br.e(2)-h.bl.e(2)},f={x:h.bl.e(1)-h.tl.e(1)+h.br.e(1)-h.tr.e(1),y:h.bl.e(2)-h.tl.e(2)+h.br.e(2)-h.tr.e(2)};return 0.25*Math.abs(g.e(1)*f.e(2)-g.e(2)*f.e(1))},nonAffinity:function(){var f=this.sides(),g=f.top-f.bottom,e=f.left-f.right;return parseFloat(parseFloat(Math.abs((Math.pow(g,2)+Math.pow(e,2))/(f.top*f.bottom+f.left*f.right))).toFixed(8))},originOffset:function(h,g){h=h?h:new c.matrix.V2(this.outerWidth*0.5,this.outerHeight*0.5);g=g?g:new c.matrix.V2(0,0);var e=this.coord(h.e(1),h.e(2));var f=this.coord(g.e(1),g.e(2));return{top:(f.e(2)-g.e(2))-(e.e(2)-h.e(2)),left:(f.e(1)-g.e(1))-(e.e(1)-h.e(1))}}}})(jQuery,this,this.document);(function(e,d,a,f){if(typeof(e.matrix)=="undefined"){e.extend({matrix:{}})}var c=e.matrix,g=c.M2x2,b=c.M3x3;e.extend(c,{identity:function(k){k=k||2;var l=k*k,n=new Array(l),j=k+1;for(var h=0;h<l;h++){n[h]=(h%j)===0?1:0}return new c["M"+k+"x"+k](n)},matrix:function(){var h=Array.prototype.slice.call(arguments);switch(arguments.length){case 4:return new g(h[0],h[2],h[1],h[3]);case 6:return new b(h[0],h[2],h[4],h[1],h[3],h[5],0,0,1)}},reflect:function(){return new g(-1,0,0,-1)},reflectX:function(){return new g(1,0,0,-1)},reflectXY:function(){return new g(0,1,1,0)},reflectY:function(){return new g(-1,0,0,1)},rotate:function(l){var i=e.angle.degreeToRadian(l),k=Math.cos(i),n=Math.sin(i);var j=k,h=n,p=-n,o=k;return new g(j,p,h,o)},scale:function(i,h){i=i||i===0?i:1;h=h||h===0?h:i;return new g(i,0,0,h)},scaleX:function(h){return c.scale(h,1)},scaleY:function(h){return c.scale(1,h)},skew:function(k,i){k=k||0;i=i||0;var l=e.angle.degreeToRadian(k),j=e.angle.degreeToRadian(i),h=Math.tan(l),n=Math.tan(j);return new g(1,h,n,1)},skewX:function(h){return c.skew(h)},skewY:function(h){return c.skew(0,h)},translate:function(i,h){i=i||0;h=h||0;return new b(1,0,i,0,1,h,0,0,1)},translateX:function(h){return c.translate(h)},translateY:function(h){return c.translate(0,h)}})})(jQuery,this,this.document);
 function ws_rotate(c,a,b){var f=jQuery;var d=f("ul",b);var g={position:"absolute",left:0,top:0,width:"100%"};var e;this.go=function(h,i){if(e){e.stop(true,true)}e=f(a.get(h)).clone().css(g).hide().appendTo(b);if(!c.noCross){var j=f(a.get(i)).clone().css(g).appendTo(b);d.hide();j.animate({rotate:c.rotateOut||180,scale:c.scaleOut||10,opacity:"hide"},{duration:c.duration,easing:"easeInOutExpo",complete:function(){f(this).remove()}})}e.css({scale:c.scaleIn||10,rotate:c.rotateIn||(-180),zIndex:10});e.animate({opacity:"show",rotate:0,scale:1},{duration:c.duration,easing:"easeInOutExpo",queue:false,complete:function(){d.css({left:-h+"00%"}).show();f(this).remove();e=0}});return h}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"rotate",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidersubwaybasic'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section16 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidersubwaybasic') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section16 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/subway-basic/engine1/style.css" />-->
 	<style>
 	/*
@@ -5500,7 +5347,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
  *	template Subway
  */
 @import url("http://fonts.googleapis.com/css?family=Cuprum&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -5509,8 +5356,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -5522,7 +5369,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -5531,7 +5378,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -5539,40 +5386,40 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:13px;
 	height:13px;
 	background: url(./bullet.png) left top;
@@ -5582,10 +5429,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	margin-left:5px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 } 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	bottom:0;
@@ -5599,30 +5446,30 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	opacity:0.7;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=70);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-image: url(./arrow-next.png);
 	right:0;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-image: url(./arrow-prev.png);
 	left:0;
 }
-#wowslider-container'.$val.' a.ws_next:hover,#wowslider-container'.$val.' a.ws_prev:hover{
+#wowslider-container' . $val . ' a.ws_next:hover,#wowslider-container' . $val . ' a.ws_prev:hover{
 	background-color:#272727;
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0;
 	left:50%;
 	padding: 5px;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
 /* separate */
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	display:block; 
 	bottom:20px;
@@ -5632,7 +5479,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	line-height: 35px;
 	font-weight: bold;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{ 
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{ 
 	display:inline-block; 
 	margin:10px 40px 0 40px;
 	padding:10px;
@@ -5644,7 +5491,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	border-radius:0;
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws-title div{ 
+#wowslider-container' . $val . ' .ws-title div{ 
 	display:block;
 	margin-top:0px; 
 	font-size: 20px;
@@ -5652,7 +5499,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	font-weight: normal;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 24s infinite;
 	-moz-animation: wsBasic 24s infinite;
 	-webkit-animation: wsBasic 24s infinite;
@@ -5661,7 +5508,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 8.33%{left:-0%} 16.67%{left:-100%} 25%{left:-100%} 33.33%{left:-200%} 41.67%{left:-200%} 50%{left:-300%} 58.33%{left:-300%} 66.67%{left:-400%} 75%{left:-400%} 83.33%{left:-500%} 91.67%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.33%{left:-0%} 16.67%{left:-100%} 25%{left:-100%} 33.33%{left:-200%} 41.67%{left:-200%} 50%{left:-300%} 58.33%{left:-300%} 66.67%{left:-400%} 75%{left:-400%} 83.33%{left:-500%} 91.67%{left:-500%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:16px;
@@ -5671,23 +5518,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
     border: 4px solid #737373;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#737373;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:18px;
 	overflow:visible;
@@ -5695,7 +5542,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	cursor:pointer;
     border: 4px solid #737373;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-9px;
@@ -5710,52 +5557,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section16 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>The sun shines through the ears</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/subway-basic/data1/images/ears.jpg" alt="Ears" title="Ears" id="wows1_0"/>The sun shines through the ears</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>The sun shines through the ears</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/subway-basic/data1/images/ears.jpg" alt="Ears" title="Ears" id="wows1_0"/>The sun shines through the ears</li>
 <li><img src="http://www.wowslider.com/images/demo/subway-basic/data1/images/cloud.jpg" alt="Cloud" title="Cloud" id="wows1_1"/>Golden clouds at sunset</li>
 <li><img src="http://www.wowslider.com/images/demo/subway-basic/data1/images/mist.jpg" alt="Mist" title="Mist" id="wows1_2"/>Misty sunset</li>
 <li><img src="http://www.wowslider.com/images/demo/subway-basic/data1/images/seed.jpg" alt="Seed" title="Seed" id="wows1_3"/>Seed in the sun</li>
 <li><img src="http://www.wowslider.com/images/demo/subway-basic/data1/images/sun.jpg" alt="Sun" title="Sun" id="wows1_4"/>A cloud covers the sun</li>
 <li><img src="http://www.wowslider.com/images/demo/subway-basic/data1/images/tree.jpg" alt="Amazing landscape" title="Amazing landscape" id="wows1_5"/>Tree at sunset</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Ears"><img src="http://www.wowslider.com/images/demo/subway-basic/data1/tooltips/ears.jpg" alt="Ears"/>1</a>
 <a href="#" title="Cloud"><img src="http://www.wowslider.com/images/demo/subway-basic/data1/tooltips/cloud.jpg" alt="Cloud"/>2</a>
@@ -5764,8 +5608,8 @@ $i++;
 <a href="#" title="Sun"><img src="http://www.wowslider.com/images/demo/subway-basic/data1/tooltips/sun.jpg" alt="Sun"/>5</a>
 <a href="#" title="Amazing landscape"><img src="http://www.wowslider.com/images/demo/subway-basic/data1/tooltips/tree.jpg" alt="Amazing landscape"/>6</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">galerie photos pour votre site</a>
@@ -5775,23 +5619,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/subway-basic/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_basic(c,a,b){this.go=function(d){b.find("ul").stop(true).animate({left:(d?-d+"00%":(/Safari/.test(navigator.userAgent)?"0%":0))},c.duration,"easeInOutExpo");return d}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"basic",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidersilenceblur'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section17 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidersilenceblur') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '		<!-- Start WOWSlider.com HEAD section17 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/silence-blur/engine1/style.css" />-->
 	<style>
 	/*
@@ -5799,7 +5639,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
  *	template Silence
  */
 @import url(http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext,cyrillic);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -5808,8 +5648,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -5821,7 +5661,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -5830,7 +5670,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -5838,47 +5678,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.'{
+#wowslider-container' . $val . '{
     box-shadow:0 0 10px #000000;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	font:14px/30px "Open Sans",Arial,Helvetica,sans-serif; 
 	font-weight: bold;
 	color:#000000;
@@ -5893,10 +5733,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 	text-shadow: none;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -5906,29 +5746,29 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	width: 77px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:10px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	top:0;
     right: 0; 
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:45px;
 	left: 0px;
@@ -5949,13 +5789,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);
 	box-shadow: 1px 0 2px #000000;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 14px;
 	font-weight: normal;
 	text-transform:none;
 }
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 24.5s infinite;
 	-moz-animation: wsBasic 24.5s infinite;
 	-webkit-animation: wsBasic 24.5s infinite;
@@ -5964,7 +5804,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 8.16%{left:-0%} 14.29%{left:-100%} 22.45%{left:-100%} 28.57%{left:-200%} 36.73%{left:-200%} 42.86%{left:-300%} 51.02%{left:-300%} 57.14%{left:-400%} 65.31%{left:-400%} 71.43%{left:-500%} 79.59%{left:-500%} 85.71%{left:-600%} 93.88%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.16%{left:-0%} 14.29%{left:-100%} 22.45%{left:-100%} 28.57%{left:-200%} 36.73%{left:-200%} 42.86%{left:-300%} 51.02%{left:-300%} 57.14%{left:-400%} 65.31%{left:-400%} 71.43%{left:-500%} 79.59%{left:-500%} 85.71%{left:-600%} 93.88%{left:-600%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:25px;
@@ -5976,23 +5816,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
     border: 5px solid #ffffff;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#ffffff;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:35px;
 	overflow:visible;
@@ -6005,7 +5845,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	-webkit-border-radius:3px;
     border: 5px solid #ffffff;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-11px;
@@ -6021,53 +5861,50 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 
 	
 		<!-- Start WOWSlider.com BODY section17 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.àalt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/bug.jpg" alt="Bug : HTML slideshow" title="Bug" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . \àALT . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/bug.jpg" alt="Bug : HTML slideshow" title="Bug" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/bumblebee.jpg" alt="Bumblebee on the flower : html slideshow for website" title="Bumblebee on the flower" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/caterpillar.jpg" alt="Bright caterpillar : html slideshow maker" title="Bright caterpillar" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/fly.jpg" alt="Two flies : jquery html slideshow" title="Two flies" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/bug1.jpg" alt="Bug und dewdrops : photo html slideshow" title="Bug und dewdrops" id="wows1_4"/></li>
 <li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/pondskater.jpg" alt="Pond skater : html slideshow with links" title="Pond skater" id="wows1_5"/></li>
 <li><img src="http://www.wowslider.com/images/demo/silence-blur/data1/images/spider.jpg" alt="A spider makes a web : html slideshow with thumbnails" title="A spider makes a web" id="wows1_6"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Bug"><img src="http://www.wowslider.com/images/demo/silence-blur/data1/tooltips/bug.jpg" alt="Bug"/>1</a>
 <a href="#" title="Bumblebee on the flower"><img src="http://www.wowslider.com/images/demo/silence-blur/data1/tooltips/bumblebee.jpg" alt="Bumblebee on the flower"/>2</a>
@@ -6077,8 +5914,8 @@ $i++;
 <a href="#" title="Pond skater"><img src="http://www.wowslider.com/images/demo/silence-blur/data1/tooltips/pondskater.jpg" alt="Pond skater"/>6</a>
 <a href="#" title="A spider makes a web"><img src="http://www.wowslider.com/images/demo/silence-blur/data1/tooltips/spider.jpg" alt="A spider makes a web"/>7</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">HTML photo diaporama</a>
@@ -6087,24 +5924,20 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/wowslider.js"></script>
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/silence-blur/engine1/script.js"></script>-->
 	<script type="text/javascript">
-function ws_blur(p,n,c){var h=jQuery;var b=!p.noCanvas&&!window.opera&&!!document.createElement("canvas").getContext;if(b){try{document.createElement("canvas").getContext("2d").getImageData(0,0,1,1)}catch(m){b=0}}var d;function k(q,e,r){q.css({opacity:0,visibility:"visible"});q.animate({opacity:1},e,"linear",r)}function i(q,e,r){q.animate({opacity:0},e,"linear",r)}var l;this.go=function(e,q){if(l){return -1}l=1;var u=h(n.get(q)),s=h(n.get(e));var t;if(b){if(!d){d="<canvas width="'+c.width()+'" height="'+c.height()+'"/>";d=h(d+d).css({"z-index":8,position:"absolute",width:"100%",height:"100%",left:0,top:0,visibility:"hidden"}).appendTo(c)}t=g(u,30,d.get(0))}if(b&&t){var r=g(s,30,d.get(1));k(t,p.duration/3,function(){c.find("ul").css({visibility:"hidden"});i(t,p.duration/6);k(r,p.duration/6,function(){t.css({visibility:"hidden"});c.find("ul").css({left:-e+"00%"}).css({visibility:"visible"});i(r,p.duration/2,function(){l=0})})})}else{b=0;t=g(u,8);t.fadeIn(p.duration/3,"linear",function(){c.find("ul").css({left:-e+"00%"});t.fadeOut(p.duration/3,"linear",function(){t.remove();l=0})})}return e};function g(v,u,q){var A=(parseInt(v.parent().css("z-index"))||0)+1;if(b){var D=q.getContext("2d");D.drawImage(v.get(0),0,0);if(!j(D,0,0,q.width,q.height,u)){return 0}return h(q)}var E=h("<div></div>").css({position:"absolute","z-index":A,left:0,top:0,width:"100%",height:"100%",display:"none"}).appendTo(c);var C=(Math.sqrt(5)+1)/2;var s=1-C/2;for(var t=0;s*t<u;t++){var w=Math.PI*C*t;var e=(s*t+1);var B=e*Math.cos(w);var z=e*Math.sin(w);h(document.createElement("img")).attr("src",v.attr("src")).css({opacity:1/(t/1.8+1),position:"absolute","z-index":A,left:Math.round(B)+"px",top:Math.round(z)+"px",width:"100%",height:"100%"}).appendTo(E)}return E}var o=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,482,454,428,405,383,364,345,328,312,298,284,271,259,496,475,456,437,420,404,388,374,360,347,335,323,312,302,292,282,273,265,512,497,482,468,454,441,428,417,405,394,383,373,364,354,345,337,328,320,312,305,298,291,284,278,271,265,259,507,496,485,475,465,456,446,437,428,420,412,404,396,388,381,374,367,360,354,347,341,335,329,323,318,312,307,302,297,292,287,282,278,273,269,265,261,512,505,497,489,482,475,468,461,454,447,441,435,428,422,417,411,405,399,394,389,383,378,373,368,364,359,354,350,345,341,337,332,328,324,320,316,312,309,305,301,298,294,291,287,284,281,278,274,271,268,265,262,259,257,507,501,496,491,485,480,475,470,465,460,456,451,446,442,437,433,428,424,420,416,412,408,404,400,396,392,388,385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,289,287,285,282,280,278,275,273,271,269,267,265,263,261,259];var a=[9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24];function j(ah,P,N,q,r,Y){if(isNaN(Y)||Y<1){return}Y|=0;var ac;try{ac=ah.getImageData(P,N,q,r)}catch(ag){console.log("error:unable to access image data: "+ag);return false}var v=ac.data;var W,V,ae,ab,E,H,B,t,u,M,C,O,K,S,X,F,A,G,I,R;var af=Y+Y+1;var T=q<<2;var D=q-1;var aa=r-1;var z=Y+1;var Z=z*(z+1)/2;var Q=new f();var L=Q;for(ae=1;ae<af;ae++){L=L.next=new f();if(ae==z){var w=L}}L.next=Q;var ad=null;var U=null;B=H=0;var J=o[Y];var s=a[Y];for(V=0;V<r;V++){S=X=F=t=u=M=0;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}for(ae=1;ae<z;ae++){ab=H+((D<ae?D:ae)<<2);t+=(L.r=(A=v[ab]))*(R=z-ae);u+=(L.g=(G=v[ab+1]))*R;M+=(L.b=(I=v[ab+2]))*R;S+=A;X+=G;F+=I;L=L.next}ad=Q;U=w;for(W=0;W<q;W++){v[H]=(t*J)>>s;v[H+1]=(u*J)>>s;v[H+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(B+((ab=W+Y+1)<D?ab:D))<<2;S+=(ad.r=v[ab]);X+=(ad.g=v[ab+1]);F+=(ad.b=v[ab+2]);t+=S;u+=X;M+=F;ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=4}B+=q}for(W=0;W<q;W++){X=F=S=u=M=t=0;H=W<<2;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}E=q;for(ae=1;ae<=Y;ae++){H=(E+W)<<2;t+=(L.r=(A=v[H]))*(R=z-ae);u+=(L.g=(G=v[H+1]))*R;M+=(L.b=(I=v[H+2]))*R;S+=A;X+=G;F+=I;L=L.next;if(ae<aa){E+=q}}H=W;ad=Q;U=w;for(V=0;V<r;V++){ab=H<<2;v[ab]=(t*J)>>s;v[ab+1]=(u*J)>>s;v[ab+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(W+(((ab=V+z)<aa?ab:aa)*q))<<2;t+=(S+=(ad.r=v[ab]));u+=(X+=(ad.g=v[ab+1]));M+=(F+=(ad.b=v[ab+2]));ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=q}}ah.putImageData(ac,P,N);return true}function f(){this.r=0;this.g=0;this.b=0;this.a=0;this.next=null}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"",duration:15*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
+function ws_blur(p,n,c){var h=jQuery;var b=!p.noCanvas&&!window.opera&&!!document.createElement("canvas").getContext;if(b){try{document.createElement("canvas").getContext("2d").getImageData(0,0,1,1)}catch(m){b=0}}var d;function k(q,e,r){q.css({opacity:0,visibility:"visible"});q.animate({opacity:1},e,"linear",r)}function i(q,e,r){q.animate({opacity:0},e,"linear",r)}var l;this.go=function(e,q){if(l){return -1}l=1;var u=h(n.get(q)),s=h(n.get(e));var t;if(b){if(!d){d="<canvas width="' + \C . width() + '" height="' + \C . height() + '"/>";d=h(d+d).css({"z-index":8,position:"absolute",width:"100%",height:"100%",left:0,top:0,visibility:"hidden"}).appendTo(c)}t=g(u,30,d.get(0))}if(b&&t){var r=g(s,30,d.get(1));k(t,p.duration/3,function(){c.find("ul").css({visibility:"hidden"});i(t,p.duration/6);k(r,p.duration/6,function(){t.css({visibility:"hidden"});c.find("ul").css({left:-e+"00%"}).css({visibility:"visible"});i(r,p.duration/2,function(){l=0})})})}else{b=0;t=g(u,8);t.fadeIn(p.duration/3,"linear",function(){c.find("ul").css({left:-e+"00%"});t.fadeOut(p.duration/3,"linear",function(){t.remove();l=0})})}return e};function g(v,u,q){var A=(parseInt(v.parent().css("z-index"))||0)+1;if(b){var D=q.getContext("2d");D.drawImage(v.get(0),0,0);if(!j(D,0,0,q.width,q.height,u)){return 0}return h(q)}var E=h("<div></div>").css({position:"absolute","z-index":A,left:0,top:0,width:"100%",height:"100%",display:"none"}).appendTo(c);var C=(Math.sqrt(5)+1)/2;var s=1-C/2;for(var t=0;s*t<u;t++){var w=Math.PI*C*t;var e=(s*t+1);var B=e*Math.cos(w);var z=e*Math.sin(w);h(document.createElement("img")).attr("src",v.attr("src")).css({opacity:1/(t/1.8+1),position:"absolute","z-index":A,left:Math.round(B)+"px",top:Math.round(z)+"px",width:"100%",height:"100%"}).appendTo(E)}return E}var o=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,482,454,428,405,383,364,345,328,312,298,284,271,259,496,475,456,437,420,404,388,374,360,347,335,323,312,302,292,282,273,265,512,497,482,468,454,441,428,417,405,394,383,373,364,354,345,337,328,320,312,305,298,291,284,278,271,265,259,507,496,485,475,465,456,446,437,428,420,412,404,396,388,381,374,367,360,354,347,341,335,329,323,318,312,307,302,297,292,287,282,278,273,269,265,261,512,505,497,489,482,475,468,461,454,447,441,435,428,422,417,411,405,399,394,389,383,378,373,368,364,359,354,350,345,341,337,332,328,324,320,316,312,309,305,301,298,294,291,287,284,281,278,274,271,268,265,262,259,257,507,501,496,491,485,480,475,470,465,460,456,451,446,442,437,433,428,424,420,416,412,408,404,400,396,392,388,385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,289,287,285,282,280,278,275,273,271,269,267,265,263,261,259];var a=[9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24];function j(ah,P,N,q,r,Y){if(isNaN(Y)||Y<1){return}Y|=0;var ac;try{ac=ah.getImageData(P,N,q,r)}catch(ag){console.log("error:unable to access image data: "+ag);return false}var v=ac.data;var W,V,ae,ab,E,H,B,t,u,M,C,O,K,S,X,F,A,G,I,R;var af=Y+Y+1;var T=q<<2;var D=q-1;var aa=r-1;var z=Y+1;var Z=z*(z+1)/2;var Q=new f();var L=Q;for(ae=1;ae<af;ae++){L=L.next=new f();if(ae==z){var w=L}}L.next=Q;var ad=null;var U=null;B=H=0;var J=o[Y];var s=a[Y];for(V=0;V<r;V++){S=X=F=t=u=M=0;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}for(ae=1;ae<z;ae++){ab=H+((D<ae?D:ae)<<2);t+=(L.r=(A=v[ab]))*(R=z-ae);u+=(L.g=(G=v[ab+1]))*R;M+=(L.b=(I=v[ab+2]))*R;S+=A;X+=G;F+=I;L=L.next}ad=Q;U=w;for(W=0;W<q;W++){v[H]=(t*J)>>s;v[H+1]=(u*J)>>s;v[H+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(B+((ab=W+Y+1)<D?ab:D))<<2;S+=(ad.r=v[ab]);X+=(ad.g=v[ab+1]);F+=(ad.b=v[ab+2]);t+=S;u+=X;M+=F;ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=4}B+=q}for(W=0;W<q;W++){X=F=S=u=M=t=0;H=W<<2;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}E=q;for(ae=1;ae<=Y;ae++){H=(E+W)<<2;t+=(L.r=(A=v[H]))*(R=z-ae);u+=(L.g=(G=v[H+1]))*R;M+=(L.b=(I=v[H+2]))*R;S+=A;X+=G;F+=I;L=L.next;if(ae<aa){E+=q}}H=W;ad=Q;U=w;for(V=0;V<r;V++){ab=H<<2;v[ab]=(t*J)>>s;v[ab+1]=(u*J)>>s;v[ab+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(W+(((ab=V+z)<aa?ab:aa)*q))<<2;t+=(S+=(ad.r=v[ab]));u+=(X+=(ad.g=v[ab+1]));M+=(F+=(ad.b=v[ab+2]));ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=q}}ah.putImageData(ac,P,N);return true}function f(){this.r=0;this.g=0;this.b=0;this.a=0;this.next=null}};
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"blur",prev:"",next:"",duration:15*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderdominionblinds'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section18 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderdominionblinds') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section18 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/dominion-blinds/engine1/style.css" />-->
 	
 	<style>
@@ -6113,7 +5946,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
  *	template Dominion
  */
 @import url("http://fonts.googleapis.com/css?family=Ubuntu+Condensed&subset=latin,cyrillic,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -6122,8 +5955,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -6135,7 +5968,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -6144,7 +5977,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -6152,44 +5985,44 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:16px;
 	height:17px;
 	background: url(./bullet.png) left top;
@@ -6199,13 +6032,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	margin-left:7px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -6215,29 +6048,29 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	width: 35px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 6px;
     right: 6px;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 0px;
@@ -6251,7 +6084,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	font-weight: bold;
 	text-shadow: none;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	padding:7px;
 	background:#1b1916;
@@ -6261,47 +6094,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	color: #FFFFFF;
 	display:block;
 	margin-top:10px;
 	font-size: 18px;
 	font-weight: normal;
-}#wowslider-container'.$val.'  .ws_thumbs { 
+}#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     top: -118px;
     left: 0;
 	width:100%;
 	height:104px;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	height:100%;
 	letter-spacing:-4px;
 	width:1340px; 
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#f5b50c;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	text-indent:0;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -6312,7 +6145,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 29s infinite;
 	-moz-animation: wsBasic 29s infinite;
 	-webkit-animation: wsBasic 29s infinite;
@@ -6321,7 +6154,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 6.9%{left:-0%} 10%{left:-100%} 16.9%{left:-100%} 20%{left:-200%} 26.9%{left:-200%} 30%{left:-300%} 36.9%{left:-300%} 40%{left:-400%} 46.9%{left:-400%} 50%{left:-500%} 56.9%{left:-500%} 60%{left:-600%} 66.9%{left:-600%} 70%{left:-700%} 76.9%{left:-700%} 80%{left:-800%} 86.9%{left:-800%} 90%{left:-900%} 96.9%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.9%{left:-0%} 10%{left:-100%} 16.9%{left:-100%} 20%{left:-200%} 26.9%{left:-200%} 30%{left:-300%} 36.9%{left:-300%} 40%{left:-400%} 46.9%{left:-400%} 50%{left:-500%} 56.9%{left:-500%} 60%{left:-600%} 66.9%{left:-600%} 70%{left:-700%} 76.9%{left:-700%} 80%{left:-800%} 86.9%{left:-800%} 90%{left:-900%} 96.9%{left:-900%} }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
@@ -6332,15 +6165,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	width:101.87%;
 	height:105.27%;
 }
-* html #wowslider-container'.$val.' .ws_shadow{/*ie6*/
+* html #wowslider-container' . $val . ' .ws_shadow{/*ie6*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-*+html #wowslider-container'.$val.' .ws_shadow{/*ie7*/
+*+html #wowslider-container' . $val . ' .ws_shadow{/*ie7*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:20px;
@@ -6354,23 +6187,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	-moz-border-radius:5px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:120px;
 	background-color:#4e463f;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:20px;
 	overflow:visible;
@@ -6382,7 +6215,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	border-radius:5px;
 	-moz-border-radius:5px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-10px;
@@ -6398,24 +6231,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 
 
 	<!-- Start WOWSlider.com BODY section18 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Sky reflected in water</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/reflection.jpg" alt="Reflection : HTML gallery" title="Reflection" id="wows1_0"/>Sky reflected in water</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Sky reflected in water</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/reflection.jpg" alt="Reflection : HTML gallery" title="Reflection" id="wows1_0"/>Sky reflected in water</li>
 <li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/field.jpg" alt="Field : html photo gallery creator" title="Field" id="wows1_1"/>Sunset in the field</li>
 <li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/landscape.jpg" alt="Lundscape : html gallery scroller" title="Lundscape" id="wows1_2"/>Beautiful nature</li>
 <li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/river.jpg" alt="River : html scrolling gallery" title="River" id="wows1_3"/>River und summer greens</li>
@@ -6425,30 +6256,29 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/sky.jpg" alt="Sky : html image gallery" title="Sky" id="wows1_7"/>Branches und amazing pink sky</li>
 <li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/sun.jpg" alt="Sun : html gallery javascript" title="Sun" id="wows1_8"/>The sun sets over the horizon</li>
 <li><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/images/sunset.jpg" alt="Sunset : html gallery with captions" title="Sunset" id="wows1_9"/>Fantastic orange sky</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Reflection"><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/tooltips/reflection.jpg" alt="" /></a>
 <a href="#" title="Field"><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/tooltips/field.jpg" alt="" /></a>
@@ -6461,8 +6291,8 @@ $i++;
 <a href="#" title="Sun"><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/tooltips/sun.jpg" alt="" /></a>
 <a href="#" title="Sunset"><img src="http://www.wowslider.com/images/demo/dominion-blinds/data1/tooltips/sunset.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -6473,23 +6303,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/dominion-blinds/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_blinds(c,b,a){var g=jQuery;var e=c.parts||3;var f=g("<div>");f.css({position:"absolute",width:"100%",height:"100%",left:0,top:0,"z-index":8}).hide().appendTo(a);var h=[];for(var d=0;d<e;d++){h[d]=g("<div>").css({position:"absolute",height:"100%",width:Math.ceil(100/e)+1+"%",border:"none",margin:0,overflow:"hidden",top:0,left:Math.round(100*d/e)+"%"}).appendTo(f)}this.go=function(m,o,j){var l=o>m?1:0;if(j){if(j<=-1){m=(o+1)%b.length;l=0}else{if(j>=1){m=(o-1+b.length)%b.length;l=1}else{return -1}}}f.find("img").stop(true,true);f.show();for(var n=0;n<h.length;n++){var k=h[n];g(b.get(m)).clone().css({position:"absolute",top:0,left:(!l?(-f.width()):(f.width()-k.position().left))+"px",width:"auto",height:"100%"}).appendTo(k).animate({left:-k.position().left+"px"},(c.duration/(h.length+1))*(l?(h.length-n+1):(n+2)),((!l&&n==h.length-1||l&&!n)?function(){g("ul",a).css({left:-m+"00%"});f.hide().find("img").remove()}:null))}return m}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next:"",duration:9*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"blinds",prev:"",next:"",duration:9*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidercalmkenburns'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section19 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidercalmkenburns') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section19 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/calm-kenburns/engine1/style.css" />-->
 	
 	<style>
@@ -6498,7 +6324,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
  *	template Calm
  */
 @import url("http://fonts.googleapis.com/css?family=Playfair+Display&subset=latin,cyrillic,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	max-width:830px;
@@ -6507,8 +6333,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	border:14px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:830px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:830px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -6520,7 +6346,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -6529,7 +6355,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -6537,44 +6363,44 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:16px;
 	height:17px;
 	background: url(./bullet.png) left top;
@@ -6584,13 +6410,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	margin-left:7px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -6600,29 +6426,29 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	width: 53px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:5px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:5px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 10px;
     right: 6px;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 0px;
@@ -6645,45 +6471,45 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	-moz-box-shadow: 1px 1px 4px #333333;
     -webkit-box-shadow: 1px 1px 4px #333333; 
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     margin-top: 6px;
 	font-size: 18px;
 	font-weight: normal;
 }
 
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     left: -160px;
     top: 0;
 	width:141px;
 	height:100%;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	width:100%;
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#565d65;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	text-indent:0;
     -moz-box-shadow: 1px 1px 4px #333333;
 	box-shadow: 1px 1px 4px #333333;
@@ -6692,7 +6518,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 23.1s infinite;
 	-moz-animation: wsBasic 23.1s infinite;
 	-webkit-animation: wsBasic 23.1s infinite;
@@ -6701,12 +6527,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 8.66%{left:-0%} 14.29%{left:-100%} 22.94%{left:-100%} 28.57%{left:-200%} 37.23%{left:-200%} 42.86%{left:-300%} 51.52%{left:-300%} 57.14%{left:-400%} 65.8%{left:-400%} 71.43%{left:-500%} 80.09%{left:-500%} 85.71%{left:-600%} 94.37%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.66%{left:-0%} 14.29%{left:-100%} 22.94%{left:-100%} 28.57%{left:-200%} 37.23%{left:-200%} 42.86%{left:-300%} 51.52%{left:-300%} 57.14%{left:-400%} 65.8%{left:-400%} 71.43%{left:-500%} 80.09%{left:-500%} 85.71%{left:-600%} 94.37%{left:-600%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	box-shadow: 1px 1px 4px #333333;
 	-moz-box-shadow: 1px 1px 4px #333333;
     -webkit-box-shadow: 1px 1px 4px #333333; 
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:20px;
@@ -6720,23 +6546,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	-moz-border-radius:5px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:120px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:20px;
 	overflow:visible;
@@ -6748,7 +6574,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	border-radius:5px;
 	-moz-border-radius:5px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-10px;
@@ -6763,54 +6589,51 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section19 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/camomile.jpg" alt="Camomile : HTML slider" title="Camomile" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/camomile.jpg" alt="Camomile : HTML slider" title="Camomile" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/drops.jpg" alt="Drops : html image slider" title="Drops" id="wows1_1"/>Raindrops on the leaf</li>
 <li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/flower.jpg" alt="Purple flower : html slider jquery" title="Purple flower" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/green.jpg" alt="Forest green : responsive html slider" title="Forest green" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/leaf.jpg" alt="Leaf : html javascript image slider" title="Leaf" id="wows1_4"/>Autumn leaf on the water</li>
 <li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/physalis.jpg" alt="Physalis : html website slider" title="Physalis" id="wows1_5"/>Bright flowers</li>
 <li><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/images/thistle.jpg" alt="Thistle : html thumbnail slider" title="Thistle" id="wows1_6"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-								$link = $video_arrtheme1['link'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                $link                           = $video_arrtheme1['link'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Camomile"><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/tooltips/camomile.jpg" alt="" /></a>
 <a href="#" title="Drops"><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/tooltips/drops.jpg" alt="" /></a>
@@ -6820,8 +6643,8 @@ $i++;
 <a href="#" title="Physalis"><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/tooltips/physalis.jpg" alt="" /></a>
 <a href="#" title="Thistle"><img src="http://www.wowslider.com/images/demo/calm-kenburns/data1/tooltips/thistle.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -6831,24 +6654,20 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/wowslider.js"></script>
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/calm-kenburns/engine1/script.js"></script>-->
 	<script type="text/javascript">
-function ws_kenburns(q,k,d){var f=jQuery;var b=document.createElement("canvas").getContext;var p=q.paths||[{from:[0,0,1],to:[0,0,1.2]},{from:[0,0,1.2],to:[0,0,1]},{from:[1,0,1],to:[1,0,1.2]},{from:[0,1,1.2],to:[0,1,1]},{from:[1,1,1],to:[1,1,1.2]},{from:[0.5,1,1],to:[0.5,1,1.3]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[1,0.5,1],to:[1,0.5,1.2]},{from:[0,0.5,1.2],to:[0,0.5,1]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[0.5,0.5,1],to:[0.5,0.5,1.2]},{from:[0.5,0.5,1.3],to:[0.5,0.5,1]},{from:[0.5,1,1],to:[0.5,0,1.15]}];function r(h){return p[h?Math.floor(Math.random()*(b?p.length:Math.min(5,p.length))):0]}function e(w,t){var v,h=0,s=40/t;var x=setInterval(function(){if(h<1){if(!v){v=1;w(h);v=0}h+=s}else{u(1)}},40);function u(y){clearInterval(x);if(y){w(1)}}return{stop:u}}var n=q.width,g=q.height;var j,a;var o,m;function i(){o=f("<div style="width:100%;height:100%"></div>").css({"z-index":8,position:"absolute",left:0,top:0}).appendTo(d)}i();function c(v,s,h){var t={width:100*v[2]+"%"};t[s?"right":"left"]=-100*(v[2]-1)*(s?(1-v[0]):v[0])+"%";t[h?"bottom":"top"]=-100*(v[2]-1)*(h?(1-v[1]):v[1])+"%";if(!b){for(var u in t){if(/\%/.test(t[u])){t[u]=(/right|left|width/.test(u)?n:g)*parseFloat(t[u])/100+"px"}}}return t}function l(t,y,v){if(b){if(a){a.stop(1)}a=j}if(m){m.remove()}m=o;i();if(v){o.hide();m.stop(true,true)}if(b){var s,h;var u,x;u=f("<canvas width="'+n+'" height="'+g+'"/>");u.css({position:"absolute",left:0,top:0,width:"100%",height:"100%"}).appendTo(o);s=u.get(0).getContext("2d");x=u.clone().appendTo(o);h=x.get(0).getContext("2d");j=new e(function(z){var B=[y.from[0]*(1-z)+z*y.to[0],y.from[1]*(1-z)+z*y.to[1],y.from[2]*(1-z)+z*y.to[2]];h.drawImage(t,-n*(B[2]-1)*B[0],-g*(B[2]-1)*B[1],n*B[2],g*B[2]);s.clearRect(0,0,n,g);var A=s;s=h;h=A},q.duration+q.delay*2)}else{var w=f("<img src="'+t.src+'"/>").css({position:"absolute",left:"auto",right:"auto",top:"auto",bottom:"auto"}).appendTo(o).css(c(y.from,y.from[0]>0.5,y.from[1]>0.5)).animate(c(y.to,y.from[0]>0.5,y.from[1]>0.5),{easing:"linear",queue:false,duration:(1.5*q.duration+q.delay)})}if(v){o.fadeIn(q.duration)}}k.each(function(h){f(this).css({visibility:"hidden"});if(h==q.startSlide){l(this,r(0),0)}});this.go=function(h,s){l(k.get(h),r(h),1);return h}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",next:"",duration:13*100,delay:20*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
+function ws_kenburns(q,k,d){var f=jQuery;var b=document.createElement("canvas").getContext;var p=q.paths||[{from:[0,0,1],to:[0,0,1.2]},{from:[0,0,1.2],to:[0,0,1]},{from:[1,0,1],to:[1,0,1.2]},{from:[0,1,1.2],to:[0,1,1]},{from:[1,1,1],to:[1,1,1.2]},{from:[0.5,1,1],to:[0.5,1,1.3]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[1,0.5,1],to:[1,0.5,1.2]},{from:[0,0.5,1.2],to:[0,0.5,1]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[0.5,0.5,1],to:[0.5,0.5,1.2]},{from:[0.5,0.5,1.3],to:[0.5,0.5,1]},{from:[0.5,1,1],to:[0.5,0,1.15]}];function r(h){return p[h?Math.floor(Math.random()*(b?p.length:Math.min(5,p.length))):0]}function e(w,t){var v,h=0,s=40/t;var x=setInterval(function(){if(h<1){if(!v){v=1;w(h);v=0}h+=s}else{u(1)}},40);function u(y){clearInterval(x);if(y){w(1)}}return{stop:u}}var n=q.width,g=q.height;var j,a;var o,m;function i(){o=f("<div style="width:100%;height:100%"></div>").css({"z-index":8,position:"absolute",left:0,top:0}).appendTo(d)}i();function c(v,s,h){var t={width:100*v[2]+"%"};t[s?"right":"left"]=-100*(v[2]-1)*(s?(1-v[0]):v[0])+"%";t[h?"bottom":"top"]=-100*(v[2]-1)*(h?(1-v[1]):v[1])+"%";if(!b){for(var u in t){if(/\%/.test(t[u])){t[u]=(/right|left|width/.test(u)?n:g)*parseFloat(t[u])/100+"px"}}}return t}function l(t,y,v){if(b){if(a){a.stop(1)}a=j}if(m){m.remove()}m=o;i();if(v){o.hide();m.stop(true,true)}if(b){var s,h;var u,x;u=f("<canvas width="' + \N + '" height="' + \G + '"/>");u.css({position:"absolute",left:0,top:0,width:"100%",height:"100%"}).appendTo(o);s=u.get(0).getContext("2d");x=u.clone().appendTo(o);h=x.get(0).getContext("2d");j=new e(function(z){var B=[y.from[0]*(1-z)+z*y.to[0],y.from[1]*(1-z)+z*y.to[1],y.from[2]*(1-z)+z*y.to[2]];h.drawImage(t,-n*(B[2]-1)*B[0],-g*(B[2]-1)*B[1],n*B[2],g*B[2]);s.clearRect(0,0,n,g);var A=s;s=h;h=A},q.duration+q.delay*2)}else{var w=f("<img src="' + \T . \SRC + '"/>").css({position:"absolute",left:"auto",right:"auto",top:"auto",bottom:"auto"}).appendTo(o).css(c(y.from,y.from[0]>0.5,y.from[1]>0.5)).animate(c(y.to,y.from[0]>0.5,y.from[1]>0.5),{easing:"linear",queue:false,duration:(1.5*q.duration+q.delay)})}if(v){o.fadeIn(q.duration)}}k.each(function(h){f(this).css({visibility:"hidden"});if(h==q.startSlide){l(this,r(0),0)}});this.go=function(h,s){l(k.get(h),r(h),1);return h}};
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"kenburns",prev:"",next:"",duration:13*100,delay:20*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderprimetimelinear'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section20 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderprimetimelinear') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section20 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/prime-time-linear/engine1/style.css" />-->
 	<style>
 	/*
@@ -6856,7 +6675,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
  *	template Prime Time
  */
 @import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	max-width:830px;
@@ -6865,8 +6684,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:830px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:830px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -6878,7 +6697,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -6887,7 +6706,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -6895,42 +6714,42 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:13px;
 	height:13px;
 	background: url(./bullet.png) left top;
@@ -6940,10 +6759,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	margin-left:6px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -6953,30 +6772,30 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	width: 50px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:3px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:3px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 0px;
     right: 0px;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 10%;
@@ -6987,7 +6806,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	font-family: "Open Sans Condensed", sans-serif;
 	font-size: 27px;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	background:#FFFFFF;
 	display:inline-block;
 	padding:7px;
@@ -6995,44 +6814,44 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	-moz-border-radius:0 3px 3px 0;	
 	-webkit-border-radius:0 3px 3px 0;	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:10px;
 	color: #555555;
     font-size: 20px;	
-}#wowslider-container'.$val.'  .ws_thumbs { 
+}#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     right: -156px;
     top: 0;
 	width:136px;
 	height:100%;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	width:100%;
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#444;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	text-indent:0;
     -moz-box-shadow: 0 0 5px #999999;
     box-shadow: 0 0 5px #999999;
@@ -7041,7 +6860,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 40s infinite;
 	-moz-animation: wsBasic 40s infinite;
 	-webkit-animation: wsBasic 40s infinite;
@@ -7050,7 +6869,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 @-moz-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
@@ -7061,15 +6880,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 	width:103.61%;
 	height:110.55%;
 }
-* html #wowslider-container'.$val.' .ws_shadow{/*ie6*/
+* html #wowslider-container' . $val . ' .ws_shadow{/*ie6*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-*+html #wowslider-container'.$val.' .ws_shadow{/*ie7*/
+*+html #wowslider-container' . $val . ' .ws_shadow{/*ie7*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:15px;
@@ -7081,23 +6900,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:120px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:16px;
 	overflow:visible;
@@ -7107,7 +6926,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
     box-shadow: 0 0 5px #999999;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-11px;
@@ -7123,24 +6942,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",ne
 
 
 	<!-- Start WOWSlider.com BODY section20 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Boats in the bay</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/bay.jpg" alt="Bay" title="Bay" id="wows1_0"/>Boats in the bay</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Boats in the bay</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/bay.jpg" alt="Bay" title="Bay" id="wows1_0"/>Boats in the bay</li>
 <li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/black_sea.jpg" alt="Black sea" title="Black sea" id="wows1_1"/>Rocky shore of the Black Sea</li>
 <li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/boats_near__the__shore.jpg" alt="Boats" title="Boats" id="wows1_2"/>Boats near the shore</li>
 <li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/motor_vessel.jpg" alt="Motor vessel" title="Motor vessel" id="wows1_3"/>River cruise</li>
@@ -7150,29 +6967,28 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/ship.jpg" alt="Ship" title="Ship" id="wows1_7"/>A ship goes</li>
 <li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/ship_at_sunset.jpg" alt="Ship at sunset" title="Ship at sunset" id="wows1_8"/>Amazing sea sunset</li>
 <li><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/images/waterscape.jpg" alt="Waterscape" title="Waterscape" id="wows1_9"/>River on a sunny morning</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Bay"><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/tooltips/bay.jpg" alt="" />image scroller jquery</a>
 <a href="#" title="Black sea"><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/tooltips/black_sea.jpg" alt="" />javascript image scroller</a>
@@ -7185,8 +7001,8 @@ $i++;
 <a href="#" title="Ship at sunset"><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/tooltips/ship_at_sunset.jpg" alt="" />html image scroller</a>
 <a href="#" title="Waterscape"><img src="http://www.wowslider.com/images/demo/prime-time-linear/data1/tooltips/waterscape.jpg" alt="" />jquery vertical image scroller</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div>
@@ -7199,22 +7015,21 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/prime-time-linear/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_basic_linear(c,a,b){var d=jQuery;var e=d("<div></div>").css({position:"absolute",display:"none","z-index":2,width:"200%",height:"100%"}).appendTo(b);this.go=function(f,i){e.stop(1,1);var g=(!!((f-i+1)%a.length)^c.revers?"left":"right");d(a[i]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,0);d(a[f]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,"50%").show();e.css({left:"auto",right:"auto",top:0}).css(g,0).show();var h={};h[g]="-100%";e.animate(h,c.duration,"easeInOutExpo",function(){b.find("ul").css({left:-f+"00%"});d(this).hide().html("")});return f}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"",next:"",duration:20*100,delay:20*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"basic_linear",prev:"",next:"",duration:20*100,delay:20*100,width:830,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		/*}elseif ($conf_value == 'wowsliderdarkmattersquares'){
-		
-		
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+        /*}elseif ($conf_value == 'wowsliderdarkmattersquares'){
+
+
 													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
+													$arg = $conf_name;
+													$val = $conf_id;
 													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
+
+
 													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section21 -->
 	<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/dark-matter-squares/engine1/style.css" />
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/jquery.js"></script>
@@ -7250,7 +7065,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 </div></div>
 <a style="display:none" href="http://wowslider.com">Diaporama sur limage</a>
 	<div class="ws_shadow"></div>
-	</div>	
+	</div>
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/wowslider.js"></script>
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/dark-matter-squares/engine1/script.js"></script>-->
 	<script type="text/javascript">
@@ -7262,20 +7077,18 @@ function ws_squares(c,a,b){var g=jQuery;var e=b.find("ul").get(0);e.id="wowslide
 wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",next:"",duration:9*100,delay:30*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:1,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
+';
+
+
 		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		*/}elseif ($conf_value == 'wowslidercatalystfade'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section22 -->
+		*/
+    } elseif ($conf_value == 'wowslidercatalystfade') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section22 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/catalyst-fade/engine1/style.css" />-->
 	<style>
 	/*
@@ -7283,7 +7096,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
  *	template Catalyst
  */
 
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -7292,8 +7105,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -7305,7 +7118,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -7314,7 +7127,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -7322,43 +7135,43 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:19px;
 	height:21px;
 	background: url(./icons/bullet.png) left top;
@@ -7368,10 +7181,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	margin-left:7px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -7381,25 +7194,25 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	width: 32px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:21px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:21px;
 	background-position: 0 0; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 126px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 18px;
@@ -7411,7 +7224,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	font-size: 15px;
 	font-weight: bold;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	padding:10px;
 	background:#e9e9e9;
@@ -7422,47 +7235,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	opacity:0.9;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:10px;
 	font-size: 12px;
 	font-weight: normal;
 	color:#303030;
-}#wowslider-container'.$val.'  .ws_thumbs { 
+}#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs a { 
+#wowslider-container' . $val . ' .ws_thumbs a { 
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
 	opacity:0.85;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     bottom: -117px;
     left: 0;
 	width:100%;
 	height:106px;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	height:100%;
 	letter-spacing:-4px;
 	width:2158px; 
 }
-#wowslider-container'.$val.' .ws_thumbs .ws_selthumb img{
+#wowslider-container' . $val . ' .ws_thumbs .ws_selthumb img{
 	border-color:#444;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a img{
+#wowslider-container' . $val . ' .ws_thumbs  a img{
 	margin:3px;
 	text-indent:0;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
@@ -7473,7 +7286,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	max-width:none;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 41.6s infinite;
 	-moz-animation: wsBasic 41.6s infinite;
 	-webkit-animation: wsBasic 41.6s infinite;
@@ -7482,7 +7295,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 @-moz-keyframes wsBasic{0%{left:-0%} 4.81%{left:-0%} 7.69%{left:-100%} 12.5%{left:-100%} 15.38%{left:-200%} 20.19%{left:-200%} 23.08%{left:-300%} 27.88%{left:-300%} 30.77%{left:-400%} 35.58%{left:-400%} 38.46%{left:-500%} 43.27%{left:-500%} 46.15%{left:-600%} 50.96%{left:-600%} 53.85%{left:-700%} 58.65%{left:-700%} 61.54%{left:-800%} 66.35%{left:-800%} 69.23%{left:-900%} 74.04%{left:-900%} 76.92%{left:-1000%} 81.73%{left:-1000%} 84.62%{left:-1100%} 89.42%{left:-1100%} 92.31%{left:-1200%} 97.12%{left:-1200%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 4.81%{left:-0%} 7.69%{left:-100%} 12.5%{left:-100%} 15.38%{left:-200%} 20.19%{left:-200%} 23.08%{left:-300%} 27.88%{left:-300%} 30.77%{left:-400%} 35.58%{left:-400%} 38.46%{left:-500%} 43.27%{left:-500%} 46.15%{left:-600%} 50.96%{left:-600%} 53.85%{left:-700%} 58.65%{left:-700%} 61.54%{left:-800%} 66.35%{left:-800%} 69.23%{left:-900%} 74.04%{left:-900%} 76.92%{left:-1000%} 81.73%{left:-1000%} 84.62%{left:-1100%} 89.42%{left:-1100%} 92.31%{left:-1200%} 97.12%{left:-1200%} }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	background-image: url(./themes/themebuilder/icons/bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
@@ -7493,15 +7306,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	width:101.25%;
 	height:104.16%;
 }
-* html #wowslider-container'.$val.' .ws_shadow{/*ie6*/
+* html #wowslider-container' . $val . ' .ws_shadow{/*ie6*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-*+html #wowslider-container'.$val.' .ws_shadow{/*ie7*/
+*+html #wowslider-container' . $val . ' .ws_shadow{/*ie7*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:16px;
@@ -7515,23 +7328,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	-moz-border-radius:6px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:150px;
 	background-color:#d2d2d2;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:24px;
 	overflow:visible;
@@ -7543,7 +7356,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	border-radius:6px;
 	-moz-border-radius:6px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-13px;
@@ -7559,24 +7372,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 
 
 	<!-- Start WOWSlider.com BODY section22 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>An alligator is swimming.</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/alligator.jpg" alt="Alligator" title="Alligator" id="wows1_0"/>An alligator is swimming.</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>An alligator is swimming.</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/alligator.jpg" alt="Alligator" title="Alligator" id="wows1_0"/>An alligator is swimming.</li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/antelope.jpg" alt="Antelope" title="Antelope" id="wows1_1"/>The addax, also known as the screwhorn antelope.</li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/bison.jpg" alt="Bison" title="Bison" id="wows1_2"/>A bison has a long, brown coat.</li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/cat.jpg" alt="Fishing cat" title="Fishing cat" id="wows1_3"/>Fishing cat is sleeping</li>
@@ -7589,29 +7400,28 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/river_otter.jpg" alt="River otter" title="River otter" id="wows1_10"/>The otters diet mainly consists of fish.</li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/tortoise.jpg" alt="Tortoise" title="Tortoise" id="wows1_11"/>Galapagos giant tortoise.</li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/images/turtle_and_frogs.jpg" alt="Turtle and frogs" title="Turtle and frogs" id="wows1_12"/>The inhabitants of the pond.</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Alligator"><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/tooltips/alligator.jpg" alt="" /></a>
 <a href="#" title="Antelope"><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/tooltips/antelope.jpg" alt="" /></a>
@@ -7627,8 +7437,8 @@ $i++;
 <a href="#" title="Tortoise"><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/tooltips/tortoise.jpg" alt="" /></a>
 <a href="#" title="Turtle and frogs"><img src="http://www.wowslider.com/images/demo/catalyst-fade/data1/tooltips/turtle_and_frogs.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -7639,23 +7449,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/catalyst-fade/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_fade(c,a,b){var e=jQuery;var d=e("ul",b);var f={position:"absolute",left:0,top:0,width:"100%",height:"100%"};this.go=function(g,h){var i=e(a.get(g)).clone().css(f).hide().appendTo(b);if(!c.noCross){var j=e(a.get(h)).clone().css(f).appendTo(b);d.hide();j.fadeOut(c.duration,function(){j.remove()})}i.fadeIn(c.duration,function(){d.css({left:-g+"00%"}).show();i.remove()});return g}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"",duration:12*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"fade",prev:"",next:"",duration:12*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidercatalystdigitalstack'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section23 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidercatalystdigitalstack') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section23 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/catalyst-digital-stack/engine1/style.css" />-->
 	<style>
 	/*
@@ -7663,7 +7469,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
  *	template Catalyst Digital
  */
 @import url(http://fonts.googleapis.com/css?family=Cuprum);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -7672,8 +7478,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -7685,7 +7491,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -7694,7 +7500,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -7702,43 +7508,43 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	font-family:Cuprum,sans-serif;
 	font-size: 15px;	
 	font-weight: bold;
@@ -7753,11 +7559,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	margin-left:7px;
 	line-height: 28px;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: right top;
 	color:#3c506b
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -7767,25 +7573,25 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	width: 32px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:21px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:21px;
 	background-position: 0 0; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 9px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 20px;
@@ -7807,14 +7613,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	opacity:0.9;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 17px;
 	font-weight: normal;
 	color:#303030;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 42s infinite;
 	-moz-animation: wsBasic 42s infinite;
 	-webkit-animation: wsBasic 42s infinite;
@@ -7823,7 +7629,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 5.95%{left:-0%} 10%{left:-100%} 15.95%{left:-100%} 20%{left:-200%} 25.95%{left:-200%} 30%{left:-300%} 35.95%{left:-300%} 40%{left:-400%} 45.95%{left:-400%} 50%{left:-500%} 55.95%{left:-500%} 60%{left:-600%} 65.95%{left:-600%} 70%{left:-700%} 75.95%{left:-700%} 80%{left:-800%} 85.95%{left:-800%} 90%{left:-900%} 95.95%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 5.95%{left:-0%} 10%{left:-100%} 15.95%{left:-100%} 20%{left:-200%} 25.95%{left:-200%} 30%{left:-300%} 35.95%{left:-300%} 40%{left:-400%} 45.95%{left:-400%} 50%{left:-500%} 55.95%{left:-500%} 60%{left:-600%} 65.95%{left:-600%} 70%{left:-700%} 75.95%{left:-700%} 80%{left:-800%} 85.95%{left:-800%} 90%{left:-900%} 95.95%{left:-900%} }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
@@ -7834,15 +7640,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	width:101.25%;
 	height:104.16%;
 }
-* html #wowslider-container'.$val.' .ws_shadow{/*ie6*/
+* html #wowslider-container' . $val . ' .ws_shadow{/*ie6*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-*+html #wowslider-container'.$val.' .ws_shadow{/*ie7*/
+*+html #wowslider-container' . $val . ' .ws_shadow{/*ie7*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:16px;
@@ -7856,23 +7662,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	-moz-border-radius:6px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#d2d2d2;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:32px;
 	overflow:visible;
@@ -7884,7 +7690,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	border-radius:6px;
 	-moz-border-radius:6px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-13px;
@@ -7900,24 +7706,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 
 
 	<!-- Start WOWSlider.com BODY section23 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/alley_in_autumn.jpg" alt="Alley in autumn : jQuery Picture Slider" title="Alley in autumn" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/alley_in_autumn.jpg" alt="Alley in autumn : jQuery Picture Slider" title="Alley in autumn" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/autumn_landscape.jpg" alt="Autumn landscape : jQuery Picture Slideshow" title="Autumn landscape" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/autumn_leaf.jpg" alt="Autumn leaf : Free Picture Slider" title="Autumn leaf" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/autumn_trees.jpg" alt="Autumn trees : Javascript Picture Slider" title="Autumn trees" id="wows1_3"/></li>
@@ -7927,28 +7731,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/maple_leaf.jpg" alt="Maple leaf : jQuery Image Slider" title="Maple leaf" id="wows1_7"/></li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/pond_in_autumn.jpg" alt="Pond in autumn : jQuery Picture Carousel" title="Pond in autumn" id="wows1_8"/></li>
 <li><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/images/red_leaf.jpg" alt="Red leaf : Picture Slider" title="Red leaf" id="wows1_9"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Alley in autumn"><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/tooltips/alley_in_autumn.jpg" alt="Alley in autumn"/>1</a>
 <a href="#" title="Autumn lundscape"><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/tooltips/autumn_landscape.jpg" alt="Autumn landscape"/>2</a>
@@ -7961,8 +7764,8 @@ $i++;
 <a href="#" title="Pond in autumn"><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/tooltips/pond_in_autumn.jpg" alt="Pond in autumn"/>9</a>
 <a href="#" title="Red leaf"><img src="http://www.wowslider.com/images/demo/catalyst-digital-stack/data1/tooltips/red_leaf.jpg" alt="Red leaf"/>10</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 
@@ -7974,23 +7777,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/catalyst-digital-stack/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_stack(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=c.length>2?(k-h+1)%c.length:1;if(Math.abs(n)>=1){g=(n>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?-1:1)+"00%";var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,left:((g?i:l))});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){e("ul",b).css({left:-k+"00%"})}f.animate({left:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"})}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:"",duration:17*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack",prev:"",next:"",duration:17*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderquietrotate'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section24 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderquietrotate') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section24 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/quiet-rotate/engine1/style.css" />-->
 	<style>
 	/*
@@ -7998,7 +7797,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
  *	template Quiet
  */
 @import url("http://fonts.googleapis.com/css?family=Oswald");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -8007,8 +7806,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -8020,7 +7819,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -8029,7 +7828,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -8037,42 +7836,42 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:15px;
 	height:15px;
 	background: url(./bullet.png) left top;
@@ -8082,13 +7881,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	margin-left:3px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -8098,28 +7897,28 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	width: 60px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0;
 	background-position: 0 0; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom:-35px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws_bullets .ws_bulframe {
+#wowslider-container' . $val . ' .ws_bullets .ws_bulframe {
 	bottom: 20px;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 10%;
@@ -8131,7 +7930,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	color: #000000;
 	text-shadow: 1px 1px 1px #BBBBBB;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	padding:10px;
 	background:#fff;
@@ -8141,7 +7940,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	opacity:0.5;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	background:#666666;
 	margin-top:10px;
@@ -8149,7 +7948,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	color: #FFFFFF;
 	opacity:0.8;
 	text-shadow: 1px 1px 1px #000000;
-}#wowslider-container'.$val.' ul{
+}#wowslider-container' . $val . ' ul{
 	animation: wsBasic 24s infinite;
 	-moz-animation: wsBasic 24s infinite;
 	-webkit-animation: wsBasic 24s infinite;
@@ -8158,7 +7957,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 10.42%{left:-0%} 16.67%{left:-100%} 27.08%{left:-100%} 33.33%{left:-200%} 43.75%{left:-200%} 50%{left:-300%} 60.42%{left:-300%} 66.67%{left:-400%} 77.08%{left:-400%} 83.33%{left:-500%} 93.75%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 10.42%{left:-0%} 16.67%{left:-100%} 27.08%{left:-100%} 33.33%{left:-200%} 43.75%{left:-200%} 50%{left:-300%} 60.42%{left:-300%} 66.67%{left:-400%} 77.08%{left:-400%} 83.33%{left:-500%} 93.75%{left:-500%} }
 
-#wowslider-container'.$val.' .ws_shadow{
+#wowslider-container' . $val . ' .ws_shadow{
 	background: url(./shadow.png) left 100%;
 	background-repeat: no-repeat;
 	background-size:100%;
@@ -8169,15 +7968,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	bottom:-20%;
 	z-index:-1;
 }
-* html #wowslider-container'.$val.' .ws_shadow{/*ie6*/
+* html #wowslider-container' . $val . ' .ws_shadow{/*ie6*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/shadow.png", sizingMethod="scale");
 }
-*+html #wowslider-container'.$val.' .ws_shadow{/*ie7*/
+*+html #wowslider-container' . $val . ' .ws_shadow{/*ie7*/
 	background:none;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/shadow.png", sizingMethod="scale");
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:15px;
@@ -8189,23 +7988,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	overflow:visible;
 	position:absolute;
@@ -8214,7 +8013,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
     box-shadow: 0 0 5px #999999;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-11px;
@@ -8229,51 +8028,48 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section24 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Albino peafowl in the park</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/images/white_peafowl.jpg" alt="White peafowl : Javascript Slideshow" title="White peafowl" id="wows1_0"/>Albino peafowl in the park</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Albino peafowl in the park</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/images/white_peafowl.jpg" alt="White peafowl : Javascript Slideshow" title="White peafowl" id="wows1_0"/>Albino peafowl in the park</li>
 <li><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/images/duck.jpg" alt="Duck : jQuery Image Slideshow" title="Duck" id="wows1_1"/>Duck stays near the pond</li>
 <li><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/images/flamingo.jpg" alt="Flamingo : Javascript Photo Slideshow" title="Flamingo" id="wows1_2"/>Sleeping flamingo at Prague Zoo</li>
 <li><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/images/nice_peafowl.jpg" alt="Nice peafowl : Javascript Slider" title="Nice peafowl" id="wows1_3"/>The peacock spreads its tail</li>
 <li><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/images/swan.jpg" alt="Swan: Javascript Horizontal Slideshow" title="Swan" id="wows1_4"/>Swan is swimming on the lake</li>
 <li><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/images/peafowl.jpg" alt="Peafowl : Javascript Code for Slideshow" title="Peafowl" id="wows1_5"/>Peafowl at Prague Zoo</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="White peafowl"><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/tooltips/white_peafowl.jpg" alt="White peafowl"/>Javascript Picture Slideshow</a>
 <a href="#" title="Duck"><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/tooltips/duck.jpg" alt="Duck"/>Javascript Banner Slideshow</a>
@@ -8282,8 +8078,8 @@ $i++;
 <a href="#" title="Swan"><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/tooltips/swan.jpg" alt="Swan"/>Simple Javascript Slideshow</a>
 <a href="#" title="Peafowl"><img src="http://www.wowslider.com/images/demo/quiet-rotate/data1/tooltips/peafowl.jpg" alt="Peafowl"/>JS Slideshow</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">jQuery diaporama dimages</a>
@@ -8294,29 +8090,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript">
 (function(f,g,j,b){var h=/progid:DXImageTransform\.Microsoft\.Matrix\(.*?\)/,c=/^([\+\-]=)?([\d+.\-]+)(.*)$/,q=/%/;var d=j.createElement("modernizr"),e=d.style;function n(s){return parseFloat(s)}function l(){var s={transformProperty:"",MozTransform:"-moz-",WebkitTransform:"-webkit-",OTransform:"-o-",msTransform:"-ms-"};for(var t in s){if(typeof e[t]!="undefined"){return s[t]}}return null}function r(){if(typeof(g.Modernizr)!=="undefined"){return Modernizr.csstransforms}var t=["transformProperty","WebkitTransform","MozTransform","OTransform","msTransform"];for(var s in t){if(e[t[s]]!==b){return true}}}var a=l(),i=a!==null?a+"transform":false,k=a!==null?a+"transform-origin":false;f.support.csstransforms=r();if(a=="-ms-"){i="msTransform";k="msTransformOrigin"}f.extend({transform:function(s){s.transform=this;this.$elem=f(s);this.applyingMatrix=false;this.matrix=null;this.height=null;this.width=null;this.outerHeight=null;this.outerWidth=null;this.boxSizingValue=null;this.boxSizingProperty=null;this.attr=null;this.transformProperty=i;this.transformOriginProperty=k}});f.extend(f.transform,{funcs:["matrix","origin","reflect","reflectX","reflectXY","reflectY","rotate","scale","scaleX","scaleY","skew","skewX","skewY","translate","translateX","translateY"]});f.fn.transform=function(s,t){return this.each(function(){var u=this.transform||new f.transform(this);if(s){u.exec(s,t)}})};f.transform.prototype={exec:function(s,t){t=f.extend(true,{forceMatrix:false,preserve:false},t);this.attr=null;if(t.preserve){s=f.extend(true,this.getAttrs(true,true),s)}else{s=f.extend(true,{},s)}this.setAttrs(s);if(f.support.csstransforms&&!t.forceMatrix){return this.execFuncs(s)}else{if(f.browser.msie||(f.support.csstransforms&&t.forceMatrix)){return this.execMatrix(s)}}return false},execFuncs:function(t){var s=[];for(var u in t){if(u=="origin"){this[u].apply(this,f.isArray(t[u])?t[u]:[t[u]])}else{if(f.inArray(u,f.transform.funcs)!==-1){s.push(this.createTransformFunc(u,t[u]))}}}this.$elem.css(i,s.join(" "));return true},execMatrix:function(z){var C,x,t;var F=this.$elem[0],B=this;function A(N,M){if(q.test(N)){return parseFloat(N)/100*B["safeOuter"+(M?"Height":"Width")]()}return o(F,N)}var s=/translate[X|Y]?/,u=[];for(var v in z){switch(f.type(z[v])){case"array":t=z[v];break;case"string":t=f.map(z[v].split(","),f.trim);break;default:t=[z[v]]}if(f.matrix[v]){if(f.cssAngle[v]){t=f.map(t,f.angle.toDegree)}else{if(!f.cssNumber[v]){t=f.map(t,A)}else{t=f.map(t,n)}}x=f.matrix[v].apply(this,t);if(s.test(v)){u.push(x)}else{C=C?C.x(x):x}}else{if(v=="origin"){this[v].apply(this,t)}}}C=C||f.matrix.identity();f.each(u,function(M,N){C=C.x(N)});var K=parseFloat(C.e(1,1).toFixed(6)),I=parseFloat(C.e(2,1).toFixed(6)),H=parseFloat(C.e(1,2).toFixed(6)),G=parseFloat(C.e(2,2).toFixed(6)),L=C.rows===3?parseFloat(C.e(1,3).toFixed(6)):0,J=C.rows===3?parseFloat(C.e(2,3).toFixed(6)):0;if(f.support.csstransforms&&a==="-moz-"){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+"px, "+J+"px)")}else{if(f.support.csstransforms){this.$elem.css(i,"matrix("+K+", "+I+", "+H+", "+G+", "+L+", "+J+")")}else{if(f.browser.msie){var w=", FilterType="nearest neighbor"";var D=this.$elem[0].style;var E="progid:DXImageTransform.Microsoft.Matrix(M11="+K+", M12="+H+", M21="+I+", M22="+G+", sizingMethod="auto expand""+w+")";var y=D.filter||f.curCSS(this.$elem[0],"filter")||"";D.filter=h.test(y)?y.replace(h,E):y?y+" "+E:E;this.applyingMatrix=true;this.matrix=C;this.fixPosition(C,L,J);this.applyingMatrix=false;this.matrix=null}}}return true},origin:function(s,t){if(f.support.csstransforms){if(typeof t==="undefined"){this.$elem.css(k,s)}else{this.$elem.css(k,s+" "+t)}return true}switch(s){case"left":s="0";break;case"right":s="100%";break;case"center":case b:s="50%"}switch(t){case"top":t="0";break;case"bottom":t="100%";break;case"center":case b:t="50%"}this.setAttr("origin",[q.test(s)?s:o(this.$elem[0],s)+"px",q.test(t)?t:o(this.$elem[0],t)+"px"]);return true},createTransformFunc:function(t,u){if(t.substr(0,7)==="reflect"){var s=u?f.matrix[t]():f.matrix.identity();return"matrix("+s.e(1,1)+", "+s.e(2,1)+", "+s.e(1,2)+", "+s.e(2,2)+", 0, 0)"}if(t=="matrix"){if(a==="-moz-"){u[4]=u[4]?u[4]+"px":0;u[5]=u[5]?u[5]+"px":0}}return t+"("+(f.isArray(u)?u.join(", "):u)+")"},fixPosition:function(B,y,x,D,s){var w=new f.matrix.calc(B,this.safeOuterHeight(),this.safeOuterWidth()),C=this.getAttr("origin");var v=w.originOffset(new f.matrix.V2(q.test(C[0])?parseFloat(C[0])/100*w.outerWidth:parseFloat(C[0]),q.test(C[1])?parseFloat(C[1])/100*w.outerHeight:parseFloat(C[1])));var t=w.sides();var u=this.$elem.css("position");if(u=="static"){u="relative"}var A={top:0,left:0};var z={position:u,top:(v.top+x+t.top+A.top)+"px",left:(v.left+y+t.left+A.left)+"px",zoom:1};this.$elem.css(z)}};function o(s,u){var t=c.exec(f.trim(u));if(t[3]&&t[3]!=="px"){var w="paddingBottom",v=f.style(s,w);f.style(s,w,u);u=p(s,w);f.style(s,w,v);return u}return parseFloat(u)}function p(t,u){if(t[u]!=null&&(!t.style||t.style[u]==null)){return t[u]}var s=parseFloat(f.css(t,u));return s&&s>-10000?s:0}})(jQuery,this,this.document);(function(d,c,a,f){d.extend(d.transform.prototype,{safeOuterHeight:function(){return this.safeOuterLength("height")},safeOuterWidth:function(){return this.safeOuterLength("width")},safeOuterLength:function(l){var p="outer"+(l=="width"?"Width":"Height");if(!d.support.csstransforms&&d.browser.msie){l=l=="width"?"width":"height";if(this.applyingMatrix&&!this[p]&&this.matrix){var k=new d.matrix.calc(this.matrix,1,1),n=k.offset(),g=this.$elem[p]()/n[l];this[p]=g;return g}else{if(this.applyingMatrix&&this[p]){return this[p]}}var o={height:["top","bottom"],width:["left","right"]};var h=this.$elem[0],j=parseFloat(d.curCSS(h,l,true)),q=this.boxSizingProperty,i=this.boxSizingValue;if(!this.boxSizingProperty){q=this.boxSizingProperty=e()||"box-sizing";i=this.boxSizingValue=this.$elem.css(q)||"content-box"}if(this[p]&&this[l]==j){return this[p]}else{this[l]=j}if(q&&(i=="padding-box"||i=="content-box")){j+=parseFloat(d.curCSS(h,"padding-"+o[l][0],true))||0+parseFloat(d.curCSS(h,"padding-"+o[l][1],true))||0}if(q&&i=="content-box"){j+=parseFloat(d.curCSS(h,"border-"+o[l][0]+"-width",true))||0+parseFloat(d.curCSS(h,"border-"+o[l][1]+"-width",true))||0}this[p]=j;return j}return this.$elem[p]()}});var b=null;function e(){if(b){return b}var h={boxSizing:"box-sizing",MozBoxSizing:"-moz-box-sizing",WebkitBoxSizing:"-webkit-box-sizing",OBoxSizing:"-o-box-sizing"},g=a.body;for(var i in h){if(typeof g.style[i]!="undefined"){b=h[i];return b}}return null}})(jQuery,this,this.document);(function(g,f,b,h){var d=/([\w\-]*?)\((.*?)\)/g,a="data-transform",e=/\s/,c=/,\s?/;g.extend(g.transform.prototype,{setAttrs:function(i){var j="",l;for(var k in i){l=i[k];if(g.isArray(l)){l=l.join(", ")}j+=" "+k+"("+l+")"}this.attr=g.trim(j);this.$elem.attr(a,this.attr)},setAttr:function(k,l){if(g.isArray(l)){l=l.join(", ")}var j=this.attr||this.$elem.attr(a);if(!j||j.indexOf(k)==-1){this.attr=g.trim(j+" "+k+"("+l+")");this.$elem.attr(a,this.attr)}else{var i=[],n;d.lastIndex=0;while(n=d.exec(j)){if(k==n[1]){i.push(k+"("+l+")")}else{i.push(n[0])}}this.attr=i.join(" ");this.$elem.attr(a,this.attr)}},getAttrs:function(){var j=this.attr||this.$elem.attr(a);if(!j){return{}}var i={},l,k;d.lastIndex=0;while((l=d.exec(j))!==null){if(l){k=l[2].split(c);i[l[1]]=k.length==1?k[0]:k}}return i},getAttr:function(j){var i=this.getAttrs();if(typeof i[j]!=="undefined"){return i[j]}if(j==="origin"&&g.support.csstransforms){return this.$elem.css(this.transformOriginProperty).split(e)}else{if(j==="origin"){return["50%","50%"]}}return g.cssDefault[j]||0}});if(typeof(g.cssAngle)=="undefined"){g.cssAngle={}}g.extend(g.cssAngle,{rotate:true,skew:true,skewX:true,skewY:true});if(typeof(g.cssDefault)=="undefined"){g.cssDefault={}}g.extend(g.cssDefault,{scale:[1,1],scaleX:1,scaleY:1,matrix:[1,0,0,1,0,0],origin:["50%","50%"],reflect:[1,0,0,1,0,0],reflectX:[1,0,0,1,0,0],reflectXY:[1,0,0,1,0,0],reflectY:[1,0,0,1,0,0]});if(typeof(g.cssMultipleValues)=="undefined"){g.cssMultipleValues={}}g.extend(g.cssMultipleValues,{matrix:6,origin:{length:2,duplicate:true},reflect:6,reflectX:6,reflectXY:6,reflectY:6,scale:{length:2,duplicate:true},skew:2,translate:2});g.extend(g.cssNumber,{matrix:true,reflect:true,reflectX:true,reflectXY:true,reflectY:true,scale:true,scaleX:true,scaleY:true});g.each(g.transform.funcs,function(j,k){g.cssHooks[k]={set:function(n,o){var l=n.transform||new g.transform(n),i={};i[k]=o;l.exec(i,{preserve:true})},get:function(n,l){var i=n.transform||new g.transform(n);return i.getAttr(k)}}});g.each(["reflect","reflectX","reflectXY","reflectY"],function(j,k){g.cssHooks[k].get=function(n,l){var i=n.transform||new g.transform(n);return i.getAttr("matrix")||g.cssDefault[k]}})})(jQuery,this,this.document);(function(e,g,h,c){var d=/^([+\-]=)?([\d+.\-]+)(.*)$/;var a=e.fn.animate;e.fn.animate=function(p,l,o,n){var k=e.speed(l,o,n),j=e.cssMultipleValues;k.complete=k.old;if(!e.isEmptyObject(p)){if(typeof k.original==="undefined"){k.original={}}e.each(p,function(s,u){if(j[s]||e.cssAngle[s]||(!e.cssNumber[s]&&e.inArray(s,e.transform.funcs)!==-1)){var t=null;if(jQuery.isArray(p[s])){var r=1,q=u.length;if(j[s]){r=(typeof j[s].length==="undefined"?j[s]:j[s].length)}if(q>r||(q<r&&q==2)||(q==2&&r==2&&isNaN(parseFloat(u[q-1])))){t=u[q-1];u.splice(q-1,1)}}k.original[s]=u.toString();p[s]=parseFloat(u)}})}return a.apply(this,[arguments[0],k])};var b="paddingBottom";function i(k,l){if(k[l]!=null&&(!k.style||k.style[l]==null)){}var j=parseFloat(e.css(k,l));return j&&j>-10000?j:0}var f=e.fx.prototype.custom;e.fx.prototype.custom=function(u,v,w){var y=e.cssMultipleValues[this.prop],p=e.cssAngle[this.prop];if(y||(!e.cssNumber[this.prop]&&e.inArray(this.prop,e.transform.funcs)!==-1)){this.values=[];if(!y){y=1}var x=this.options.original[this.prop],t=e(this.elem).css(this.prop),j=e.cssDefault[this.prop]||0;if(!e.isArray(t)){t=[t]}if(!e.isArray(x)){if(e.type(x)==="string"){x=x.split(",")}else{x=[x]}}var l=y.length||y,s=0;while(x.length<l){x.push(y.duplicate?x[0]:j[s]||0);s++}var k,r,q,o=this,n=o.elem.transform;orig=e.style(o.elem,b);e.each(x,function(z,A){if(t[z]){k=t[z]}else{if(j[z]&&!y.duplicate){k=j[z]}else{if(y.duplicate){k=t[0]}else{k=0}}}if(p){k=e.angle.toDegree(k)}else{if(!e.cssNumber[o.prop]){r=d.exec(e.trim(k));if(r[3]&&r[3]!=="px"){if(r[3]==="%"){k=parseFloat(r[2])/100*n["safeOuter"+(z?"Height":"Width")]()}else{e.style(o.elem,b,k);k=i(o.elem,b);e.style(o.elem,b,orig)}}}}k=parseFloat(k);r=d.exec(e.trim(A));if(r){q=parseFloat(r[2]);w=r[3]||"px";if(p){q=e.angle.toDegree(q+w);w="deg"}else{if(!e.cssNumber[o.prop]&&w==="%"){k=(k/n["safeOuter"+(z?"Height":"Width")]())*100}else{if(!e.cssNumber[o.prop]&&w!=="px"){e.style(o.elem,b,(q||1)+w);k=((q||1)/i(o.elem,b))*k;e.style(o.elem,b,orig)}}}if(r[1]){q=((r[1]==="-="?-1:1)*q)+k}}else{q=A;w=""}o.values.push({start:k,end:q,unit:w})})}return f.apply(this,arguments)};e.fx.multipleValueStep={_default:function(j){e.each(j.values,function(k,l){j.values[k].now=l.start+((l.end-l.start)*j.pos)})}};e.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(j,k){e.fx.multipleValueStep[k]=function(n){var p=n.decomposed,l=e.matrix;m=l.identity();p.now={};e.each(p.start,function(q){p.now[q]=parseFloat(p.start[q])+((parseFloat(p.end[q])-parseFloat(p.start[q]))*n.pos);if(((q==="scaleX"||q==="scaleY")&&p.now[q]===1)||(q!=="scaleX"&&q!=="scaleY"&&p.now[q]===0)){return true}m=m.x(l[q](p.now[q]))});var o;e.each(n.values,function(q){switch(q){case 0:o=parseFloat(m.e(1,1).toFixed(6));break;case 1:o=parseFloat(m.e(2,1).toFixed(6));break;case 2:o=parseFloat(m.e(1,2).toFixed(6));break;case 3:o=parseFloat(m.e(2,2).toFixed(6));break;case 4:o=parseFloat(m.e(1,3).toFixed(6));break;case 5:o=parseFloat(m.e(2,3).toFixed(6));break}n.values[q].now=o})}});e.each(e.transform.funcs,function(j,k){e.fx.step[k]=function(o){var n=o.elem.transform||new e.transform(o.elem),l={};if(e.cssMultipleValues[k]||(!e.cssNumber[k]&&e.inArray(k,e.transform.funcs)!==-1)){(e.fx.multipleValueStep[o.prop]||e.fx.multipleValueStep._default)(o);l[o.prop]=[];e.each(o.values,function(p,q){l[o.prop].push(q.now+(e.cssNumber[o.prop]?"":q.unit))})}else{l[o.prop]=o.now+(e.cssNumber[o.prop]?"":o.unit)}n.exec(l,{preserve:true})}});e.each(["matrix","reflect","reflectX","reflectXY","reflectY"],function(j,k){e.fx.step[k]=function(q){var p=q.elem.transform||new e.transform(q.elem),o={};if(!q.initialized){q.initialized=true;if(k!=="matrix"){var n=e.matrix[k]().elements;var r;e.each(q.values,function(s){switch(s){case 0:r=n[0];break;case 1:r=n[2];break;case 2:r=n[1];break;case 3:r=n[3];break;default:r=0}q.values[s].end=r})}q.decomposed={};var l=q.values;q.decomposed.start=e.matrix.matrix(l[0].start,l[1].start,l[2].start,l[3].start,l[4].start,l[5].start).decompose();q.decomposed.end=e.matrix.matrix(l[0].end,l[1].end,l[2].end,l[3].end,l[4].end,l[5].end).decompose()}(e.fx.multipleValueStep[q.prop]||e.fx.multipleValueStep._default)(q);o.matrix=[];e.each(q.values,function(s,t){o.matrix.push(t.now)});p.exec(o,{preserve:true})}})})(jQuery,this,this.document);(function(g,h,j,c){var d=180/Math.PI;var k=200/Math.PI;var f=Math.PI/180;var e=2/1.8;var i=0.9;var a=Math.PI/200;var b=/^([+\-]=)?([\d+.\-]+)(.*)$/;g.extend({angle:{runit:/(deg|g?rad)/,radianToDegree:function(l){return l*d},radianToGrad:function(l){return l*k},degreeToRadian:function(l){return l*f},degreeToGrad:function(l){return l*e},gradToDegree:function(l){return l*i},gradToRadian:function(l){return l*a},toDegree:function(n){var l=b.exec(n);if(l){n=parseFloat(l[2]);switch(l[3]||"deg"){case"grad":n=g.angle.gradToDegree(n);break;case"rad":n=g.angle.radianToDegree(n);break}return n}return 0}}})})(jQuery,this,this.document);(function(f,e,b,g){if(typeof(f.matrix)=="undefined"){f.extend({matrix:{}})}var d=f.matrix;f.extend(d,{V2:function(h,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,2)}else{this.elements=[h,i]}this.length=2},V3:function(h,j,i){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,3)}else{this.elements=[h,j,i]}this.length=3},M2x2:function(i,h,k,j){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,4)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,4)}this.rows=2;this.cols=2},M3x3:function(n,l,k,j,i,h,q,p,o){if(f.isArray(arguments[0])){this.elements=arguments[0].slice(0,9)}else{this.elements=Array.prototype.slice.call(arguments).slice(0,9)}this.rows=3;this.cols=3}});var c={e:function(k,h){var i=this.rows,j=this.cols;if(k>i||h>i||k<1||h<1){return 0}return this.elements[(k-1)*j+h-1]},decompose:function(){var v=this.e(1,1),t=this.e(2,1),q=this.e(1,2),p=this.e(2,2),o=this.e(1,3),n=this.e(2,3);if(Math.abs(v*p-t*q)<0.01){return{rotate:0+"deg",skewX:0+"deg",scaleX:1,scaleY:1,translateX:0+"px",translateY:0+"px"}}var l=o,j=n;var u=Math.sqrt(v*v+t*t);v=v/u;t=t/u;var i=v*q+t*p;q-=v*i;p-=t*i;var s=Math.sqrt(q*q+p*p);q=q/s;p=p/s;i=i/s;if((v*p-t*q)<0){v=-v;t=-t;u=-u}var w=f.angle.radianToDegree;var h=w(Math.atan2(t,v));i=w(Math.atan(i));return{rotate:h+"deg",skewX:i+"deg",scaleX:u,scaleY:s,translateX:l+"px",translateY:j+"px"}}};f.extend(d.M2x2.prototype,c,{toM3x3:function(){var h=this.elements;return new d.M3x3(h[0],h[1],0,h[2],h[3],0,0,0,1)},x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows==3){return this.toM3x3().x(j)}var i=this.elements,h=j.elements;if(k&&h.length==2){return new d.V2(i[0]*h[0]+i[1]*h[1],i[2]*h[0]+i[3]*h[1])}else{if(h.length==i.length){return new d.M2x2(i[0]*h[0]+i[1]*h[2],i[0]*h[1]+i[1]*h[3],i[2]*h[0]+i[3]*h[2],i[2]*h[1]+i[3]*h[3])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M2x2(i*h[3],i*-h[1],i*-h[2],i*h[0])},determinant:function(){var h=this.elements;return h[0]*h[3]-h[1]*h[2]}});f.extend(d.M3x3.prototype,c,{x:function(j){var k=typeof(j.rows)==="undefined";if(!k&&j.rows<3){j=j.toM3x3()}var i=this.elements,h=j.elements;if(k&&h.length==3){return new d.V3(i[0]*h[0]+i[1]*h[1]+i[2]*h[2],i[3]*h[0]+i[4]*h[1]+i[5]*h[2],i[6]*h[0]+i[7]*h[1]+i[8]*h[2])}else{if(h.length==i.length){return new d.M3x3(i[0]*h[0]+i[1]*h[3]+i[2]*h[6],i[0]*h[1]+i[1]*h[4]+i[2]*h[7],i[0]*h[2]+i[1]*h[5]+i[2]*h[8],i[3]*h[0]+i[4]*h[3]+i[5]*h[6],i[3]*h[1]+i[4]*h[4]+i[5]*h[7],i[3]*h[2]+i[4]*h[5]+i[5]*h[8],i[6]*h[0]+i[7]*h[3]+i[8]*h[6],i[6]*h[1]+i[7]*h[4]+i[8]*h[7],i[6]*h[2]+i[7]*h[5]+i[8]*h[8])}}return false},inverse:function(){var i=1/this.determinant(),h=this.elements;return new d.M3x3(i*(h[8]*h[4]-h[7]*h[5]),i*(-(h[8]*h[1]-h[7]*h[2])),i*(h[5]*h[1]-h[4]*h[2]),i*(-(h[8]*h[3]-h[6]*h[5])),i*(h[8]*h[0]-h[6]*h[2]),i*(-(h[5]*h[0]-h[3]*h[2])),i*(h[7]*h[3]-h[6]*h[4]),i*(-(h[7]*h[0]-h[6]*h[1])),i*(h[4]*h[0]-h[3]*h[1]))},determinant:function(){var h=this.elements;return h[0]*(h[8]*h[4]-h[7]*h[5])-h[3]*(h[8]*h[1]-h[7]*h[2])+h[6]*(h[5]*h[1]-h[4]*h[2])}});var a={e:function(h){return this.elements[h-1]}};f.extend(d.V2.prototype,a);f.extend(d.V3.prototype,a)})(jQuery,this,this.document);(function(c,b,a,d){if(typeof(c.matrix)=="undefined"){c.extend({matrix:{}})}c.extend(c.matrix,{calc:function(e,f,g){this.matrix=e;this.outerHeight=f;this.outerWidth=g}});c.matrix.calc.prototype={coord:function(e,i,h){h=typeof(h)!=="undefined"?h:0;var g=this.matrix,f;switch(g.rows){case 2:f=g.x(new c.matrix.V2(e,i));break;case 3:f=g.x(new c.matrix.V3(e,i,h));break}return f},corners:function(e,h){var f=!(typeof(e)!=="undefined"||typeof(h)!=="undefined"),g;if(!this.c||!f){h=h||this.outerHeight;e=e||this.outerWidth;g={tl:this.coord(0,0),bl:this.coord(0,h),tr:this.coord(e,0),br:this.coord(e,h)}}else{g=this.c}if(f){this.c=g}return g},sides:function(e){var f=e||this.corners();return{top:Math.min(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),bottom:Math.max(f.tl.e(2),f.tr.e(2),f.br.e(2),f.bl.e(2)),left:Math.min(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1)),right:Math.max(f.tl.e(1),f.tr.e(1),f.br.e(1),f.bl.e(1))}},offset:function(e){var f=this.sides(e);return{height:Math.abs(f.bottom-f.top),width:Math.abs(f.right-f.left)}},area:function(e){var h=e||this.corners();var g={x:h.tr.e(1)-h.tl.e(1)+h.br.e(1)-h.bl.e(1),y:h.tr.e(2)-h.tl.e(2)+h.br.e(2)-h.bl.e(2)},f={x:h.bl.e(1)-h.tl.e(1)+h.br.e(1)-h.tr.e(1),y:h.bl.e(2)-h.tl.e(2)+h.br.e(2)-h.tr.e(2)};return 0.25*Math.abs(g.e(1)*f.e(2)-g.e(2)*f.e(1))},nonAffinity:function(){var f=this.sides(),g=f.top-f.bottom,e=f.left-f.right;return parseFloat(parseFloat(Math.abs((Math.pow(g,2)+Math.pow(e,2))/(f.top*f.bottom+f.left*f.right))).toFixed(8))},originOffset:function(h,g){h=h?h:new c.matrix.V2(this.outerWidth*0.5,this.outerHeight*0.5);g=g?g:new c.matrix.V2(0,0);var e=this.coord(h.e(1),h.e(2));var f=this.coord(g.e(1),g.e(2));return{top:(f.e(2)-g.e(2))-(e.e(2)-h.e(2)),left:(f.e(1)-g.e(1))-(e.e(1)-h.e(1))}}}})(jQuery,this,this.document);(function(e,d,a,f){if(typeof(e.matrix)=="undefined"){e.extend({matrix:{}})}var c=e.matrix,g=c.M2x2,b=c.M3x3;e.extend(c,{identity:function(k){k=k||2;var l=k*k,n=new Array(l),j=k+1;for(var h=0;h<l;h++){n[h]=(h%j)===0?1:0}return new c["M"+k+"x"+k](n)},matrix:function(){var h=Array.prototype.slice.call(arguments);switch(arguments.length){case 4:return new g(h[0],h[2],h[1],h[3]);case 6:return new b(h[0],h[2],h[4],h[1],h[3],h[5],0,0,1)}},reflect:function(){return new g(-1,0,0,-1)},reflectX:function(){return new g(1,0,0,-1)},reflectXY:function(){return new g(0,1,1,0)},reflectY:function(){return new g(-1,0,0,1)},rotate:function(l){var i=e.angle.degreeToRadian(l),k=Math.cos(i),n=Math.sin(i);var j=k,h=n,p=-n,o=k;return new g(j,p,h,o)},scale:function(i,h){i=i||i===0?i:1;h=h||h===0?h:i;return new g(i,0,0,h)},scaleX:function(h){return c.scale(h,1)},scaleY:function(h){return c.scale(1,h)},skew:function(k,i){k=k||0;i=i||0;var l=e.angle.degreeToRadian(k),j=e.angle.degreeToRadian(i),h=Math.tan(l),n=Math.tan(j);return new g(1,h,n,1)},skewX:function(h){return c.skew(h)},skewY:function(h){return c.skew(0,h)},translate:function(i,h){i=i||0;h=h||0;return new b(1,0,i,0,1,h,0,0,1)},translateX:function(h){return c.translate(h)},translateY:function(h){return c.translate(0,h)}})})(jQuery,this,this.document);
 function ws_rotate(c,a,b){var f=jQuery;var d=f("ul",b);var g={position:"absolute",left:0,top:0,width:"100%"};var e;this.go=function(h,i){if(e){e.stop(true,true)}e=f(a.get(h)).clone().css(g).hide().appendTo(b);if(!c.noCross){var j=f(a.get(i)).clone().css(g).appendTo(b);d.hide();j.animate({rotate:c.rotateOut||180,scale:c.scaleOut||10,opacity:"hide"},{duration:c.duration,easing:"easeInOutExpo",complete:function(){f(this).remove()}})}e.css({scale:c.scaleIn||10,rotate:c.rotateIn||(-180),zIndex:10});e.animate({opacity:"show",rotate:0,scale:1},{duration:c.duration,easing:"easeInOutExpo",queue:false,complete:function(){d.css({left:-h+"00%"}).show();f(this).remove();e=0}});return h}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next:"",duration:15*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"rotate",prev:"",next:"",duration:15*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderelementalslices'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section25 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderelementalslices') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section25 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/elemental-slices/engine1/style.css" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -8325,8 +8117,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -8334,14 +8126,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -8349,41 +8141,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 9px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:11px;
 	height:11px;
 	background: url(./bullet.png) left top;
@@ -8393,13 +8185,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	margin-left:5px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -8410,21 +8202,21 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 	opacity: 0.8;	
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:21px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:21px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	opacity: 1;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	opacity: 1;
 }  
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 17px;
@@ -8446,18 +8238,18 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	-moz-box-shadow: 0 0 2px #5D5D5D;
     box-shadow: 0 0 2px #5D5D5D; 
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 14px;
 }
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 6px;
     right: 6px;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 1716s infinite;
 	-moz-animation: wsBasic 1716s infinite;
 	-webkit-animation: wsBasic 1716s infinite;
@@ -8466,13 +8258,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 0.12%{left:-0%} 0.19%{left:-100%} 0.31%{left:-100%} 0.38%{left:-200%} 0.5%{left:-200%} 0.58%{left:-300%} 0.69%{left:-300%} 0.77%{left:-400%} 0.89%{left:-400%} 0.96%{left:-500%} 1.08%{left:-500%} 1.15%{left:-600%} 1.27%{left:-600%} 1.35%{left:-700%} 1.46%{left:-700%} 1.54%{left:-800%} 1.66%{left:-800%} 1.73%{left:-900%} 1.85%{left:-900%} 1.92%{left:-1000%} 2.04%{left:-1000%} 2.12%{left:-1100%} 2.23%{left:-1100%} 2.31%{left:-1200%} 2.42%{left:-1200%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 0.12%{left:-0%} 0.19%{left:-100%} 0.31%{left:-100%} 0.38%{left:-200%} 0.5%{left:-200%} 0.58%{left:-300%} 0.69%{left:-300%} 0.77%{left:-400%} 0.89%{left:-400%} 0.96%{left:-500%} 1.08%{left:-500%} 1.15%{left:-600%} 1.27%{left:-600%} 1.35%{left:-700%} 1.46%{left:-700%} 1.54%{left:-800%} 1.66%{left:-800%} 1.73%{left:-900%} 1.85%{left:-900%} 1.92%{left:-1000%} 2.04%{left:-1000%} 2.12%{left:-1100%} 2.23%{left:-1100%} 2.31%{left:-1200%} 2.42%{left:-1200%} }
 
-#wowslider-container'.$val.' .ws_images {
+#wowslider-container' . $val . ' .ws_images {
     border-radius: 4px; 
 }
-#wowslider-container'.$val.' .ws_effect img{
+#wowslider-container' . $val . ' .ws_effect img{
 	border-radius: 4px;
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:20px;
@@ -8486,23 +8278,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	-moz-border-radius:5px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:18px;
 	overflow:visible;
@@ -8514,7 +8306,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 	border-radius:5px;
 	-moz-border-radius:5px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-10px;
@@ -8530,24 +8322,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"rotate",prev:"",next
 
 
 	<!-- Start WOWSlider.com BODY section25 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-							
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/lily.jpg" alt="lily" title="lily" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/lily.jpg" alt="lily" title="lily" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/beatiful_flowers.jpg" alt="beatiful flowers" title="beatiful flowers" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/bumblebee_on_the_mallow.jpg" alt="bumblebee on the mallow" title="bumblebee on the mallow" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/flowers.jpg" alt="flowers" title="flowers" id="wows1_3"/></li>
@@ -8560,28 +8350,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/roses.jpg" alt="roses" title="roses" id="wows1_10"/></li>
 <li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/white_flowers.jpg" alt="white flowers" title="white flowers" id="wows1_11"/></li>
 <li><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/images/yellow_dahlia.jpg" alt="yellow dahlia" title="yellow dahlia" id="wows1_12"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="lily"><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/tooltips/lily.jpg" alt="lily"/>jQuery CSS Slider</a>
 <a href="#" title="beatiful flowers"><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/tooltips/beatiful_flowers.jpg" alt="beatiful flowers"/>CSS3 Slider</a>
@@ -8597,8 +8386,8 @@ $i++;
 <a href="#" title="white flowers"><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/tooltips/white_flowers.jpg" alt="white flowers"/>CSS HTML Gallery</a>
 <a href="#" title="yellow dahlia"><img src="http://www.wowslider.com/images/demo/elemental-slices/data1/tooltips/yellow_dahlia.jpg" alt="yellow dahlia"/>CSS-only Gallery</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">CSS Diaporama jQuery</a>
@@ -8608,29 +8397,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/elemental-slices/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_slices(i,f,g){var c=jQuery;var e=function(p,v){var o=c.extend({},{effect:"random",slices:15,animSpeed:500,pauseTime:3000,startSlide:0,container:null,onEffectEnd:0},v);var r={currentSlide:0,currentImage:"",totalSlides:0,randAnim:"",stop:false};var m=c(p);m.data("wow:vars",r);if(!/absolute|relative/.test(m.css("position"))){m.css("position","relative")}var k=v.container||m;var n=m.children();r.totalSlides=n.length;if(o.startSlide>0){if(o.startSlide>=r.totalSlides){o.startSlide=r.totalSlides-1}r.currentSlide=o.startSlide}if(c(n[r.currentSlide]).is("img")){r.currentImage=c(n[r.currentSlide])}else{r.currentImage=c(n[r.currentSlide]).find("img:first")}if(c(n[r.currentSlide]).is("a")){c(n[r.currentSlide]).css("display","block")}for(var q=0;q<o.slices;q++){var u=Math.round(k.width()/o.slices);var t=c("<div class="wow-slice"></div>").css({left:u*q+"px",overflow:"hidden",width:((q==o.slices-1)?(k.width()-(u*q)):u)+"px",position:"absolute"}).appendTo(k);c("<img>").css({position:"absolute",left:0,top:0}).appendTo(t)}var l=0;this.sliderRun=function(w,x){if(r.busy){return false}o.effect=x||o.effect;r.currentSlide=w-1;s(m,n,o,false);return true};var j=function(){if(o.onEffectEnd){o.onEffectEnd(r.currentSlide)}k.hide();r.busy=0};var s=function(w,x,z,B){var C=w.data("wow:vars");if((!C||C.stop)&&!B){return false}C.busy=1;C.currentSlide++;if(C.currentSlide==C.totalSlides){C.currentSlide=0}if(C.currentSlide<0){C.currentSlide=(C.totalSlides-1)}C.currentImage=c(x[C.currentSlide]);if(!C.currentImage.is("img")){C.currentImage=C.currentImage.find("img:first")}c(".wow-slice",k).each(function(H){var J=c(this),G=c("img",J);var I=Math.round(k.width()/z.slices);G.width(k.width());G.attr("src",C.currentImage.attr("src"));G.css({left:-I*H+"px"});J.css({height:"0px",opacity:"0",left:I*H+"px",width:((H==z.slices-1)?(k.width()-(I*H)):I)+"px",})});k.show();if(z.effect=="random"){var D=new Array("sliceDownRight","sliceDownLeft","sliceUpRight","sliceUpLeft","sliceUpDownRight","sliceUpDownLeft","fold","fade");C.randAnim=D[Math.floor(Math.random()*(D.length+1))];if(C.randAnim==undefined){C.randAnim="fade"}}if(z.effect.indexOf(",")!=-1){var D=z.effect.split(",");C.randAnim=c.trim(D[Math.floor(Math.random()*D.length)])}if(z.effect=="sliceDown"||z.effect=="sliceDownRight"||C.randAnim=="sliceDownRight"||z.effect=="sliceDownLeft"||C.randAnim=="sliceDownLeft"){var y=0;var A=0;var F=c(".wow-slice",k);if(z.effect=="sliceDownLeft"||C.randAnim=="sliceDownLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);G.css({top:0,bottom:""});if(A==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="sliceUp"||z.effect=="sliceUpRight"||C.randAnim=="sliceUpRight"||z.effect=="sliceUpLeft"||C.randAnim=="sliceUpLeft"){var y=0;var A=0;var F=c(".wow-slice",k);if(z.effect=="sliceUpLeft"||C.randAnim=="sliceUpLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);G.css({top:"",bottom:0});if(A==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="sliceUpDown"||z.effect=="sliceUpDownRight"||C.randAnim=="sliceUpDownRight"||z.effect=="sliceUpDownLeft"||C.randAnim=="sliceUpDownLeft"){var y=0;var A=0;var E=0;var F=c(".wow-slice",k);if(z.effect=="sliceUpDownLeft"||C.randAnim=="sliceUpDownLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);if(A==0){G.css({top:0,bottom:""});A++}else{G.css({top:"",bottom:0});A=0}if(E==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;E++})}else{if(z.effect=="fold"||C.randAnim=="fold"){var y=0;var A=0;c(".wow-slice",k).each(function(){var G=c(this);var H=G.width();G.css({top:"0px",height:"100%",width:"0px"});if(A==z.slices-1){setTimeout(function(){G.animate({width:H,opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({width:H,opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="fade"||C.randAnim=="fade"){var A=0;c(".wow-slice",k).each(function(){c(this).css("height","100%");if(A==z.slices-1){c(this).animate({opacity:"1.0"},(z.animSpeed*2),j)}else{c(this).animate({opacity:"1.0"},(z.animSpeed*2))}A++})}}}}}}};c.fn._reverse=[].reverse;var a=c("li",g);var d=c("ul",g);var b=c("<div></div>").css({left:0,top:0,"z-index":8,width:"100%",height:"100%",position:"absolute"}).appendTo(g);var h=new e(d,{keyboardNav:false,caption:0,effect:"sliceDownRight,sliceDownLeft,sliceUpRight,sliceUpLeft,sliceUpDownRight,sliceUpDownLeft,sliceUpDownRight,sliceUpDownLeft,fold,fold,fold",animSpeed:i.duration,startSlide:i.startSlide,container:b,onEffectEnd:function(j){d.css({left:-j+"00%"})}});this.go=function(k,j){var l=h.sliderRun(k);if(l){return k}else{return -1}}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next:"",duration:13*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"slices",prev:"",next:"",duration:13*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidershadystackv'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section26 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidershadystackv') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section26 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/shady-stack-v/engine1/style.css" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -8639,8 +8424,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -8648,14 +8433,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -8663,40 +8448,40 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left:4px;
 	width:22px;
 	height:20px;
@@ -8706,10 +8491,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -8723,23 +8508,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	background-size:200% 200%;*/
 
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:10px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
-#wowslider-container'.$val.' .ws-title{
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:50px;
 	left: 0;
@@ -8755,18 +8540,18 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 13px;
 	text-transform:none;
 }
 /* bottom center */
-#wowslider-container'.$val.' .ws_bullets {
+#wowslider-container' . $val . ' .ws_bullets {
 	top:0;
     right: 0;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 60s infinite;
 	-moz-animation: wsBasic 60s infinite;
 	-webkit-animation: wsBasic 60s infinite;
@@ -8775,7 +8560,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 3.33%{left:-0%} 6.67%{left:-100%} 10%{left:-100%} 13.33%{left:-200%} 16.67%{left:-200%} 20%{left:-300%} 23.33%{left:-300%} 26.67%{left:-400%} 30%{left:-400%} 33.33%{left:-500%} 36.67%{left:-500%} 40%{left:-600%} 43.33%{left:-600%} 46.67%{left:-700%} 50%{left:-700%} 53.33%{left:-800%} 56.67%{left:-800%} 60%{left:-900%} 63.33%{left:-900%} 66.67%{left:-1000%} 70%{left:-1000%} 73.33%{left:-1100%} 76.67%{left:-1100%} 80%{left:-1200%} 83.33%{left:-1200%} 86.67%{left:-1300%} 90%{left:-1300%} 93.33%{left:-1400%} 96.67%{left:-1400%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 3.33%{left:-0%} 6.67%{left:-100%} 10%{left:-100%} 13.33%{left:-200%} 16.67%{left:-200%} 20%{left:-300%} 23.33%{left:-300%} 26.67%{left:-400%} 30%{left:-400%} 33.33%{left:-500%} 36.67%{left:-500%} 40%{left:-600%} 43.33%{left:-600%} 46.67%{left:-700%} 50%{left:-700%} 53.33%{left:-800%} 56.67%{left:-800%} 60%{left:-900%} 63.33%{left:-900%} 66.67%{left:-1000%} 70%{left:-1000%} 73.33%{left:-1100%} 76.67%{left:-1100%} 80%{left:-1200%} 83.33%{left:-1200%} 86.67%{left:-1300%} 90%{left:-1300%} 93.33%{left:-1400%} 96.67%{left:-1400%} }
 
-#wowslider-container'.$val.' .ws_shadow{
+#wowslider-container' . $val . ' .ws_shadow{
 	width:135%;
 	height:45%;
 	position: absolute;
@@ -8784,12 +8569,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	z-index:-1;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/shadow.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background: url(./shadow.png) left 100%;
 	background-size:100%;
 	filter:"";
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:16px;
@@ -8801,23 +8586,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
     border: 5px solid #a4a4a4;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#a4a4a4;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:20px;
 	overflow:visible;
@@ -8827,7 +8612,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
     box-shadow: 0 0 5px #000000;
     border: 5px solid #a4a4a4;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-10px;
@@ -8842,24 +8627,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section26 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Bream Bay From The Brynderwyn Ranges</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/bream_bay.jpg" alt="Bream bay" title="Bream bay" id="wows1_0"/>Bream Bay From The Brynderwyn Ranges</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Bream Bay From The Brynderwyn Ranges</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/bream_bay.jpg" alt="Bream bay" title="Bream bay" id="wows1_0"/>Bream Bay From The Brynderwyn Ranges</li>
 <li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/dunes_and_harbour.jpg" alt="dunes and harbour" title="dunes and harbour" id="wows1_1"/>Mangawhais sund dunes are a dominant feature of the harbour.</li>
 <li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/head_rock.jpg" alt="Head Rock" title="Head Rock" id="wows1_2"/>Head Rock (Mangawhai Heads)</li>
 <li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/ligurian_sea.jpg" alt="Ligurian sea" title="Ligurian sea" id="wows1_3"/>Ligurian Sea from Vernazza, Cinque Terre, Italy. </li>
@@ -8874,28 +8657,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/sea_view.jpg" alt="sea view" title="sea view" id="wows1_12"/>Looking out towards the Hen und Chicken Islunds from Bream Tail Farm Northlund New Zealund</li>
 <li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/te_werahi_beach.jpg" alt="Te Werahi Beach" title="Te Werahi Beach" id="wows1_13"/>Overlooking Te Werahi Beach und Cape Maria van Dieman from Cape Reinga, New Zealund</li>
 <li><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/images/whangarei_harbour.jpg" alt="Whangarei Harbour" title="Whangarei Harbour" id="wows1_14"/>Whangarei, 130 miles by rail north of Aucklund, is the capital of Northlund.</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Bream bay"><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/tooltips/bream_bay.jpg" alt="Bream bay"/>1</a>
 <a href="#" title="dunes und harbour"><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/tooltips/dunes_and_harbour.jpg" alt="dunes und harbour"/>2</a>
@@ -8913,8 +8695,8 @@ $i++;
 <a href="#" title="Te Werahi Beach"><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/tooltips/te_werahi_beach.jpg" alt="Te Werahi Beach"/>14</a>
 <a href="#" title="Whangarei Harbour"><img src="http://www.wowslider.com/images/demo/shady-stack-v/data1/tooltips/whangarei_harbour.jpg" alt="Whangarei Harbour"/>15</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 </div></div>
@@ -8925,29 +8707,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/shady-stack-v/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_stack_vertical(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=(k-h+1)%c.length;if(Math.abs(m)>=1){g=(m>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?1:-1)+"00%";c.each(function(o){if(g&&o!=h){this.style.zIndex=(Math.max(0,this.style.zIndex-1))}});var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,top:(g?i:l)});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){e("ul",b).css({left:-k+"00%"})}f.animate({top:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"})}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack_vertical",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidernumericbasic'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section27 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidernumericbasic') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section27 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/numeric-basic/engine1/style.css" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -8956,8 +8734,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -8965,14 +8743,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -8980,41 +8758,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	font:14px/32px Arial,Helvetica,sans-serif; 
 	color:#3D3D3D;
 	text-align:center;
@@ -9025,10 +8803,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	float: left; 
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: right top;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -9038,21 +8816,21 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	width: 29px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:55px;
 	left: 0px;
@@ -9069,21 +8847,21 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 	text-transform:none;
 }
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 735s infinite;
 	-moz-animation: wsBasic 735s infinite;
 	-webkit-animation: wsBasic 735s infinite;
@@ -9092,11 +8870,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 @-moz-keyframes wsBasic{0%{left:-0%} 0.34%{left:-0%} 0.41%{left:-100%} 0.75%{left:-100%} 0.82%{left:-200%} 1.16%{left:-200%} 1.22%{left:-300%} 1.56%{left:-300%} 1.63%{left:-400%} 1.97%{left:-400%} 2.04%{left:-500%} 2.38%{left:-500%} 2.45%{left:-600%} 2.79%{left:-600%} 2.86%{left:-700%} 3.2%{left:-700%} 3.27%{left:-800%} 3.61%{left:-800%} 3.67%{left:-900%} 4.01%{left:-900%} 4.08%{left:-1000%} 4.42%{left:-1000%} 4.49%{left:-1100%} 4.83%{left:-1100%} 4.9%{left:-1200%} 5.24%{left:-1200%} 5.31%{left:-1300%} 5.65%{left:-1300%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 0.34%{left:-0%} 0.41%{left:-100%} 0.75%{left:-100%} 0.82%{left:-200%} 1.16%{left:-200%} 1.22%{left:-300%} 1.56%{left:-300%} 1.63%{left:-400%} 1.97%{left:-400%} 2.04%{left:-500%} 2.38%{left:-500%} 2.45%{left:-600%} 2.79%{left:-600%} 2.86%{left:-700%} 3.2%{left:-700%} 3.27%{left:-800%} 3.61%{left:-800%} 3.67%{left:-900%} 4.01%{left:-900%} 4.08%{left:-1000%} 4.42%{left:-1000%} 4.49%{left:-1100%} 4.83%{left:-1100%} 4.9%{left:-1200%} 5.24%{left:-1200%} 5.31%{left:-1300%} 5.65%{left:-1300%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:5px auto 5px;
 }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-0.52%;
@@ -9105,11 +8883,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	height:102.78%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-size:100%;
 	filter:"";
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:25px;
@@ -9121,23 +8899,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
     border: 5px solid #ffffff;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#ffffff;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:35px;
 	overflow:visible;
@@ -9150,7 +8928,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	-webkit-border-radius:3px;
     border: 5px solid #ffffff;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-17px;
@@ -9166,24 +8944,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 
 
 	<!-- Start WOWSlider.com BODY section27 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/amazing_sunset.jpg" alt="amazing sunset : HTML5 Image Gallery" title="amazing sunset" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/amazing_sunset.jpg" alt="amazing sunset : HTML5 Image Gallery" title="amazing sunset" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/apple_tree.jpg" alt="apple tree : HTML5 Image Slider" title="apple tree" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/beutiful_landscape.jpg" alt="beutiful landscape : HTML5 Image Slideshow" title="beautiful landscape" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/birch.jpg" alt="birch : HTML5 Image Banner" title="birch" id="wows1_3"/></li>
@@ -9197,28 +8973,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/sun_and_sea.jpg" alt="sun and sea : HTML5 Image Gallery Template" title="sun and sea" id="wows1_11"/></li>
 <li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/strobiles_on_spruce.jpg" alt="strobiles on a spruce : Image Gallery with HTML5 " title="strobiles on a spruce" id="wows1_12"/></li>
 <li><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/images/sunset_on_the_river.jpg" alt="sunset on the river : Free Image Gallery HTML5" title="sunset on the river" id="wows1_13"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="amazing sunset"><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/tooltips/amazing_sunset.jpg" alt="amazing sunset"/>1</a>
 <a href="#" title="apple tree"><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/tooltips/apple_tree.jpg" alt="apple tree"/>2</a>
@@ -9235,8 +9010,8 @@ $i++;
 <a href="#" title="strobiles on a spruce"><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/tooltips/strobiles_on_spruce.jpg" alt="strobiles on a spruce"/>13</a>
 <a href="#" title="sunset on the river"><img src="http://www.wowslider.com/images/demo/numeric-basic/data1/tooltips/sunset_on_the_river.jpg" alt="sunset on the river"/>14</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">galerie HTML5</a>
@@ -9246,22 +9021,21 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/numeric-basic/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_basic(c,a,b){this.go=function(d){b.find("ul").stop(true).animate({left:(d?-d+"00%":0)},c.duration,"easeInOutExpo");return d}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:"",duration:5*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"basic",prev:"",next:"",duration:5*100,delay:25*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		/*}elseif ($conf_value == 'wowslideraquaflip'){
-		
-		
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+        /*}elseif ($conf_value == 'wowslideraquaflip'){
+
+
 													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
+													$arg = $conf_name;
+													$val = $conf_id;
 													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
+
+
 													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section28 -->
 	<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/aqua-flip/engine1/style.css" media="screen" />
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/jquery.js"></script>
@@ -9306,26 +9080,24 @@ function ws_flip(c,m,e){var f=jQuery;var s=f.browser.msie&&parseInt(f.browser.ve
 wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"",duration:30*100,delay:10*100,width:960,height:360,autoPlay:true,stopOnHover:true,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0,onBeforeStep:function(curIdx,count){return (curIdx+1 + Math.floor((count-1)*Math.random()))},startSlide: Math.round(Math.random()*999999999)});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
+';
+
+
 		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		*/}elseif ($conf_value == 'wowsliderterseblur'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section29 -->
+		*/
+    } elseif ($conf_value == 'wowsliderterseblur') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '		<!-- Start WOWSlider.com HEAD section29 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/terse-blur/engine1/style.css" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -9334,8 +9106,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 	border:1px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -9343,14 +9115,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -9358,41 +9130,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:22px;
 	height:20px;
 	background: url(./bullet.png) left top;
@@ -9401,11 +9173,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%; 
 }
 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -9415,15 +9187,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 	width: 39px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0; 
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0px;
 	background-position: 0 0;  
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:25px;
 	left: 0;
@@ -9438,17 +9210,17 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
     opacity: 0.7;    
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 13px;
 }
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	top:0;
     right: 0;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 40s infinite;
 	-moz-animation: wsBasic 40s infinite;
 	-webkit-animation: wsBasic 40s infinite;
@@ -9457,7 +9229,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:18px;
@@ -9467,23 +9239,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
     border: 1px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:20px;
 	overflow:visible;
@@ -9491,7 +9263,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 	cursor:pointer;
     border: 1px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-7px;
@@ -9507,24 +9279,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"flip",prev:"",next:"
 
 	
 		<!-- Start WOWSlider.com BODY section29 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/cars_wallpapers_51.jpg" alt="Mercedes Benz : jQuery Banner Rotator" title="Mercedes Benz" id="wows0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/cars_wallpapers_51.jpg" alt="Mercedes Benz : jQuery Banner Rotator" title="Mercedes Benz" id="wows0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/zenvost1danishsupercar.jpg" alt="Zenvo ST1 - Danish super car : jQuery Rotator" title="Zenvo ST1 - Danish super car" id="wows1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/car023.jpg" alt="Concept Cars : jQuery random Image Rotator" title="Concept Cars" id="wows2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/cars_wallpapers_18.jpg" alt="Chevrolet Camaro : jQuery Image Rotator With Description" title="Chevrolet Camaro" id="wows3"/></li>
@@ -9534,28 +9304,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/gtravalanche06_07.jpg" alt="Racing cars : jQuery Image Rotator Plugin" title="Racing cars" id="wows7"/></li>
 <li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/muscle.jpg" alt="Muscle cars : jQuery Banner Rotator Fade" title="Muscle cars" id="wows8"/></li>
 <li><img src="http://www.wowslider.com/images/demo/terse-blur/data1/images/maseratimc12racingcar.jpg" alt="Maserati-MC12 : Automatic Image Rotator" title="Maserati-MC12" id="wows9"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Mercedes Benz"><img src="http://www.wowslider.com/images/demo/terse-blur/data1/tooltips/cars_wallpapers_51.jpg" alt="Mercedes Benz"/>Automatic Image Rotator</a>
 <a href="#" title="Zenvo ST1 - Danish super car"><img src="http://www.wowslider.com/images/demo/terse-blur/data1/tooltips/zenvost1danishsupercar.jpg" alt="Zenvo ST1 - Danish super car"/>jQuery Banner Rotator Fade</a>
@@ -9568,8 +9337,8 @@ $i++;
 <a href="#" title="Muscle cars"><img src="http://www.wowslider.com/images/demo/terse-blur/data1/tooltips/muscle.jpg" alt="Muscle cars"/>jQuery Rotator</a>
 <a href="#" title="Maserati-MC12"><img src="http://www.wowslider.com/images/demo/terse-blur/data1/tooltips/maseratimc12racingcar.jpg" alt="Maserati-MC12 : jQuery Banner Rotator"/>jQuery Banner Rotator</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">jQuery Bilder Rotator HTML5 Banner Rotator</a>
@@ -9577,30 +9346,26 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/wowslider.js"></script>
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/terse-blur/engine1/script.js"></script>-->
 	<script type="text/javascript">
-function ws_blur(p,n,c){var h=jQuery;var b=!p.noCanvas&&!window.opera&&!!document.createElement("canvas").getContext;if(b){try{document.createElement("canvas").getContext("2d").getImageData(0,0,1,1)}catch(m){b=0}}var d;function k(q,e,r){q.css({opacity:0,visibility:"visible"});q.animate({opacity:1},e,"linear",r)}function i(q,e,r){q.animate({opacity:0},e,"linear",r)}var l;this.go=function(e,q){if(l){return -1}l=1;var u=h(n.get(q)),s=h(n.get(e));var t;if(b){if(!d){d="<canvas width="'+c.width()+'" height="'+c.height()+'"/>";d=h(d+d).css({"z-index":8,position:"absolute",width:"100%",height:"100%",left:0,top:0,visibility:"hidden"}).appendTo(c)}t=g(u,30,d.get(0))}if(b&&t){var r=g(s,30,d.get(1));k(t,p.duration/3,function(){c.find("ul").css({visibility:"hidden"});i(t,p.duration/6);k(r,p.duration/6,function(){t.css({visibility:"hidden"});c.find("ul").css({left:-e+"00%"}).css({visibility:"visible"});i(r,p.duration/2,function(){l=0})})})}else{b=0;t=g(u,8);t.fadeIn(p.duration/3,"linear",function(){c.find("ul").css({left:-e+"00%"});t.fadeOut(p.duration/3,"linear",function(){t.remove();l=0})})}return e};function g(v,u,q){var A=(parseInt(v.parent().css("z-index"))||0)+1;if(b){var D=q.getContext("2d");D.drawImage(v.get(0),0,0);if(!j(D,0,0,q.width,q.height,u)){return 0}return h(q)}var E=h("<div></div>").css({position:"absolute","z-index":A,left:0,top:0,width:"100%",height:"100%",display:"none"}).appendTo(c);var C=(Math.sqrt(5)+1)/2;var s=1-C/2;for(var t=0;s*t<u;t++){var w=Math.PI*C*t;var e=(s*t+1);var B=e*Math.cos(w);var z=e*Math.sin(w);h(document.createElement("img")).attr("src",v.attr("src")).css({opacity:1/(t/1.8+1),position:"absolute","z-index":A,left:Math.round(B)+"px",top:Math.round(z)+"px",width:"100%",height:"100%"}).appendTo(E)}return E}var o=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,482,454,428,405,383,364,345,328,312,298,284,271,259,496,475,456,437,420,404,388,374,360,347,335,323,312,302,292,282,273,265,512,497,482,468,454,441,428,417,405,394,383,373,364,354,345,337,328,320,312,305,298,291,284,278,271,265,259,507,496,485,475,465,456,446,437,428,420,412,404,396,388,381,374,367,360,354,347,341,335,329,323,318,312,307,302,297,292,287,282,278,273,269,265,261,512,505,497,489,482,475,468,461,454,447,441,435,428,422,417,411,405,399,394,389,383,378,373,368,364,359,354,350,345,341,337,332,328,324,320,316,312,309,305,301,298,294,291,287,284,281,278,274,271,268,265,262,259,257,507,501,496,491,485,480,475,470,465,460,456,451,446,442,437,433,428,424,420,416,412,408,404,400,396,392,388,385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,289,287,285,282,280,278,275,273,271,269,267,265,263,261,259];var a=[9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24];function j(ah,P,N,q,r,Y){if(isNaN(Y)||Y<1){return}Y|=0;var ac;try{ac=ah.getImageData(P,N,q,r)}catch(ag){console.log("error:unable to access image data: "+ag);return false}var v=ac.data;var W,V,ae,ab,E,H,B,t,u,M,C,O,K,S,X,F,A,G,I,R;var af=Y+Y+1;var T=q<<2;var D=q-1;var aa=r-1;var z=Y+1;var Z=z*(z+1)/2;var Q=new f();var L=Q;for(ae=1;ae<af;ae++){L=L.next=new f();if(ae==z){var w=L}}L.next=Q;var ad=null;var U=null;B=H=0;var J=o[Y];var s=a[Y];for(V=0;V<r;V++){S=X=F=t=u=M=0;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}for(ae=1;ae<z;ae++){ab=H+((D<ae?D:ae)<<2);t+=(L.r=(A=v[ab]))*(R=z-ae);u+=(L.g=(G=v[ab+1]))*R;M+=(L.b=(I=v[ab+2]))*R;S+=A;X+=G;F+=I;L=L.next}ad=Q;U=w;for(W=0;W<q;W++){v[H]=(t*J)>>s;v[H+1]=(u*J)>>s;v[H+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(B+((ab=W+Y+1)<D?ab:D))<<2;S+=(ad.r=v[ab]);X+=(ad.g=v[ab+1]);F+=(ad.b=v[ab+2]);t+=S;u+=X;M+=F;ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=4}B+=q}for(W=0;W<q;W++){X=F=S=u=M=t=0;H=W<<2;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}E=q;for(ae=1;ae<=Y;ae++){H=(E+W)<<2;t+=(L.r=(A=v[H]))*(R=z-ae);u+=(L.g=(G=v[H+1]))*R;M+=(L.b=(I=v[H+2]))*R;S+=A;X+=G;F+=I;L=L.next;if(ae<aa){E+=q}}H=W;ad=Q;U=w;for(V=0;V<r;V++){ab=H<<2;v[ab]=(t*J)>>s;v[ab+1]=(u*J)>>s;v[ab+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(W+(((ab=V+z)<aa?ab:aa)*q))<<2;t+=(S+=(ad.r=v[ab]));u+=(X+=(ad.g=v[ab+1]));M+=(F+=(ad.b=v[ab+2]));ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=q}}ah.putImageData(ac,P,N);return true}function f(){this.r=0;this.g=0;this.b=0;this.a=0;this.next=null}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+function ws_blur(p,n,c){var h=jQuery;var b=!p.noCanvas&&!window.opera&&!!document.createElement("canvas").getContext;if(b){try{document.createElement("canvas").getContext("2d").getImageData(0,0,1,1)}catch(m){b=0}}var d;function k(q,e,r){q.css({opacity:0,visibility:"visible"});q.animate({opacity:1},e,"linear",r)}function i(q,e,r){q.animate({opacity:0},e,"linear",r)}var l;this.go=function(e,q){if(l){return -1}l=1;var u=h(n.get(q)),s=h(n.get(e));var t;if(b){if(!d){d="<canvas width="' + \C . width() + '" height="' + \C . height() + '"/>";d=h(d+d).css({"z-index":8,position:"absolute",width:"100%",height:"100%",left:0,top:0,visibility:"hidden"}).appendTo(c)}t=g(u,30,d.get(0))}if(b&&t){var r=g(s,30,d.get(1));k(t,p.duration/3,function(){c.find("ul").css({visibility:"hidden"});i(t,p.duration/6);k(r,p.duration/6,function(){t.css({visibility:"hidden"});c.find("ul").css({left:-e+"00%"}).css({visibility:"visible"});i(r,p.duration/2,function(){l=0})})})}else{b=0;t=g(u,8);t.fadeIn(p.duration/3,"linear",function(){c.find("ul").css({left:-e+"00%"});t.fadeOut(p.duration/3,"linear",function(){t.remove();l=0})})}return e};function g(v,u,q){var A=(parseInt(v.parent().css("z-index"))||0)+1;if(b){var D=q.getContext("2d");D.drawImage(v.get(0),0,0);if(!j(D,0,0,q.width,q.height,u)){return 0}return h(q)}var E=h("<div></div>").css({position:"absolute","z-index":A,left:0,top:0,width:"100%",height:"100%",display:"none"}).appendTo(c);var C=(Math.sqrt(5)+1)/2;var s=1-C/2;for(var t=0;s*t<u;t++){var w=Math.PI*C*t;var e=(s*t+1);var B=e*Math.cos(w);var z=e*Math.sin(w);h(document.createElement("img")).attr("src",v.attr("src")).css({opacity:1/(t/1.8+1),position:"absolute","z-index":A,left:Math.round(B)+"px",top:Math.round(z)+"px",width:"100%",height:"100%"}).appendTo(E)}return E}var o=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,482,454,428,405,383,364,345,328,312,298,284,271,259,496,475,456,437,420,404,388,374,360,347,335,323,312,302,292,282,273,265,512,497,482,468,454,441,428,417,405,394,383,373,364,354,345,337,328,320,312,305,298,291,284,278,271,265,259,507,496,485,475,465,456,446,437,428,420,412,404,396,388,381,374,367,360,354,347,341,335,329,323,318,312,307,302,297,292,287,282,278,273,269,265,261,512,505,497,489,482,475,468,461,454,447,441,435,428,422,417,411,405,399,394,389,383,378,373,368,364,359,354,350,345,341,337,332,328,324,320,316,312,309,305,301,298,294,291,287,284,281,278,274,271,268,265,262,259,257,507,501,496,491,485,480,475,470,465,460,456,451,446,442,437,433,428,424,420,416,412,408,404,400,396,392,388,385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,289,287,285,282,280,278,275,273,271,269,267,265,263,261,259];var a=[9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24];function j(ah,P,N,q,r,Y){if(isNaN(Y)||Y<1){return}Y|=0;var ac;try{ac=ah.getImageData(P,N,q,r)}catch(ag){console.log("error:unable to access image data: "+ag);return false}var v=ac.data;var W,V,ae,ab,E,H,B,t,u,M,C,O,K,S,X,F,A,G,I,R;var af=Y+Y+1;var T=q<<2;var D=q-1;var aa=r-1;var z=Y+1;var Z=z*(z+1)/2;var Q=new f();var L=Q;for(ae=1;ae<af;ae++){L=L.next=new f();if(ae==z){var w=L}}L.next=Q;var ad=null;var U=null;B=H=0;var J=o[Y];var s=a[Y];for(V=0;V<r;V++){S=X=F=t=u=M=0;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}for(ae=1;ae<z;ae++){ab=H+((D<ae?D:ae)<<2);t+=(L.r=(A=v[ab]))*(R=z-ae);u+=(L.g=(G=v[ab+1]))*R;M+=(L.b=(I=v[ab+2]))*R;S+=A;X+=G;F+=I;L=L.next}ad=Q;U=w;for(W=0;W<q;W++){v[H]=(t*J)>>s;v[H+1]=(u*J)>>s;v[H+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(B+((ab=W+Y+1)<D?ab:D))<<2;S+=(ad.r=v[ab]);X+=(ad.g=v[ab+1]);F+=(ad.b=v[ab+2]);t+=S;u+=X;M+=F;ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=4}B+=q}for(W=0;W<q;W++){X=F=S=u=M=t=0;H=W<<2;C=z*(A=v[H]);O=z*(G=v[H+1]);K=z*(I=v[H+2]);t+=Z*A;u+=Z*G;M+=Z*I;L=Q;for(ae=0;ae<z;ae++){L.r=A;L.g=G;L.b=I;L=L.next}E=q;for(ae=1;ae<=Y;ae++){H=(E+W)<<2;t+=(L.r=(A=v[H]))*(R=z-ae);u+=(L.g=(G=v[H+1]))*R;M+=(L.b=(I=v[H+2]))*R;S+=A;X+=G;F+=I;L=L.next;if(ae<aa){E+=q}}H=W;ad=Q;U=w;for(V=0;V<r;V++){ab=H<<2;v[ab]=(t*J)>>s;v[ab+1]=(u*J)>>s;v[ab+2]=(M*J)>>s;t-=C;u-=O;M-=K;C-=ad.r;O-=ad.g;K-=ad.b;ab=(W+(((ab=V+z)<aa?ab:aa)*q))<<2;t+=(S+=(ad.r=v[ab]));u+=(X+=(ad.g=v[ab+1]));M+=(F+=(ad.b=v[ab+2]));ad=ad.next;C+=(A=U.r);O+=(G=U.g);K+=(I=U.b);S-=A;X-=G;F-=I;U=U.next;H+=q}}ah.putImageData(ac,P,N);return true}function f(){this.r=0;this.g=0;this.b=0;this.a=0;this.next=null}};
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"blur",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidermacstack'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section30 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidermacstack') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '		<!-- Start WOWSlider.com HEAD section30 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/mac-stack/engine1/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -9609,8 +9374,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -9618,14 +9383,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -9633,41 +9398,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:15px;
 	height:15px;
 	background: url(./icons/bullet.png) left top;
@@ -9677,13 +9442,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	margin-left:3px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -9693,18 +9458,18 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	width: 45px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:11px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:11px;
 	background-position: 0 0; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 0px;
@@ -9722,20 +9487,20 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 }
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 54s infinite;
 	-moz-animation: wsBasic 54s infinite;
 	-webkit-animation: wsBasic 54s infinite;
@@ -9744,11 +9509,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 3.7%{left:-0%} 5.56%{left:-100%} 9.26%{left:-100%} 11.11%{left:-200%} 14.81%{left:-200%} 16.67%{left:-300%} 20.37%{left:-300%} 22.22%{left:-400%} 25.93%{left:-400%} 27.78%{left:-500%} 31.48%{left:-500%} 33.33%{left:-600%} 37.04%{left:-600%} 38.89%{left:-700%} 42.59%{left:-700%} 44.44%{left:-800%} 48.15%{left:-800%} 50%{left:-900%} 53.7%{left:-900%} 55.56%{left:-1000%} 59.26%{left:-1000%} 61.11%{left:-1100%} 64.81%{left:-1100%} 66.67%{left:-1200%} 70.37%{left:-1200%} 72.22%{left:-1300%} 75.93%{left:-1300%} 77.78%{left:-1400%} 81.48%{left:-1400%} 83.33%{left:-1500%} 87.04%{left:-1500%} 88.89%{left:-1600%} 92.59%{left:-1600%} 94.44%{left:-1700%} 98.15%{left:-1700%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 3.7%{left:-0%} 5.56%{left:-100%} 9.26%{left:-100%} 11.11%{left:-200%} 14.81%{left:-200%} 16.67%{left:-300%} 20.37%{left:-300%} 22.22%{left:-400%} 25.93%{left:-400%} 27.78%{left:-500%} 31.48%{left:-500%} 33.33%{left:-600%} 37.04%{left:-600%} 38.89%{left:-700%} 42.59%{left:-700%} 44.44%{left:-800%} 48.15%{left:-800%} 50%{left:-900%} 53.7%{left:-900%} 55.56%{left:-1000%} 59.26%{left:-1000%} 61.11%{left:-1100%} 64.81%{left:-1100%} 66.67%{left:-1200%} 70.37%{left:-1200%} 72.22%{left:-1300%} 75.93%{left:-1300%} 77.78%{left:-1400%} 81.48%{left:-1400%} 83.33%{left:-1500%} 87.04%{left:-1500%} 88.89%{left:-1600%} 92.59%{left:-1600%} 94.44%{left:-1700%} 98.15%{left:-1700%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:9px auto 17px;
 }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-1.04%;
@@ -9757,12 +9522,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	height:107.22%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
 	filter:"";
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -9776,23 +9541,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	-moz-border-radius:5px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:18px;
 	overflow:visible;
@@ -9804,7 +9569,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	border-radius:5px;
 	-moz-border-radius:5px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-10px;
@@ -9819,52 +9584,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blur",prev:"",next:"
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section30 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/rainbowchicks.jpg" alt="Rainbow Chicks : jQuery Carousel" title="Rainbow Chicks" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/rainbowchicks.jpg" alt="Rainbow Chicks : jQuery Carousel" title="Rainbow Chicks" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/tegu.jpg" alt="Tegu : jQuery Carousel With Text" title="Tegu" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/otter.jpg" alt="Otter : jQuery Ajax Carousel" title="Otter" id="wows2"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/sleepingkitties.jpg" alt="Sleeping Kitties : jQuery Carousel Pagination" title="Sleeping Kitties" id="wows3"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/alone.jpg" alt="Puppy : jQuery Carousel Autoscroll" title="Puppy" id="wows4"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/white_bear.jpg" alt="White Bear : jQuery Banner Carousel" title="White Bear" id="wows5"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/images/rabbits.jpg" alt="Rabbits : jQuery Content Slider Carousel" title="Rabbits" id="wows7"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Rainbow Chicks"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/tooltips/rainbowchicks.jpg" alt="Rainbow Chicks : jQuery Carousel Image Slider"/>Free jQuery Carousel Slideshow</a>
 <a href="#" title="Tegu"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/tooltips/tegu.jpg" alt="Tegu : jQuery Carousel Slider Example"/>jQuery Carousel Horizontal Slider</a>
@@ -9874,8 +9636,8 @@ $i++;
 <a href="#" title="White Bear"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/tooltips/white_bear.jpg" alt="White Bear : jQuery Ajax Carousel"/>jQuery Carousel With Text</a>
 <a href="#" title="Rabbits"><img src="http://www.wowslider.com/images/demo/mac-stack/data1/tooltips/rabbits.jpg" alt="Rabbits : jQuery Carousel Ajax"/>jQuery Carousel</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">CSS Carousel slider JQuery</a>
@@ -9884,29 +9646,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/mac-stack/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_stack(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=c.length>2?(k-h+1)%c.length:1;if(Math.abs(n)>=1){g=(n>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?-1:1)+"00%";var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,left:((g?i:l))});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){e("ul",b).css({left:-k+"00%"})}f.animate({left:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"})}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:true,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:true,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidercrystallinear'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section31 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidercrystallinear') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '		<!-- Start WOWSlider.com HEAD section31 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/crystal-linear/engine1/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -9915,8 +9673,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -9924,14 +9682,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -9939,37 +9697,37 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.' .ws_frame{
+#wowslider-container' . $val . ' .ws_frame{
 	display:block;
 	position: absolute;
 	left:0;
@@ -9981,14 +9739,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	opacity:0.3;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=30);
 }
-* html #wowslider-container'.$val.' .ws_frame{
+* html #wowslider-container' . $val . ' .ws_frame{
 	width:$FrameW$px;
 	height:$FrameH$px;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin: 0;
 	width:16px;
 	height:15px;
@@ -9998,19 +9756,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{ 
+#wowslider-container' . $val . ' .ws_bullets a:hover{ 
 	background-position: -16px 0;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: right top;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_overbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_overbull{
 	background-position: 50% top;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 50% top;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -10020,15 +9778,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	width: 29px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0; 
 	right:-29px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:-29px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:18px;
 	left: 18px;
@@ -10042,23 +9800,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	opacity:0.6;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 }
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom:-24px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws_bullets .ws_bulframe {
+#wowslider-container' . $val . ' .ws_bullets .ws_bulframe {
 	bottom: 20px;
 }
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 30s infinite;
 	-moz-animation: wsBasic 30s infinite;
 	-webkit-animation: wsBasic 30s infinite;
@@ -10067,11 +9825,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:5px auto 39px;
 }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-0.52%;
@@ -10080,13 +9838,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	height:112.22%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
 	filter:"";
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:15px;
@@ -10098,23 +9856,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	overflow:visible;
 	position:absolute;
@@ -10123,7 +9881,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
     box-shadow: 0 0 5px #999999;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-11px;
@@ -10139,24 +9897,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:
 	<!-- End WOWSlider.com HEAD section -->
 
 <!-- Start WOWSlider.com BODY section31 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/frosty.jpg" alt="Frosty : Best Image Slider" title="Frosty" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/frosty.jpg" alt="Frosty : Best Image Slider" title="Frosty" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/leaves3.jpg" alt="Leaves : Best jQuery Slideshow" title="Leaves" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/raindrops.jpg" alt="Rain drops : Best Wordpress Slideshow" title="Rain drops" id="wows2"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/leaves2.jpg" alt="Autumn leaves : Best Joomla Slideshow" title="Autumn leaves" id="wows3"/></a></li>
@@ -10166,28 +9922,27 @@ $i++;
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/leaves.jpg" alt="Bright leaves : Best jQuery Gallery" title="Bright leaves" id="wows7"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/geraniumleaves.jpg" alt="Geranium : Best jQuery Image Gallery" title="Geranium" id="wows8"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/images/leavesandwater.jpg" alt="Leaves and Water : Best jQuery Photo Gallery" title="Leaves and Water" id="wows9"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Frosty"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/tooltips/frosty.jpg" alt="Frosty"/>Best jQuery Photo Gallery</a>
 <a href="#" title="Leaves"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/tooltips/leaves3.jpg" alt="Leaves"/>Best jQuery Image Gallery</a>
@@ -10200,8 +9955,8 @@ $i++;
 <a href="#" title="Geranium"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/tooltips/geraniumleaves.jpg" alt="Geranium"/>Best jQuery Slideshow</a>
 <a href="#" title="Leaves und Water"><img src="http://www.wowslider.com/images/demo/crystal-linear/data1/tooltips/leavesandwater.jpg" alt="Leaves and Water"/>Best Image Slider</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">Diaporama sur limage</a>
@@ -10212,29 +9967,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/crystal-linear/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_basic_linear(c,a,b){var d=jQuery;var e=d("<div></div>").css({position:"absolute",display:"none","z-index":2,width:"200%",height:"100%"}).appendTo(b);this.go=function(f,i){e.stop(1,1);var g=(!!((f-i+1)%a.length)^c.revers?"left":"right");d(a[i]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,0);d(a[f]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,"50%").show();e.css({left:"auto",right:"auto",top:0}).css(g,0).show();var h={};h[g]="-100%";e.animate(h,c.duration,"easeInOutExpo",function(){b.find("ul").css({left:-f+"00%"});d(this).hide().html("")});return f}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:true,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"basic_linear",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:true,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderdigitstackv'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section32 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderdigitstackv') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '		<!-- Start WOWSlider.com HEAD section32 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/digit-stack-v/engine1/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -10243,8 +9994,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -10252,14 +10003,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -10267,41 +10018,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	font:bold 10px/22px Tahoma,sans-serif; 
 	color:#000;
 	text-align:center;
@@ -10314,11 +10065,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);	
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: right top;
 	color:#D4D4D4;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -10328,23 +10079,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	width: 59px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
-#wowslider-container'.$val.' .ws-title{
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:50px;
 	left: 0px;
@@ -10361,19 +10112,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 13px;
 	text-transform:none;
 }
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 0px;
     right: 0px;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 30s infinite;
 	-moz-animation: wsBasic 30s infinite;
 	-webkit-animation: wsBasic 30s infinite;
@@ -10382,11 +10133,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 @-moz-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:14px auto 60px;
 }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-1.56%;
@@ -10395,12 +10146,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	height:120.55%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
 	filter:"";
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:25px;
@@ -10412,23 +10163,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
     border: 5px solid #0e0e0e;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#0e0e0e;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:25px;
 	overflow:visible;
@@ -10441,7 +10192,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	-webkit-border-radius:3px;
     border: 5px solid #0e0e0e;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-11px;
@@ -10456,24 +10207,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	<!-- End WOWSlider.com HEAD section -->
 
 <!-- Start WOWSlider.com BODY section32 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/flowerongreen.jpg" alt="Flower on Green : jQuery Vertical Image Slider" title="Flower on Green" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/flowerongreen.jpg" alt="Flower on Green : jQuery Vertical Image Slider" title="Flower on Green" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/parkerflowers.jpg" alt="Parker Flowers : Vertical Slider" title="Parker Flowers" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/flowercloseup.jpg" alt="Flower close up : Vertical Slider jQuery" title="Flower close up" id="wows2"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/littledeeds.jpg" alt="Little Deeds : jQuery Slider Vertical" title="Little Deeds" id="wows3"/></a></li>
@@ -10483,28 +10232,27 @@ $i++;
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/142195032_1267233bbd_b.jpg" alt="Blue Flowers : jQuery Vertical Panel Slider" title="Blue Flowers" id="wows7"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/whiteflower.jpg" alt="White Flower : Vertical Slider Flash" title="White Flower" id="wows8"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/images/73421372_0c8ecaf089_b.jpg" alt="Flowers : Vertical Slider Blinds" title="Flowers" id="wows9"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Flower on Green"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/tooltips/flowerongreen.jpg" alt="Flower on Green : jQuery Vertical Slide Navigation"/>1</a>
 <a href="#" title="Parker Flowers"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/tooltips/parkerflowers.jpg" alt="Parker Flowers : jQuery Vertical Slider Content"/>2</a>
@@ -10517,8 +10265,8 @@ $i++;
 <a href="#" title="White Flower"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/tooltips/whiteflower.jpg" alt="White Flower : jQuery Slider Vertical"/>9</a>
 <a href="#" title="Flowers"><img src="http://www.wowslider.com/images/demo/digit-stack-v/data1/tooltips/73421372_0c8ecaf089_b.jpg" alt="Flowers : Vertical Slider"/>10</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">Diaporama verticale de limage</a>
@@ -10528,29 +10276,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/digit-stack-v/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_stack_vertical(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=(k-h+1)%c.length;if(Math.abs(m)>=1){g=(m>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?1:-1)+"00%";c.each(function(o){if(g&&o!=h){this.style.zIndex=(Math.max(0,this.style.zIndex-1))}});var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,top:(g?i:l)});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){e("ul",b).css({left:-k+"00%"})}f.animate({top:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"})}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:true,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack_vertical",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:true,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidernoblekenburns'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section33 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidernoblekenburns') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section33 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/noble-kenburns/engine1/style.css" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -10559,8 +10303,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -10568,14 +10312,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -10583,41 +10327,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left: 5px; 
 	height: 10px; 
 	width: 10px; 
@@ -10629,17 +10373,17 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_selbull { 
+#wowslider-container' . $val . ' .ws_selbull { 
 	background-color: #d6d6d6; 
 	color: #FFFFFF; 
 }
 
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_overbull { 
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_overbull { 
 	background-color: #d6d6d6;
 	color: #FFFFFF; 
 }
 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -10649,21 +10393,21 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	width: 32px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 0 0; 
 	right:-7px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:-7px;
 	background-position: 0 100%; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 0; 
 }
-#wowslider-container'.$val.' a.ws_prev:hover{
+#wowslider-container' . $val . ' a.ws_prev:hover{
 	background-position: 100% 100%; 
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:20px;
 	left: 0;
@@ -10677,19 +10421,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	opacity:0.7;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=70);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 }
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	bottom:0;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 40s infinite;
 	-moz-animation: wsBasic 40s infinite;
 	-webkit-animation: wsBasic 40s infinite;
@@ -10698,7 +10442,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 @-moz-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:12px;
@@ -10708,23 +10452,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
     border: 2px solid #B8C4CF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#B8C4CF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:25px;
 	overflow:visible;
@@ -10732,7 +10476,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	cursor:pointer;
     border: 2px solid #B8C4CF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	position:absolute;
 }
 	</style>
@@ -10742,24 +10486,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	
 	
 	<!-- Start WOWSlider.com BODY section33 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/4031507140_35ca846d90_b.jpg" alt="Coconut : Ken Burns Effect Slideshow" title="Coconut" id="wows0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/4031507140_35ca846d90_b.jpg" alt="Coconut : Ken Burns Effect Slideshow" title="Coconut" id="wows0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/4030754229_6f97bdc5ee_b.jpg" alt="Winged beans : Ken Burns Effect" title="Winged beans" id="wows1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/387781444_78b8f34fab_b.jpg" alt="Fruits brochettes : Jquery Ken Burns" title="Fruits brochettes" id="wows2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/4036900331_efcd523ded_b.jpg" alt="Ash Plantains : Ken Burns Effect Jquery" title="Ash Plantains" id="wows3"/></li>
@@ -10769,28 +10511,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/2521078045_8cd365d17c_o.jpg" alt="Dragon Fruit : Slideshow Ken Burns" title="Dragon Fruit" id="wows7"/></li>
 <li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/225232630_f99490b19a_o.jpg" alt="Fruits : Ken Burns Effect Software" title="Fruits" id="wows8"/></li>
 <li><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/images/159160780_49c5c193eb_o.jpg" alt="Fruit Cocktail : Ken Burns Slideshow Software" title="Fruit Cocktail" id="wows9"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Coconut"><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/tooltips/4031507140_35ca846d90_b.jpg" alt="Coconut : Ken Burns Slideshow Software"/>Ken Burns Slideshow Software</a>
 <a href="#" title="Winged beans"><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/tooltips/4030754229_6f97bdc5ee_b.jpg" alt="Winged beans : Ken Burns Software"/>Ken Burns Software</a>
@@ -10803,8 +10544,8 @@ $i++;
 <a href="#" title="Fruits"><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/tooltips/225232630_f99490b19a_o.jpg" alt="Fruits : Ken Burns Effect Jquery"/>Ken Burns Effect Jquery</a>
 <a href="#" title="Fruit Cocktail"><img src="http://www.wowslider.com/images/demo/noble-kenburns/data1/tooltips/159160780_49c5c193eb_o.jpg" alt="Fruit Cocktail : Jquery Ken Burns Effect"/>Jquery Ken Burns Effect</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">Ken Burns effet Diaporama</a>
@@ -10812,23 +10553,22 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/wowslider.js"></script>
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/noble-kenburns/engine1/script.js"></script>-->
 	<script type="text/javascript">
-function ws_kenburns(q,k,d){var f=jQuery;var b=document.createElement("canvas").getContext;var p=q.paths||[{from:[0,0,1],to:[0,0,1.2]},{from:[0,0,1.2],to:[0,0,1]},{from:[1,0,1],to:[1,0,1.2]},{from:[0,1,1.2],to:[0,1,1]},{from:[1,1,1],to:[1,1,1.2]},{from:[0.5,1,1],to:[0.5,1,1.3]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[1,0.5,1],to:[1,0.5,1.2]},{from:[0,0.5,1.2],to:[0,0.5,1]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[0.5,0.5,1],to:[0.5,0.5,1.2]},{from:[0.5,0.5,1.3],to:[0.5,0.5,1]},{from:[0.5,1,1],to:[0.5,0,1.15]}];function r(h){return p[h?Math.floor(Math.random()*(b?p.length:Math.min(5,p.length))):0]}function e(w,t){var v,h=0,s=40/t;var x=setInterval(function(){if(h<1){if(!v){v=1;w(h);v=0}h+=s}else{u(1)}},40);function u(y){clearInterval(x);if(y){w(1)}}return{stop:u}}var n=q.width,g=q.height;var j,a;var o,m;function i(){o=f("<div style="width:100%;height:100%"></div>").css({"z-index":8,position:"absolute",left:0,top:0}).appendTo(d)}i();function c(v,s,h){var t={width:100*v[2]+"%"};t[s?"right":"left"]=-100*(v[2]-1)*(s?(1-v[0]):v[0])+"%";t[h?"bottom":"top"]=-100*(v[2]-1)*(h?(1-v[1]):v[1])+"%";if(!b){for(var u in t){if(/\%/.test(t[u])){t[u]=(/right|left|width/.test(u)?n:g)*parseFloat(t[u])/100+"px"}}}return t}function l(t,y,v){if(b){if(a){a.stop(1)}a=j}if(m){m.remove()}m=o;i();if(v){o.hide();m.stop(true,true)}if(b){var s,h;var u,x;u=f("<canvas width="'+n+'" height="'+g+'"/>");u.css({position:"absolute",left:0,top:0,width:"100%",height:"100%"}).appendTo(o);s=u.get(0).getContext("2d");x=u.clone().appendTo(o);h=x.get(0).getContext("2d");j=new e(function(z){var B=[y.from[0]*(1-z)+z*y.to[0],y.from[1]*(1-z)+z*y.to[1],y.from[2]*(1-z)+z*y.to[2]];h.drawImage(t,-n*(B[2]-1)*B[0],-g*(B[2]-1)*B[1],n*B[2],g*B[2]);s.clearRect(0,0,n,g);var A=s;s=h;h=A},q.duration+q.delay*2)}else{var w=f("<img src="'+t.src+'"/>").css({position:"absolute",left:"auto",right:"auto",top:"auto",bottom:"auto"}).appendTo(o).css(c(y.from,y.from[0]>0.5,y.from[1]>0.5)).animate(c(y.to,y.from[0]>0.5,y.from[1]>0.5),{easing:"linear",queue:false,duration:(1.5*q.duration+q.delay)})}if(v){o.fadeIn(q.duration)}}k.each(function(h){f(this).css({visibility:"hidden"});if(h==q.startSlide){l(this,r(0),0)}});this.go=function(h,s){l(k.get(h),r(h),1);return h}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"kenburns",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+function ws_kenburns(q,k,d){var f=jQuery;var b=document.createElement("canvas").getContext;var p=q.paths||[{from:[0,0,1],to:[0,0,1.2]},{from:[0,0,1.2],to:[0,0,1]},{from:[1,0,1],to:[1,0,1.2]},{from:[0,1,1.2],to:[0,1,1]},{from:[1,1,1],to:[1,1,1.2]},{from:[0.5,1,1],to:[0.5,1,1.3]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[1,0.5,1],to:[1,0.5,1.2]},{from:[0,0.5,1.2],to:[0,0.5,1]},{from:[1,0.5,1.2],to:[1,0.5,1]},{from:[0.5,0.5,1],to:[0.5,0.5,1.2]},{from:[0.5,0.5,1.3],to:[0.5,0.5,1]},{from:[0.5,1,1],to:[0.5,0,1.15]}];function r(h){return p[h?Math.floor(Math.random()*(b?p.length:Math.min(5,p.length))):0]}function e(w,t){var v,h=0,s=40/t;var x=setInterval(function(){if(h<1){if(!v){v=1;w(h);v=0}h+=s}else{u(1)}},40);function u(y){clearInterval(x);if(y){w(1)}}return{stop:u}}var n=q.width,g=q.height;var j,a;var o,m;function i(){o=f("<div style="width:100%;height:100%"></div>").css({"z-index":8,position:"absolute",left:0,top:0}).appendTo(d)}i();function c(v,s,h){var t={width:100*v[2]+"%"};t[s?"right":"left"]=-100*(v[2]-1)*(s?(1-v[0]):v[0])+"%";t[h?"bottom":"top"]=-100*(v[2]-1)*(h?(1-v[1]):v[1])+"%";if(!b){for(var u in t){if(/\%/.test(t[u])){t[u]=(/right|left|width/.test(u)?n:g)*parseFloat(t[u])/100+"px"}}}return t}function l(t,y,v){if(b){if(a){a.stop(1)}a=j}if(m){m.remove()}m=o;i();if(v){o.hide();m.stop(true,true)}if(b){var s,h;var u,x;u=f("<canvas width="' + \N + '" height="' + \G + '"/>");u.css({position:"absolute",left:0,top:0,width:"100%",height:"100%"}).appendTo(o);s=u.get(0).getContext("2d");x=u.clone().appendTo(o);h=x.get(0).getContext("2d");j=new e(function(z){var B=[y.from[0]*(1-z)+z*y.to[0],y.from[1]*(1-z)+z*y.to[1],y.from[2]*(1-z)+z*y.to[2]];h.drawImage(t,-n*(B[2]-1)*B[0],-g*(B[2]-1)*B[1],n*B[2],g*B[2]);s.clearRect(0,0,n,g);var A=s;s=h;h=A},q.duration+q.delay*2)}else{var w=f("<img src="' + \T . \SRC + '"/>").css({position:"absolute",left:"auto",right:"auto",top:"auto",bottom:"auto"}).appendTo(o).css(c(y.from,y.from[0]>0.5,y.from[1]>0.5)).animate(c(y.to,y.from[0]>0.5,y.from[1]>0.5),{easing:"linear",queue:false,duration:(1.5*q.duration+q.delay)})}if(v){o.fadeIn(q.duration)}}k.each(function(h){f(this).css({visibility:"hidden"});if(h==q.startSlide){l(this,r(0),0)}});this.go=function(h,s){l(k.get(h),r(h),1);return h}};
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"kenburns",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		/*}elseif ($conf_value == 'wowslidernoirsquares'){
-		
-		
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+        /*}elseif ($conf_value == 'wowslidernoirsquares'){
+
+
 													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
+													$arg = $conf_name;
+													$val = $conf_id;
 													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
+
+
 													${'SLIDER'.$arg .'_'. $val} = '<!-- Start WOWSlider.com HEAD section34 -->
 	<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/noir-squares/engine/style.css" media="screen" />
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/jquery.js"></script>
@@ -10872,26 +10612,24 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	</script>
 
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
+';
+
+
 		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		*/}elseif ($conf_value == 'wowsliderpulseblinds'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section35 -->
+		*/
+    } elseif ($conf_value == 'wowsliderpulseblinds') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section35 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/pulse-blinds/engine/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -10900,8 +10638,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -10909,14 +10647,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -10924,39 +10662,39 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
 /* Navigation arrows for preview mode */
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev{
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev{
 	position:absolute;
 	display:none;
 	top:50%;
@@ -10971,21 +10709,21 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	opacity:0.6;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=60);	
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	right:2%;
 	background:#000 url(./next_photo.png) no-repeat 50% 50%;
 }
-#wowslider-container'.$val.' a.ws_prev{
+#wowslider-container' . $val . ' a.ws_prev{
 	left:2%;
 	background:#000 url(./prev_photo.png) no-repeat 50% 50%;
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
-#wowslider-container'.$val.' a.ws_next:hover, #wowslider-container'.$val.' a.ws_prev:hover{
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
+#wowslider-container' . $val . ' a.ws_next:hover, #wowslider-container' . $val . ' a.ws_prev:hover{
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);	
 }
-#wowslider-container'.$val.' .ws_bullets a {
+#wowslider-container' . $val . ' .ws_bullets a {
 	position:relative;
 	background:url("bullet.png") no-repeat scroll 0 0 transparent;
 	border:0 none;
@@ -11000,11 +10738,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	outline:none;
 	color:transparent;
 }
-#wowslider-container'.$val.' a.ws_selbull,#wowslider-container'.$val.' a.ws_overbull,#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' a.ws_selbull,#wowslider-container' . $val . ' a.ws_overbull,#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position:100% 0;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 15px;
@@ -11022,17 +10760,17 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	opacity:0.5;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 }
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	top:20px;
     right:15px;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 40s infinite;
 	-moz-animation: wsBasic 40s infinite;
 	-webkit-animation: wsBasic 40s infinite;
@@ -11041,10 +10779,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 @-moz-keyframes wsBasic{0%{left:-0%} 7.5%{left:-0%} 10%{left:-100%} 17.5%{left:-100%} 20%{left:-200%} 27.5%{left:-200%} 30%{left:-300%} 37.5%{left:-300%} 40%{left:-400%} 47.5%{left:-400%} 50%{left:-500%} 57.5%{left:-500%} 60%{left:-600%} 67.5%{left:-600%} 70%{left:-700%} 77.5%{left:-700%} 80%{left:-800%} 87.5%{left:-800%} 90%{left:-900%} 97.5%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 7.5%{left:-0%} 10%{left:-100%} 17.5%{left:-100%} 20%{left:-200%} 27.5%{left:-200%} 30%{left:-300%} 37.5%{left:-300%} 40%{left:-400%} 47.5%{left:-400%} 50%{left:-500%} 57.5%{left:-500%} 60%{left:-600%} 67.5%{left:-600%} 70%{left:-700%} 77.5%{left:-700%} 80%{left:-800%} 87.5%{left:-800%} 90%{left:-900%} 97.5%{left:-900%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:15px auto;
 }
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-1.56%;
@@ -11053,12 +10791,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	height:108.33%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
 	filter:"";
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:10px;
@@ -11070,23 +10808,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:15px;
 	overflow:visible;
@@ -11096,7 +10834,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
     box-shadow: 0 0 5px #999999;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-11px;
@@ -11111,24 +10849,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"squares",prev:"",nex
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section35 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/canyon.jpg" alt="Canyon: Ajax Slider" title="Canyon" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/canyon.jpg" alt="Canyon: Ajax Slider" title="Canyon" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/colorado.jpg" alt="Colorado : Ajax Slideshow" title="Colorado" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/garden.jpg" alt="Garden : Ajax Image Slideshow" title="Garden" id="wows2"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/greenmountain.jpg" alt="Greenmountain : Ajax Photo Slideshow" title="Greenmountain" id="wows3"/></a></li>
@@ -11138,28 +10874,27 @@ $i++;
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/lake_road.jpg" alt="Lake Road : Free Ajax Slideshow" title="Lake Road" id="wows7"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/peak.jpg" alt="Peak : Ajax Banner Slideshow" title="Peak" id="wows8"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/images/yo.jpg" alt="Yo : Simple Ajax Slideshow" title="Yo" id="wows9"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Canyon"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/tooltips/canyon.jpg" alt="Canyon : Ajax Picture Slideshow"/>Ajax Picture Slideshow</a>
 <a href="#" title="Colorado"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/tooltips/colorado.jpg" alt="Colorado: Image Slideshow Ajax"/>Image Slideshow Ajax</a>
@@ -11172,8 +10907,8 @@ $i++;
 <a href="#" title="Peak"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/tooltips/peak.jpg" alt="Peak : Ajax Slider Examples"/>Ajax Slider Examples</a>
 <a href="#" title="Yo"><img src="http://www.wowslider.com/images/demo/pulse-blinds/data/tooltips/yo.jpg" alt="Yo : Ajax jQuery Slider"/>Ajax jQuery Slider</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">Ajax Diaporama - Diaporama Ajax</a>
@@ -11183,30 +10918,26 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/pulse-blinds/engine/script.js"></script>-->
 	<script type="text/javascript">
 function ws_blinds(c,b,a){var g=jQuery;var e=c.parts||3;var f=g("<div>");f.css({position:"absolute",width:"100%",height:"100%",left:0,top:0,"z-index":8}).hide().appendTo(a);var h=[];for(var d=0;d<e;d++){h[d]=g("<div>").css({position:"absolute",height:"100%",width:Math.ceil(100/e)+1+"%",border:"none",margin:0,overflow:"hidden",top:0,left:Math.round(100*d/e)+"%"}).appendTo(f)}this.go=function(m,o,j){var l=o>m?1:0;if(j){if(j<=-1){m=(o+1)%b.length;l=0}else{if(j>=1){m=(o-1+b.length)%b.length;l=1}else{return -1}}}f.find("img").stop(true,true);f.show();for(var n=0;n<h.length;n++){var k=h[n];g(b.get(m)).clone().css({position:"absolute",top:0,left:(!l?(-f.width()):(f.width()-k.position().left))+"px",width:"auto",height:"100%"}).appendTo(k).animate({left:-k.position().left+"px"},(c.duration/(h.length+1))*(l?(h.length-n+1):(n+2)),((!l&&n==h.length-1||l&&!n)?function(){g("ul",a).css({left:-m+"00%"});f.hide().find("img").remove()}:null))}return m}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next:"",duration:10*100,delay:30*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"blinds",prev:"",next:"",duration:10*100,delay:30*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidercrystalbasic'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section36 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidercrystalbasic') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section36 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/crystal-basic/engine/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -11215,8 +10946,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -11224,14 +10955,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -11239,37 +10970,37 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.' .ws_frame{
+#wowslider-container' . $val . ' .ws_frame{
 	display:block;
 	position: absolute;
 	left:0;
@@ -11281,14 +11012,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	opacity:0.3;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=30);
 }
-* html #wowslider-container'.$val.' .ws_frame{
+* html #wowslider-container' . $val . ' .ws_frame{
 	width:$FrameW$px;
 	height:$FrameH$px;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin: 0;
 	width:16px;
 	height:15px;
@@ -11298,19 +11029,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{ 
+#wowslider-container' . $val . ' .ws_bullets a:hover{ 
 	background-position: -16px 0;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: right top;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_overbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_overbull{
 	background-position: 50% top;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 50% top;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -11320,15 +11051,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	width: 29px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0; 
 	right:-29px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:-29px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:18px;
 	left: 18px;
@@ -11342,23 +11073,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	opacity:0.6;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 }
 
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 5px;
     right: 10px;
 }
-#wowslider-container'.$val.' .ws_bullets .ws_bulframe {
+#wowslider-container' . $val . ' .ws_bullets .ws_bulframe {
 	top: 20px;
 }
-#wowslider-container'.$val.' .ws_bullets .ws_bulframe {
+#wowslider-container' . $val . ' .ws_bullets .ws_bulframe {
 	top: 20px;
 }
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 40s infinite;
 	-moz-animation: wsBasic 40s infinite;
 	-webkit-animation: wsBasic 40s infinite;
@@ -11367,11 +11098,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 7.5%{left:-0%} 10%{left:-100%} 17.5%{left:-100%} 20%{left:-200%} 27.5%{left:-200%} 30%{left:-300%} 37.5%{left:-300%} 40%{left:-400%} 47.5%{left:-400%} 50%{left:-500%} 57.5%{left:-500%} 60%{left:-600%} 67.5%{left:-600%} 70%{left:-700%} 77.5%{left:-700%} 80%{left:-800%} 87.5%{left:-800%} 90%{left:-900%} 97.5%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 7.5%{left:-0%} 10%{left:-100%} 17.5%{left:-100%} 20%{left:-200%} 27.5%{left:-200%} 30%{left:-300%} 37.5%{left:-300%} 40%{left:-400%} 47.5%{left:-400%} 50%{left:-500%} 57.5%{left:-500%} 60%{left:-600%} 67.5%{left:-600%} 70%{left:-700%} 77.5%{left:-700%} 80%{left:-800%} 87.5%{left:-800%} 90%{left:-900%} 97.5%{left:-900%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:5px auto 39px;
 }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-0.52%;
@@ -11380,13 +11111,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 	height:112.22%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
 	filter:"";
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:15px;
@@ -11398,23 +11129,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	overflow:visible;
 	position:absolute;
@@ -11423,7 +11154,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
     box-shadow: 0 0 5px #999999;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-11px;
@@ -11441,24 +11172,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blinds",prev:"",next
 
 				
 	<!-- Start WOWSlider.com BODY section36 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';									
-$i++;	
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/amsterdam.jpg" alt="Overlooking amsterdam : HTML5 Image Gallery Slider" title="Overlooking amsterdam" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/amsterdam.jpg" alt="Overlooking amsterdam : HTML5 Image Gallery Slider" title="Overlooking amsterdam" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/barpark.jpg" alt="Brownsville Bar Park : HTML5 Slider" title="Brownsville Bar Park" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/florence.jpg" alt="Florence : HTML5 Image Slider" title="Florence" id="wows2"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/gate.jpg" alt="Golden Gate, California : HTML5 Slider Example" title="Golden Gate, California" id="wows3"/></a></li>
@@ -11468,28 +11197,27 @@ $i++;
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/praga.jpg" alt="Prague : HTML5 Horizontal Slider" title="Prague" id="wows7"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/santorini.jpg" alt="Panorama of Oia, Santorini : HTML5 Image Slider" title="Panorama of Oia, Santorini" id="wows8"/>Oia (in Santorini, Greece) remains one of the foremost tourist attractions of the Aegean Sea.</a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/images/seul.jpg" alt="Seoul sunrise : HTML5 jQuery Slider" title="Seoul sunrise" id="wows9"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Overlooking amsterdam"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/tooltips/amsterdam.jpg" alt="Overlooking amsterdam"/>HTML5 News Slider</a>
 <a href="#" title="Brownsville Bar Park"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/tooltips/barpark.jpg" alt="Brownsville Bar Park"/>HTML5 jQuery Slider</a>
@@ -11502,8 +11230,8 @@ $i++;
 <a href="#" title="Panorama of Oia, Santorini"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/tooltips/santorini.jpg" alt="Panorama of Oia, Santorini"/>HTML5 Image Slider</a>
 <a href="#" title="Seoul sunrise"><img src="http://www.wowslider.com/images/demo/crystal-basic/data/tooltips/seul.jpg" alt="Seoul sunrise : HTML5 Slider"/>HTML5 Image Gallery Slider</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">Diaporama HTML5 jQuery</a>
@@ -11514,23 +11242,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/crystal-basic/engine/script.js"></script>-->
 	<script type="text/javascript">
 function ws_basic(c,a,b){this.go=function(d){b.find("ul").stop(true).animate({left:(d?-d+"00%":0)},c.duration,"easeInOutExpo");return d}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:"",duration:10*100,delay:30*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"basic",prev:"",next:"",duration:10*100,delay:30*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidernoblefade'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section37 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidernoblefade') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section37 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/noble-fade/engine1/style.css" media="screen" />-->
 	<style>
 	/*
@@ -11538,7 +11262,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
  *	template Noble
  */
 
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -11547,8 +11271,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -11560,7 +11284,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -11569,7 +11293,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	margin:0 0 0 0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -11577,41 +11301,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left: 5px; 
 	height: 10px; 
 	width: 10px; 
@@ -11623,17 +11347,17 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_selbull { 
+#wowslider-container' . $val . ' .ws_selbull { 
 	background-color: #d6d6d6; 
 	color: #FFFFFF; 
 }
 
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_overbull { 
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_overbull { 
 	background-color: #d6d6d6;
 	color: #FFFFFF; 
 }
 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:block;
 	top:50%;
@@ -11643,27 +11367,27 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	width: 32px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 0 0; 
 	right:-7px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:-7px;
 	background-position: 0 100%; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 0; 
 }
-#wowslider-container'.$val.' a.ws_prev:hover{
+#wowslider-container' . $val . ' a.ws_prev:hover{
 	background-position: 100% 100%; 
 }
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
 	top:0;
     right: 0;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:7%;
 	left: 0;
@@ -11673,19 +11397,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	font-family: Tahoma,Arial,Helvetica;
 	font-size: 14px;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	background-color:#FFF;
 	padding:10px;
 	opacity:0.7;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=70);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:10px;
 	font-size: 12px;
 }
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 30s infinite;
 	-moz-animation: wsBasic 30s infinite;
 	-webkit-animation: wsBasic 30s infinite;
@@ -11694,7 +11418,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:12px;
@@ -11704,23 +11428,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
     border: 2px solid #B8C4CF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#B8C4CF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:25px;
 	overflow:visible;
@@ -11728,7 +11452,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	cursor:pointer;
     border: 2px solid #B8C4CF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	position:absolute;
 }
 	</style>
@@ -11736,24 +11460,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic",prev:"",next:
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section37 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Awesome waterscape</li>
-';									
-$i++;	
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/10211621.jpg" alt="Blue sea : Beautiful jQuery Slider Demo" title="Blue sea" id="wows1_0"/>Awesome waterscape</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Awesome waterscape</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/10211621.jpg" alt="Blue sea : Beautiful jQuery Slider Demo" title="Blue sea" id="wows1_0"/>Awesome waterscape</li>
 <li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/2032112.jpg" alt="Pier  Easy Slider jQuery Plugin Demo" title="Pier" id="wows1_1"/>Marine dock in the rays of the azure sunset</li>
 <li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/4686c697efa3077e5d691710ec3c8d82.jpg" alt="Purple sky : Image Slider jQuery Demo" title="Purple sky" id="wows1_2"/>Impressive clouds</li>
 <li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/681fcb3df7d8c3baaecebf78f195f147.jpg" alt="Noon on the sea : jQuery Auto Slider Demo" title="Noon on the sea" id="wows1_3"/>Houses on the Caribbean coast</li>
@@ -11763,28 +11485,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/more_alushta.jpg" alt="Shore : jQuery Text Slider Demo" title="Shore" id="wows1_7"/>Black sea near Alushta</li>
 <li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/nature_sundown_sea_sunset_005344_.jpg" alt="Sea : jQuery Slider Demonstration" title="Sea" id="wows1_8"/>Beautiful sunset</li>
 <li><img src="http://www.wowslider.com/images/demo/noble-fade/data1/images/sea.jpg" alt="Sea waves : Slider In jQuery Demo" title="Sea waves" id="wows1_9"/>Sea waves in the evening</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Blue sea"><img src="http://www.wowslider.com/images/demo/noble-fade/data1/tooltips/10211621.jpg" alt="Blue sea : Slider jQuery Demo"/>Slider jQuery Demo</a>
 <a href="#" title="Pier"><img src="http://www.wowslider.com/images/demo/noble-fade/data1/tooltips/2032112.jpg" alt="Pier : Easy Slider jQuery Plugin Demo"/>Image Slider jQuery Demo</a>
@@ -11797,8 +11518,8 @@ $i++;
 <a href="#" title="Sea"><img src="http://www.wowslider.com/images/demo/noble-fade/data1/tooltips/nature_sundown_sea_sunset_005344_.jpg" alt="Sea : jQuery Auto Slider Demo"/>Image Slider jQuery Demo</a>
 <a href="#" title="Sea waves"><img src="http://www.wowslider.com/images/demo/noble-fade/data1/tooltips/sea.jpg" alt="Sea waves : Easy Slider jQuery Plugin Demo"/>Beautiful jQuery Slider Demo</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">CSS Diaporama de limage</a>
@@ -11808,29 +11529,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/noble-fade/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_fade(c,a,b){var e=jQuery;var d=e("ul",b);var f={position:"absolute",left:0,top:0,width:"100%",height:"100%"};this.go=function(g,h){var i=e(a.get(g)).clone().css(f).hide().appendTo(b);if(!c.noCross){var j=e(a.get(h)).clone().css(f).appendTo(b);d.hide();j.fadeOut(c.duration,function(){j.remove()})}i.fadeIn(c.duration,function(){d.css({left:-g+"00%"}).show();i.remove()});return g}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"fade",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderfluxslices'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section38 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderfluxslices') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section38 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/flux-slices/engine/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -11839,8 +11556,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	border:10px solid #FFFFFF;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -11848,14 +11565,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -11863,44 +11580,44 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-* html #wowslider-container'.$val.'{
+* html #wowslider-container' . $val . '{
 	background-image: none;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 0px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin: 0 2px; 
 	width:21px;
 	height:21px;
@@ -11910,22 +11627,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	position:relative;
 	color:transparent;
 }
-* html #wowslider-container'.$val.' .ws_bullets a {
+* html #wowslider-container' . $val . ' .ws_bullets a {
 	background: url(./bullet.gif);
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background: url(./bullet_active.png);
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background: url(./bullet_active.png);
 }
-* html #wowslider-container'.$val.' .ws_bullets a:hover{
+* html #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background: url(./bullet_active.gif);
 }
-* html #wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+* html #wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background: url(./bullet_active.gif);
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -11935,22 +11652,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	width: 45px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-* html #wowslider-container'.$val.' a.ws_next, * html #wowslider-container'.$val.' a.ws_prev{
+* html #wowslider-container' . $val . ' a.ws_next, * html #wowslider-container' . $val . ' a.ws_prev{
 	background-image: url(./arrows.gif);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0; 
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:10px;
 	background-position: 0 0; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:25px;
 	left: 0px;
@@ -11972,17 +11689,17 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 	opacity:0.8;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 }
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 8px;
     right: 5px;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 30s infinite;
 	-moz-animation: wsBasic 30s infinite;
 	-webkit-animation: wsBasic 30s infinite;
@@ -11991,7 +11708,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:20px;
@@ -12003,23 +11720,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
     border: 3px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:25px;
 	overflow:visible;
@@ -12029,7 +11746,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
     box-shadow: 0 0 18px #FFF;
     border: 3px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-9px;
@@ -12045,24 +11762,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fade",prev:"",next:"
 
 				
 	<!-- Start WOWSlider.com BODY section38 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/1293441583_nature_forest_morning_in_the_forest_015232_.jpg" alt="Fallen tree: jQuery Image Slider HTML" title="Fallen tree" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/1293441583_nature_forest_morning_in_the_forest_015232_.jpg" alt="Fallen tree: jQuery Image Slider HTML" title="Fallen tree" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/2685176_b18ba54c.jpg" alt="Forest glade : How To Add jQuery Slider To HTML" title="Forest glade" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/611418.jpg" alt="In the woods : jQuery Div Slider" title="In the woods" id="wows2"/>rays of light show through the trees</a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/forest_wallpaper21.jpg" alt="The road in the woods : jQuery Slider Div Horizontal" title="The road in the woods" id="wows3"/></a></li>
@@ -12072,28 +11787,27 @@ $i++;
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/nature_forest_forest_010852_.jpg" alt="Swamp in the woods : Horizontal Div Slider jQuery" title="Swamp in the woods" id="wows7"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/widescreen_forest_004692_.jpg" alt="Fire in the woods: jQuery Div Slider Example" title="Fire in the woods" id="wows8"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/flux-slices/data/images/world_canada_rain_forest_007534_.jpg" alt="Morning mist over the forest : jQuery Div Slider Plugin" title="Morning mist over the forest" id="wows9"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Fallen tree"><img src="http://www.wowslider.com/images/demo/flux-slices/data/tooltips/1293441583_nature_forest_morning_in_the_forest_015232_.jpg" alt="Fallen tree"/>jQuery Div Slider</a>
 <a href="#" title="Forest glade"><img src="http://www.wowslider.com/images/demo/flux-slices/data/tooltips/2685176_b18ba54c.jpg" alt="Forest glade : jQuery HTML Page Slider"/>How To Add jQuery Slider To HTML</a>
@@ -12106,8 +11820,8 @@ $i++;
 <a href="#" title="Fire in the woods"><img src="http://www.wowslider.com/images/demo/flux-slices/data/tooltips/widescreen_forest_004692_.jpg" alt="Fire in the woods : jQuery HTML Slider"/>jQuery Slider HTML</a>
 <a href="#" title="Morning mist over the forest"><img src="http://www.wowslider.com/images/demo/flux-slices/data/tooltips/world_canada_rain_forest_007534_.jpg" alt="Morning mist over the forest :jQuery Slider Div Horizontal"/>How To Add jQuery Slider To HTML</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">jQuery CSS Diaporama Div</a>
@@ -12116,29 +11830,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/flux-slices/engine/script.js"></script>-->
 	<script type="text/javascript">
 function ws_slices(i,f,g){var c=jQuery;var e=function(p,v){var o=c.extend({},{effect:"random",slices:15,animSpeed:500,pauseTime:3000,startSlide:0,container:null,onEffectEnd:0},v);var r={currentSlide:0,currentImage:"",totalSlides:0,randAnim:"",stop:false};var m=c(p);m.data("wow:vars",r);if(!/absolute|relative/.test(m.css("position"))){m.css("position","relative")}var k=v.container||m;var n=m.children();r.totalSlides=n.length;if(o.startSlide>0){if(o.startSlide>=r.totalSlides){o.startSlide=r.totalSlides-1}r.currentSlide=o.startSlide}if(c(n[r.currentSlide]).is("img")){r.currentImage=c(n[r.currentSlide])}else{r.currentImage=c(n[r.currentSlide]).find("img:first")}if(c(n[r.currentSlide]).is("a")){c(n[r.currentSlide]).css("display","block")}for(var q=0;q<o.slices;q++){var u=Math.round(k.width()/o.slices);var t=c("<div class="wow-slice"></div>").css({left:u*q+"px",overflow:"hidden",width:((q==o.slices-1)?(k.width()-(u*q)):u)+"px",position:"absolute"}).appendTo(k);c("<img>").css({position:"absolute",left:0,top:0}).appendTo(t)}var l=0;this.sliderRun=function(w,x){if(r.busy){return false}o.effect=x||o.effect;r.currentSlide=w-1;s(m,n,o,false);return true};var j=function(){if(o.onEffectEnd){o.onEffectEnd(r.currentSlide)}k.hide();r.busy=0};var s=function(w,x,z,B){var C=w.data("wow:vars");if((!C||C.stop)&&!B){return false}C.busy=1;C.currentSlide++;if(C.currentSlide==C.totalSlides){C.currentSlide=0}if(C.currentSlide<0){C.currentSlide=(C.totalSlides-1)}C.currentImage=c(x[C.currentSlide]);if(!C.currentImage.is("img")){C.currentImage=C.currentImage.find("img:first")}c(".wow-slice",k).each(function(H){var J=c(this),G=c("img",J);var I=Math.round(k.width()/z.slices);G.width(k.width());G.attr("src",C.currentImage.attr("src"));G.css({left:-I*H+"px"});J.css({height:"0px",opacity:"0",left:I*H+"px",width:((H==z.slices-1)?(k.width()-(I*H)):I)+"px",})});k.show();if(z.effect=="random"){var D=new Array("sliceDownRight","sliceDownLeft","sliceUpRight","sliceUpLeft","sliceUpDownRight","sliceUpDownLeft","fold","fade");C.randAnim=D[Math.floor(Math.random()*(D.length+1))];if(C.randAnim==undefined){C.randAnim="fade"}}if(z.effect.indexOf(",")!=-1){var D=z.effect.split(",");C.randAnim=c.trim(D[Math.floor(Math.random()*D.length)])}if(z.effect=="sliceDown"||z.effect=="sliceDownRight"||C.randAnim=="sliceDownRight"||z.effect=="sliceDownLeft"||C.randAnim=="sliceDownLeft"){var y=0;var A=0;var F=c(".wow-slice",k);if(z.effect=="sliceDownLeft"||C.randAnim=="sliceDownLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);G.css({top:0,bottom:""});if(A==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="sliceUp"||z.effect=="sliceUpRight"||C.randAnim=="sliceUpRight"||z.effect=="sliceUpLeft"||C.randAnim=="sliceUpLeft"){var y=0;var A=0;var F=c(".wow-slice",k);if(z.effect=="sliceUpLeft"||C.randAnim=="sliceUpLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);G.css({top:"",bottom:0});if(A==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="sliceUpDown"||z.effect=="sliceUpDownRight"||C.randAnim=="sliceUpDownRight"||z.effect=="sliceUpDownLeft"||C.randAnim=="sliceUpDownLeft"){var y=0;var A=0;var E=0;var F=c(".wow-slice",k);if(z.effect=="sliceUpDownLeft"||C.randAnim=="sliceUpDownLeft"){F=c(".wow-slice",k)._reverse()}F.each(function(){var G=c(this);if(A==0){G.css({top:0,bottom:""});A++}else{G.css({top:"",bottom:0});A=0}if(E==z.slices-1){setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({height:"100%",opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;E++})}else{if(z.effect=="fold"||C.randAnim=="fold"){var y=0;var A=0;c(".wow-slice",k).each(function(){var G=c(this);var H=G.width();G.css({top:"0px",height:"100%",width:"0px"});if(A==z.slices-1){setTimeout(function(){G.animate({width:H,opacity:"1.0"},z.animSpeed,j)},(100+y))}else{setTimeout(function(){G.animate({width:H,opacity:"1.0"},z.animSpeed)},(100+y))}y+=50;A++})}else{if(z.effect=="fade"||C.randAnim=="fade"){var A=0;c(".wow-slice",k).each(function(){c(this).css("height","100%");if(A==z.slices-1){c(this).animate({opacity:"1.0"},(z.animSpeed*2),j)}else{c(this).animate({opacity:"1.0"},(z.animSpeed*2))}A++})}}}}}}};c.fn._reverse=[].reverse;var a=c("li",g);var d=c("ul",g);var b=c("<div></div>").css({left:0,top:0,"z-index":8,width:"100%",height:"100%",position:"absolute"}).appendTo(g);var h=new e(d,{keyboardNav:false,caption:0,effect:"sliceDownRight,sliceDownLeft,sliceUpRight,sliceUpLeft,sliceUpDownRight,sliceUpDownLeft,sliceUpDownRight,sliceUpDownLeft,fold,fold,fold",animSpeed:i.duration,startSlide:i.startSlide,container:b,onEffectEnd:function(j){d.css({left:-j+"00%"})}});this.go=function(k,j){var l=h.sliderRun(k);if(l){return k}else{return -1}}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"slices",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderpinboardfly'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '		<!-- Start WOWSlider.com HEAD section39 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderpinboardfly') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '		<!-- Start WOWSlider.com HEAD section39 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/pinboard-fly/engine/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -12147,8 +11857,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -12156,14 +11866,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -12171,40 +11881,40 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left:4px;
 	width:8px;
 	height:8px;
@@ -12214,10 +11924,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: right top;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -12227,23 +11937,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	width: 59px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
-#wowslider-container'.$val.' .ws-title{
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:50px;
 	left: 0px;
@@ -12259,18 +11969,18 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	-moz-border-radius:0 10px 10px 0;
 	border-radius:0 10px 10px 0;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 13px;
 	text-transform:none;
 }
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 0px;
     right: 0px;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 30s infinite;
 	-moz-animation: wsBasic 30s infinite;
 	-webkit-animation: wsBasic 30s infinite;
@@ -12279,11 +11989,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 @-moz-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:15px auto 60px;
 }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-1.56%;
@@ -12292,12 +12002,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 	height:120.83%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
 	filter:"";
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:15px;
@@ -12309,23 +12019,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
     border: 5px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:15px;
 	overflow:visible;
@@ -12335,7 +12045,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
     box-shadow: 0 0 5px #999999;
     border: 5px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-11px;
@@ -12351,24 +12061,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"slices",prev:"",next
 
 				
 	<!-- Start WOWSlider.com BODY section39 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/autumn_leaves.jpg" alt="Autumn Leaves : Banner Slider" title="Autumn Leaves" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/autumn_leaves.jpg" alt="Autumn Leaves : Banner Slider" title="Autumn Leaves" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/creek.jpg" alt="Creek : Joomla Banner Slider" title="Creek" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/desert_landscape.jpg" alt="Desert Landscape : Flash Banner Slider" title="Desert Landscape" id="wows2"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/dock.jpg" alt="Dock : Banner Slider Script" title="Dock" id="wows3"/></a></li>
@@ -12378,28 +12086,27 @@ $i++;
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/garden.jpg" alt="Garden : jQuery Banner Rotator Download" title="Garden" id="wows7"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/green_sea_turtle.jpg" alt="Green Sea Turtle : jQuery Scrolling Banner" title="Green Sea Turtle" id="wows8"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/images/humpback_whale.jpg" alt="Humpback Whale : jQuery Banner Effects" title="Humpback Whale" id="wows9"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;
-}	
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Autumn Leaves"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/tooltips/autumn_leaves.jpg" alt="autumn_leaves"/>jQuery Banner Rotator Fade</a>
 <a href="#" title="Creek"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/tooltips/creek.jpg" alt="creek : Sliding Banner jQuery"/>Sliding Banner jQuery</a>
@@ -12412,8 +12119,8 @@ $i++;
 <a href="#" title="Green Sea Turtle"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/tooltips/green_sea_turtle.jpg" alt="green_sea_turtle"/>Flash Banner Slider</a>
 <a href="#" title="Humpback Whale"><img src="http://www.wowslider.com/images/demo/pinboard-fly/data/tooltips/humpback_whale.jpg" alt="humpback_whale : Joomla Banner Slider"/>Banner Slider</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">Diaporama Banniere CSS jQuery</a>
@@ -12423,29 +12130,25 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/pinboard-fly/engine/script.js"></script>-->
 	<script type="text/javascript">
 function ws_fly(c,a,b){var d=jQuery;var f={position:"absolute",left:0,top:0,width:"100%",height:"100%"};var e=d("<div>").addClass("ws_effect").css(f).css({overflow:"visible"}).appendTo(b.parent());this.go=function(m,j,p){var i=!!c.revers;if(p){if(p>=1){i=1}if(p<=-1){i=0}}var h=-(c.distance||e.width()/4),k=Math.min(-h,Math.max(0,d(window).width()-e.offset().left-e.width())),g=(i?k:h),n=(i?h:k);var o=d(a.get(j)).clone().css(f).css({"z-index":1}).appendTo(e);var l=d(a.get(m)).clone().css(f).css({opacity:0,left:g,"z-index":3}).appendTo(e).show();l.animate({opacity:1},{duration:c.duration,queue:false});l.animate({left:0},{duration:2*c.duration/3,queue:false});setTimeout(function(){o.animate({left:n,opacity:0},2*c.duration/3,function(){o.remove();b.find("ul").css({left:-m+"00%"});l.remove()})},c.duration/3);return m}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"fly",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidermellowblast'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section40 -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidermellowblast') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section40 -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/mellow-blast/engine/style.css" media="screen" />-->
 	<style>
 	/*
  *	generated by WOW Slider 2.2
  */
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -12454,8 +12157,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	border:none;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' ul{
 	position:relative;
 	width: 10000%; 
 	left:0;
@@ -12463,14 +12166,14 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	margin:0;
 	padding:0;
 }
-#wowslider-container'.$val.' ul li{
+#wowslider-container' . $val . ' ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
 	font-size:0;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -12478,41 +12181,41 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
 
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  a.wsl{
+#wowslider-container' . $val . '  a.wsl{
 	display:none;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:22px;
 	height:22px;
 	background: url(./bullet.png) left top;
@@ -12521,10 +12224,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -12534,18 +12237,18 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	width: 38px;
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:10px;
 	background-position: 0 0; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 21px;
@@ -12564,19 +12267,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	opacity:0.5;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);	
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	padding-top:5px;
 	font-size: 12px;
 }
 /* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     top: 0px;
     right: 0px;
 	margin-top: -5px;
 	margin-right: -5px;
 }
 
-#wowslider-container'.$val.' ul{
+#wowslider-container' . $val . ' ul{
 	animation: wsBasic 30s infinite;
 	-moz-animation: wsBasic 30s infinite;
 	-webkit-animation: wsBasic 30s infinite;
@@ -12585,11 +12288,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 @-moz-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 6.67%{left:-0%} 10%{left:-100%} 16.67%{left:-100%} 20%{left:-200%} 26.67%{left:-200%} 30%{left:-300%} 36.67%{left:-300%} 40%{left:-400%} 46.67%{left:-400%} 50%{left:-500%} 56.67%{left:-500%} 60%{left:-600%} 66.67%{left:-600%} 70%{left:-700%} 76.67%{left:-700%} 80%{left:-800%} 86.67%{left:-800%} 90%{left:-900%} 96.67%{left:-900%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
 	margin:11px auto;
 }
 
-#wowslider-container'.$val.'  .ws_shadow{
+#wowslider-container' . $val . '  .ws_shadow{
 	position:absolute;
 	z-index: -1;
 	left:-1.15%;
@@ -12598,12 +12301,12 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	height:106.11%;
 	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src="engine1/bg.png", sizingMethod="scale");		/*IE<8*/
 }
-*|html #wowslider-container'.$val.' .ws_shadow{
+*|html #wowslider-container' . $val . ' .ws_shadow{
 	background-image: url(./bg.png);
 	background-repeat: no-repeat;
 	background-size:100%;
 	filter:"";
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	top:20px;
@@ -12617,23 +12320,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	-moz-border-radius:4px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#000;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	top:25px;
 	overflow:visible;
@@ -12645,7 +12348,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	border-radius:4px;
 	-moz-border-radius:4px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	top:-8px;
@@ -12660,24 +12363,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"fly",prev:"",next:""
 	<!-- End WOWSlider.com HEAD section -->
 	
 		<!-- Start WOWSlider.com BODY section40 -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows'.$i.'"/></a></li>
-';								
-$i++;		
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/1206241549_24.jpg" alt="Aircraft carrier : Slider Demo" title="Aircraft carrier" id="wows0"/></a></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows' . $i . '"/></a></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/1206241549_24.jpg" alt="Aircraft carrier : Slider Demo" title="Aircraft carrier" id="wows0"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/costa_atlantica.jpg" alt="Costa Atlantica : Demo Slider" title="Costa Atlantica" id="wows1"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/fred_olsen_cruise_lines.jpg" alt="Fred. Olsen Cruise Lines : Easy Slider Demo" title="Fred. Olsen Cruise Lines" id="wows2"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/img-2c369.jpg" alt="The modern warship : Smooth Slider Demo" title="The modern warship" id="wows3"/></a></li>
@@ -12687,28 +12388,27 @@ $i++;
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/navy_ships.jpg" alt="Navy ships : Ajax Slider Example" title="Navy ships" id="wows7"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/ships__003121_.jpg" alt="Ship in a battle : jQuery Slider Example Code" title="Ship in a battle" id="wows8"/></a></li>
 <li><a href="#"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/images/wpapers_ru.jpg" alt="Ships : jQuery Content Slider Example" title="Ships" id="wows9"/></a></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Aircraft carrier"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/tooltips/1206241549_24.jpg" alt="Aircraft carrier : jQuery Image Slider Code Example"/>Simple jQuery Image Slider Example</a>
 <a href="#" title="Costa Atlantica"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/tooltips/costa_atlantica.jpg" alt="Costa Atlantica : Simple jQuery Slider Example"/>Simple jQuery Slider Example</a>
@@ -12721,8 +12421,8 @@ $i++;
 <a href="#" title="Ship in a battle"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/tooltips/ships__003121_.jpg" alt="Ship in a battle : jQuery Slider Example"/>Smooth Slider Demo</a>
 <a href="#" title="Ships"><img src="http://www.wowslider.com/images/demo/mellow-blast/data/tooltips/wpapers_ru.jpg" alt="Ships : Demo Slider"/>Slider Demo</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a class="wsl" href="http://wowslider.com">Exemplo de Slider de Imagem de jQuery</a>
@@ -12732,23 +12432,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/mellow-blast/engine/script.js"></script>-->
 	<script type="text/javascript">
 function ws_blast(l,e,h){var d=jQuery;var a=l.distance||1;h=h.parent();var f=d("<div>").addClass("ws_effect");h.css({overflow:"visible"}).append(f);f.css({position:"absolute",left:0,top:0,width:"100%",height:"100%","z-index":8});var c=l.cols;var k=l.rows;var g=[];var b=[];function i(){var p=Math.max((l.width||f.width())/(l.height||f.height())||3,3);c=c||Math.round(p<1?3:3*p);k=k||Math.round(p<1?3/p:3);for(var n=0;n<c*k;n++){var o=n%c;var m=Math.floor(n/c);d([b[n]=document.createElement("div"),g[n]=document.createElement("div")]).css({position:"absolute",overflow:"hidden"}).appendTo(f).append(d("<img>").css({position:"absolute"}))}g=d(g);b=d(b);j(g);j(b,true)}function j(r,p,m){var q=f.width();var o=f.height();var n={left:d(window).scrollLeft(),top:d(window).scrollTop(),width:d(window).width(),height:d(window).height()};d(r).each(function(x){var w=x%c;var u=Math.floor(x/c);if(p){var A=a*q*(2*Math.random()-1)+q/2;var y=a*o*(2*Math.random()-1)+o/2;var z=f.offset();z.left+=A;z.top+=y;if(z.left<n.left){A-=z.left+n.left}if(z.top<n.top){y-=z.top+n.top}var v=(n.left+n.width)-z.left-q/c;if(0>v){A+=v}var t=(n.top+n.height)-z.top-o/k;if(0>t){y+=t}}else{var A=q*w/c;var y=o*u/k}d(this).find("img").css({left:-(q*w/c)+"px",top:-(o*u/k)+"px",width:q+"px",height:o+"px"});var s={left:A+"px",top:y+"px",width:q/c+"px",height:o/k+"px",};if(m){d(this).animate(s,{queue:false,duration:l.duration})}else{d(this).css(s)}})}this.go=function(m,o){if(!g.length){i()}f.show();d(g).stop(1).css({opacity:1,"z-index":3}).find("img").attr("src",e.get(o).src);d(b).stop(1).css({opacity:0,"z-index":2}).find("img").attr("src",e.get(m).src);j(b,false,true);d(b).animate({opacity:1},{queue:false,easing:"easeInOutExpo",duration:l.duration});j(g,true,true);d(g).animate({opacity:0},{queue:false,easing:"easeInOutExpo",duration:l.duration,complete:function(){h.find("ul").css({left:-m+"00%"});f.hide()}});var n=b;b=g;g=n;return m}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"blast",prev:"",next:"",duration:10*100,delay:20*100,width:960,height:360,autoPlay:true,stopOnHover:false,loop:false,bullets:true,caption:true,controls:true,logo:"engine1/loading.gif",images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidergalaxycollage'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidergalaxycollage') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/galaxy-collage/engine1/style.css" />-->
 	<style>
 	/*
@@ -12756,7 +12452,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
  *	template Galaxy
  */
 @import url("http://fonts.googleapis.com/css?family=Roboto+Condensed&subset=latin,cyrillic,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -12766,8 +12462,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -12779,7 +12475,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -12788,7 +12484,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -12796,49 +12492,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 	margin:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px 0; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width: 17px;
 	height: 17px;
 
@@ -12850,10 +12546,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	color:transparent;
 	background-size: 100%;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -12865,19 +12561,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	background-size: 200%;
 	opacity: 1;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 0 0;
 	right: 0;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 100% 0;
 	left: 0;
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 8.4em;
     height: 8.4em;
@@ -12891,23 +12587,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	opacity: 1;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 }/* bottom right */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 30px;
 	right: 10px;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 2em;
@@ -12923,19 +12619,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	font-family: "Roboto Condensed", sans-serif;
 	text-shadow: none;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:0.3em;
 	font-size: 1.2em;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2.1em;
 	text-transform: uppercase; 
-}#wowslider-container'.$val.' .ws_images ul{
+}#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 20s infinite;
 	-moz-animation: wsBasic 20s infinite;
 	-webkit-animation: wsBasic 20s infinite;
@@ -12944,7 +12640,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 20%{left:-100%} 30%{left:-100%} 40%{left:-200%} 50%{left:-200%} 60%{left:-300%} 70%{left:-300%} 80%{left:-400%} 90%{left:-400%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 20%{left:-100%} 30%{left:-100%} 40%{left:-200%} 50%{left:-200%} 60%{left:-300%} 70%{left:-300%} 80%{left:-400%} 90%{left:-400%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -12954,23 +12650,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
     border: 4px solid #FFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:48px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:128px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:26px;
 	overflow:visible;
@@ -12978,7 +12674,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 	cursor:pointer;
     border: 4px solid #FFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-11px;
@@ -12994,50 +12690,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"blast",prev:"",next:
 
 
 	<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>The berenike haar constellation</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/images/ngc456511635.jpg" alt="css gallery business" title="Galaxy" id="wows1_0"/>The berenike haar constellation</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>The berenike haar constellation</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/images/ngc456511635.jpg" alt="css gallery business" title="Galaxy" id="wows1_0"/>The berenike haar constellation</li>
 <li><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/images/galaxy10994.jpg" alt="css gallery code" title="Galaxy" id="wows1_1"/>Barred Spiral Galaxy</li>
 <li><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/images/galaxy252885.jpg" alt="css gallery design" title="Galaxy" id="wows1_2"/>Universe Raumfahrt</li>
 <li><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/images/milkyway67504.jpg" alt="css gallery example" title="Galaxy" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/images/galaxy74005.jpg" alt="css gallery furniture" title="Tarantula Nebula" id="wows1_4"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Galaxy"><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/tooltips/ngc456511635.jpg" alt="css gallery business"/>1</a>
 <a href="#" title="Galaxy"><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/tooltips/galaxy10994.jpg" alt="css gallery code"/>2</a>
@@ -13045,8 +12738,8 @@ $i++;
 <a href="#" title="Galaxy"><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/tooltips/milkyway67504.jpg" alt="css gallery example"/>4</a>
 <a href="#" title="Tarantula Nebula"><img src="http://www.wowslider.com/images/demo/galaxy-collage/data1/tooltips/galaxy74005.jpg" alt="css gallery furniture"/>5</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <span class="wsl"><a href="http://wowslider.com">css gallery image</a></span>
@@ -13056,7 +12749,7 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/galaxy-collage/engine1/script.js"></script>-->
 	<script type="text/javascript">
 	function ws_collage(t,e,r){function i(t,e,a){return parseFloat(a*(e-t)+t)}function n(e,a,r){var i=r*a.x,n=r*a.y,h=r*a.width,o=r*a.height;f?(e.save(),e.translate(i+.5*h,n+.5*o),e.rotate(a.angle*Math.PI/180),e.scale(a.scale,a.scale),a.img&&e.drawImage(a.img,-.5*h,-.5*o,h,o),e.restore()):l("<img>").attr("src",a.img).css({position:"absolute",width:100*h/t.width+"%",height:100*o/t.height+"%",left:100*i/t.width+"%",top:100*n/t.height+"%"}).appendTo(e)}function h(e,r,h,o,c,g){var s=Q[e],l=Q[r],d=new Date,w=setInterval(function(){var e=(new Date-d)/t.duration;e>1&&(e=1);var r=1-2*e;if(0>r&&(r*=-1,r>1&&(r=1)),r=jQuery.easing.easeInOutQuad(1,r,0,1,1),e=jQuery.easing.easeInOutQuad(1,e,0,1,1),f){T.width=o,T.height=c,N.width=o,N.height=c;var u=i(t.width/l.width,t.width/s.width,e),v=i(.5,i(1/l.scale,1/s.scale,e),r),m=i(1/l.scale,1/s.scale,e);if(a=i(l.angle,s.angle,e),y=h*s.width,M=h*s.height,b=h*i(l.x,s.x,e),I=h*i(l.y,s.y,e),X&&z&&(T.ctx.drawImage(z,0,0,o,c),T.ctx.save(),T.ctx.translate(b+.5*y,I+.5*M),T.ctx.rotate(-a*Math.PI/180),T.ctx.scale(m,m),T.ctx.translate(-(b+.5*y),-(I+.5*M)),T.ctx.transform(m,0,0,m,-b*m,-I*m),T.ctx.drawImage(z,-o,-c,4*o,4*c),T.ctx.restore()),T.ctx.transform(u,0,0,u,-b*u,-I*u),T.ctx.translate(b+.5*y,I+.5*M),T.ctx.rotate(-a*Math.PI/180),T.ctx.scale(v,v),T.ctx.translate(-(b+.5*y),-(I+.5*M)),T.ctx.globalAlpha=i(.2,1,r),x)for(F in Q)n(T.ctx,Q[F],h);else T.ctx.drawImage(H,0,0);T.ctx.globalAlpha=1,T.ctx.globalAlpha=i(0,1,r),n(T.ctx,s,h),T.ctx.globalAlpha=i(1,0,2*e>1?1:2*e),n(T.ctx,l,h),T.ctx.globalAlpha=1,N.ctx.drawImage(T,0,0)}else{var p=i(2,o/(l.width*h),r),b=-h*i(l.x,s.x,e)*p,I=-h*i(l.y,s.y,e)*p,y=o*p,M=c*p;N.css({left:b,top:I,width:y,height:M})}A.show(),1==e&&(clearInterval(w),g())},Math.ceil(1e3/u))}function o(t,a,r,i,h){if(!(t>a||!Q[t]||Q[t].img)){var c=new Image;c.onload=function(){Q[t].img=c,r&&t!=h[0]&&t!=h[1]?(n(i,Q[t],1),o(t+1,a,!0,i,h)):o(t+1,a,!1)},c.onerror=function(){r&&t!=h[0]&&t!=h[1]?(n(i,Q[t],1),o(t+1,a,!0,i,h)):o(t+1,a,!1)},c.src=e[t].src}}function c(t,e,a){return f?(a.ctx.drawImage(t.get(0),0,0),g(a.ctx,0,0,a.width,a.height,e)||a.ctx.drawImage(t.get(0),0,0),!0):cont}function g(t,e,a,r,i,n){if(!(isNaN(n)||1>n)){n|=0;var h;try{h=t.getImageData(e,a,r,i)}catch(o){return console.log("error:unable to access image data: "+o),!1}var c,g,l,d,x,w,f,u,v,m,p,b,I,y,M,Q,A,C,j,D,O=h.data,P=n+n+1,q=r-1,E=i-1,F=n+1,N=F*(F+1)/2,T=new s,z=T;for(l=1;P>l;l++)if(z=z.next=new s,l==F)var H=z;z.next=T;var L=null,R=null;f=w=0;var S=_[n],X=k[n];for(g=0;i>g;g++){for(y=M=Q=u=v=m=0,p=F*(A=O[w]),b=F*(C=O[w+1]),I=F*(j=O[w+2]),u+=N*A,v+=N*C,m+=N*j,z=T,l=0;F>l;l++)z.r=A,z.g=C,z.b=j,z=z.next;for(l=1;F>l;l++)d=w+((l>q?q:l)<<2),u+=(z.r=A=O[d])*(D=F-l),v+=(z.g=C=O[d+1])*D,m+=(z.b=j=O[d+2])*D,y+=A,M+=C,Q+=j,z=z.next;for(L=T,R=H,c=0;r>c;c++)O[w]=u*S>>X,O[w+1]=v*S>>X,O[w+2]=m*S>>X,u-=p,v-=b,m-=I,p-=L.r,b-=L.g,I-=L.b,d=f+((d=c+n+1)<q?d:q)<<2,y+=L.r=O[d],M+=L.g=O[d+1],Q+=L.b=O[d+2],u+=y,v+=M,m+=Q,L=L.next,p+=A=R.r,b+=C=R.g,I+=j=R.b,y-=A,M-=C,Q-=j,R=R.next,w+=4;f+=r}for(c=0;r>c;c++){for(M=Q=y=v=m=u=0,w=c<<2,p=F*(A=O[w]),b=F*(C=O[w+1]),I=F*(j=O[w+2]),u+=N*A,v+=N*C,m+=N*j,z=T,l=0;F>l;l++)z.r=A,z.g=C,z.b=j,z=z.next;for(x=r,l=1;n>=l;l++)w=x+c<<2,u+=(z.r=A=O[w])*(D=F-l),v+=(z.g=C=O[w+1])*D,m+=(z.b=j=O[w+2])*D,y+=A,M+=C,Q+=j,z=z.next,E>l&&(x+=r);for(w=c,L=T,R=H,g=0;i>g;g++)d=w<<2,O[d]=u*S>>X,O[d+1]=v*S>>X,O[d+2]=m*S>>X,u-=p,v-=b,m-=I,p-=L.r,b-=L.g,I-=L.b,d=c+((d=g+F)<E?d:E)*r<<2,u+=y+=L.r=O[d],v+=M+=L.g=O[d+1],m+=Q+=L.b=O[d+2],L=L.next,p+=A=R.r,b+=C=R.g,I+=j=R.b,y-=A,M-=C,Q-=j,R=R.next,w+=r}return t.putImageData(h,e,a),!0}}function s(){this.r=0,this.g=0,this.b=0,this.a=0,this.next=null}var l=jQuery,d=l("ul",r),x=t.maxQuality||!0,w=t.maxPreload||20,f=!t.noCanvas&&document.createElement("canvas").getContext,u=30,v=10,m=!1,p=.3,b=.7,I=-180,y=180,M=e.length,Q=[];r=r.parent();var A=l("<div>").css({position:"absolute",width:"100%",height:"100%",left:0,top:0,overflow:"hidden","z-index":8}).appendTo(r),C=0,j=0,D=t.width/(Math.sqrt(M)+1),O=t.height/(Math.sqrt(M)+1),P=Math.floor(t.width/D);for(F=0;M>F;F++)D+C>D*P&&(j=Math.floor(D*(F+1)/t.width)*O,C=0),Q[F]={x:C,y:j,width:D,height:O,img:null},f&&(Q[F].scale=i(p,b,Math.random()),Q[F].angle=i(I,y,Math.random())),C+=parseFloat(D);for(var q,E,F=Q.length;F;q=parseInt(Math.random()*F),E=Q[--F],Q[F]=Q[q],Q[q]=E);if(f){var N=l("<canvas>")[0];N.ctx=N.getContext("2d"),N.width=A.width(),N.height=A.height();var T=l("<canvas>")[0];T.ctx=T.getContext("2d"),T.width=A.width(),T.height=A.height();var z=l("<canvas>")[0];if(z.ctx=z.getContext("2d"),z.width=A.width(),z.height=A.height(),!x){var H=l("<canvas>")[0];H.ctx=H.getContext("2d"),H.width=A.width(),H.height=A.height()}A.append(N)}else{var N=A.clone().css({overflow:"visible"});A.css("display","none").append(N);for(F in Q)Q[F].img=e[F].src,n(N,Q[F],1);for(var L=M%P,R=2*P-L,F=(Math.ceil(M/P)+1,0);R>F;F++)n(N,{img:e[F].src,width:D,height:O,x:D*((L+F)%P),y:j+Math.floor((L+F)/P)*O},1);for(var F=0;R>F;F++)n(N,{img:e[F].src,width:D,height:O,x:D*P,y:F*O},1)}var S,X;this.go=function(a,r){if(S)return-1;if(window.XMLHttpRequest){var n=A.width(),g=A.height(),s=n/t.width;f&&(o(r,r,!1),o(a,a,!1),x?o(2,w+1,!1):(H.width=n,H.height=g,o(2,w+1,!0,H.ctx,[r,a])),X||m||(rand=Math.round(i(0,M-1,Math.random())),z.width=A.width(),z.height=A.height(),X=c(l(e[rand]),v,z))),S=new h(a,r,s,n,g,function(){if(d.css({left:-a+"00%"}).show(),A.hide(),S=0,!x&&f)for(s in Q)Q[s].img=null})}else S=0,d.stop(!0).animate({left:a?-a+"00%":/Safari/.test(navigator.userAgent)?"0%":0},t.duration,"easeInOutExpo");return a};var _=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,482,454,428,405,383,364,345,328,312,298,284,271,259,496,475,456,437,420,404,388,374,360,347,335,323,312,302,292,282,273,265,512,497,482,468,454,441,428,417,405,394,383,373,364,354,345,337,328,320,312,305,298,291,284,278,271,265,259,507,496,485,475,465,456,446,437,428,420,412,404,396,388,381,374,367,360,354,347,341,335,329,323,318,312,307,302,297,292,287,282,278,273,269,265,261,512,505,497,489,482,475,468,461,454,447,441,435,428,422,417,411,405,399,394,389,383,378,373,368,364,359,354,350,345,341,337,332,328,324,320,316,312,309,305,301,298,294,291,287,284,281,278,274,271,268,265,262,259,257,507,501,496,491,485,480,475,470,465,460,456,451,446,442,437,433,428,424,420,416,412,408,404,400,396,392,388,385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,289,287,285,282,280,278,275,273,271,269,267,265,263,261,259],k=[9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24]}jQuery.extend(jQuery.easing,{easeInOutQuad:function(t,e,a,r,i){return(e/=i/2)<1?r/2*e*e+a:-r/2*(--e*(e-2)-1)+a}});
-jQuery("#wowslider-container'.$val.'").wowSlider({
+jQuery("#wowslider-container' . $val . '").wowSlider({
 	effect:"collage", 
 	prev:"", 
 	next:"", 
@@ -13077,25 +12770,21 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 });
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderstrictphoto'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderstrictphoto') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/strict-photo/engine1/style.css" />-->
 	<style>
 
 @import url("http://fonts.googleapis.com/css?family=Roboto+Condensed&subset=latin,cyrillic,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -13105,8 +12794,8 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -13118,7 +12807,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -13127,7 +12816,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -13135,49 +12824,49 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 	margin:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px 0; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width: 25px;
 	height: 25px;
 
@@ -13189,10 +12878,10 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	color:transparent;
 	background-size: 100%;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -13204,23 +12893,23 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	background-size: 200%;
 	opacity: 0.7;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 0 0; 
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 100% 0;
 	left:0px;
 }
-#wowslider-container'.$val.' a.ws_next:hover,
-#wowslider-container'.$val.' a.ws_prev:hover{
+#wowslider-container' . $val . ' a.ws_next:hover,
+#wowslider-container' . $val . ' a.ws_prev:hover{
 	opacity: 0.9;
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 5.8em;
     height: 5.8em;
@@ -13234,22 +12923,22 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	opacity: 0.7;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause,
-#wowslider-container'.$val.' .ws_play,
-#wowslider-container'.$val.' a.ws_next,
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' .ws_pause,
+#wowslider-container' . $val . ' .ws_play,
+#wowslider-container' . $val . ' a.ws_next,
+#wowslider-container' . $val . ' a.ws_prev {
 	-webkit-transition: opacity .3s ease;
 	-moz-transition: opacity .3s ease;
 	-ms-transition: opacity .3s ease;
@@ -13257,12 +12946,12 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	transition: opacity .3s ease;
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     opacity: 0.9;
 }
 
 /* shadow */
-#wowslider-container'.$val.' .ws_shadow {
+#wowslider-container' . $val . ' .ws_shadow {
 	overflow: hidden;
 	position: absolute;
 	width: 100%;
@@ -13275,7 +12964,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	box-shadow: inset 0 -39px 20px -20px rgba(0, 0, 0, 0.2);
 	z-index: 8;
 }
-#wowslider-container'.$val.' .ws_shadow:before {
+#wowslider-container' . $val . ' .ws_shadow:before {
 	content: "";
 	position: absolute;
 	top: 0;
@@ -13288,15 +12977,15 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
   	-o-background-size: cover;
   	background-size: cover;
 }/* bottom right */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left: 50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 4em;
@@ -13312,16 +13001,16 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	opacity:1;
 	text-shadow: none;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     padding-top: 0.15em;
 	font-size: 1.8em;
 	line-height: 1.3em;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2.6em;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 40s infinite;
 	-moz-animation: wsBasic 40s infinite;
 	-webkit-animation: wsBasic 40s infinite;
@@ -13330,7 +13019,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 @-moz-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 5%{left:-0%} 10%{left:-100%} 15%{left:-100%} 20%{left:-200%} 25%{left:-200%} 30%{left:-300%} 35%{left:-300%} 40%{left:-400%} 45%{left:-400%} 50%{left:-500%} 55%{left:-500%} 60%{left:-600%} 65%{left:-600%} 70%{left:-700%} 75%{left:-700%} 80%{left:-800%} 85%{left:-800%} 90%{left:-900%} 95%{left:-900%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -13340,23 +13029,23 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
     border: 4px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:48px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:128px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:31px;
 	margin-left: 3px;
@@ -13365,7 +13054,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	cursor:pointer;
     border: 4px solid rgba(96,125,246,0.7);
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-11px;
@@ -13381,24 +13070,22 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 
 
 	<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Monument in Leipzig, Germany</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/voelkerschlachtdenkmal264413_1280.jpg" alt="jquery photo gallery builder" title="The Monument to the Battle of the Nations" id="wows1_0"/>Monument in Leipzig, Germany</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Monument in Leipzig, Germany</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/voelkerschlachtdenkmal264413_1280.jpg" alt="jquery photo gallery builder" title="The Monument to the Battle of the Nations" id="wows1_0"/>Monument in Leipzig, Germany</li>
 <li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/castle195105_1920.jpg" alt="jquery photo gallery carousel" title="Castle" id="wows1_1"/>Middle Ages</li>
 <li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/moatedcastle179331_1280.jpg" alt="jquery photo gallery download" title="Castle" id="wows1_2"/>Anholt</li>
 <li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/paris114323_1280.jpg" alt="jquery photo gallery for website" title="Place de la Concord" id="wows1_3"/>Paris</li>
@@ -13408,28 +13095,27 @@ $i++;
 <li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/chateauofdesullysurloire196390_1280.jpg" alt="jquery photo gallery plugin" title="Sully-sur-Loire" id="wows1_7"/>France</li>
 <li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/berlin143832_1280.jpg" alt="jquery photo gallery software" title="House of the Cultures of the World" id="wows1_8"/>Berlin</li>
 <li><img src="http://www.wowslider.com/images/demo/strict-photo/data1/images/paris253920_1280.jpg" alt="jquery photo gallery wordpress" title="Eiffel Tower" id="wows1_9"/>Paris</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="The Monument to the Battle of the Nations"><img src="data1/tooltips/voelkerschlachtdenkmal264413_1280.jpg" alt="The Monument to the Battle of the Nations"/>1</a>
 <a href="#" title="Castle"><img src="http://www.wowslider.com/images/demo/strict-photo/data1/tooltips/castle195105_1920.jpg" alt="Castle"/>2</a>
@@ -13442,8 +13128,8 @@ $i++;
 <a href="#" title="House of the Cultures of the World"><img src="http://www.wowslider.com/images/demo/strict-photo/data1/tooltips/berlin143832_1280.jpg" alt="House of the Cultures of the World"/>9</a>
 <a href="#" title="Eiffel Tower"><img src="http://www.wowslider.com/images/demo/strict-photo/data1/tooltips/paris253920_1280.jpg" alt="Eiffel Tower"/>10</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <span class="wsl"><a href="http://wowslider.com">jquery photo gallery code</a></span>
@@ -13454,7 +13140,7 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript">
 	function ws_photo(c,f,j){var d=jQuery,l=d("ul",j),j=j.parent(),g=f.length,u=c.imagesCount||30,m=30,e=80,h=2*c.width/100;var a=d("<div>").css({position:"absolute",top:0,left:0,width:"100%",height:"100%",overflow:"hidden",backgroundColor:"#DDDDDD"}).appendTo(j);var n=d("<div>").css({position:"absolute",top:0,left:0,width:"100%",height:"100%",backgroundColor:"rgba(0,0,0,0.6)",zIndex:4}).appendTo(a);var b=a.width()/c.width,p=Math.max(u,f.length);for(var q=0,o=0;q<p;q++){if(o>f.length){o-=f.length}d(f[o]).clone().appendTo(a);o++}var r=a.children("img");d.support.transition=(function(){var i=document.body||document.documentElement,k=i.style;return k.transition!==undefined||k.WebkitTransition!==undefined||k.MozTransition!==undefined||k.MsTransition!==undefined||k.OTransition!==undefined})();function s(k,i){return parseFloat(Math.random()*(i-k)+k)}function t(E,z,i,w,A,k){if(w&&z){var F=e,D=50-F/2,C=50-F/2,v=0,B=5}else{var F=m,D=s(-10,90),C=s(-10,90),v=s(-30,30),B=z?5:(i?3:2)}E.css({position:"absolute",zIndex:B,border:h*A+"px solid white"});if(d.support.transition){E.css({top:C+"%",left:D+"%",marginLeft:-h*A,marginTop:-h*A,width:F+"%",height:F+"%",transform:"rotate("+v+"deg)",transition:"all "+k+"ms ease-in-out"})}else{E.animate({top:C+"%",left:D+"%",marginLeft:-h*A,marginTop:-h*A,width:F+"%",height:F+"%"},k)}}r.each(function(i){t(d(this),c.startSlide==i,false,true,b,0)});this.go=function(i,v){if(window.XMLHttpRequest){b=a.width()/c.width;var k=c.duration*0.5;r.each(function(w){t(d(this),i==w,v==w,false,b,k)});n.fadeOut(k);setTimeout(function(){r.each(function(w){t(d(this),i==w,v==w,true,b,k)});n.fadeIn(k)},k)}else{l.stop(true).animate({left:(i?-i+"00%":(/Safari/.test(navigator.userAgent)?"0%":0))},c.duration,"easeInOutExpo")}return i}};
 
-jQuery("#wowslider-container'.$val.'").wowSlider({
+jQuery("#wowslider-container' . $val . '").wowSlider({
 	effect:"photo", 
 	prev:"", 
 	next:"", 
@@ -13475,20 +13161,16 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 });
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslidergrafitoseven'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslidergrafitoseven') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/grafito-seven/engine1/style.css" />-->
 	<style>
 	/*
@@ -13496,7 +13178,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
  *	template Graffito
  */
 @import url("http://fonts.googleapis.com/css?family=Averia+Sans+Libre");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -13506,8 +13188,8 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -13519,7 +13201,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -13528,7 +13210,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -13536,49 +13218,49 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 	margin:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px 0; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width: 20px;
 	height: 20px;
 
@@ -13590,10 +13272,10 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	color:transparent;
 	background-size: 100%;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -13605,27 +13287,27 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	background-size: 200%;
 	opacity: 0.7;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 0 0; 
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 100% 0;
 	left:10px;
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 0 100%; 
 	opacity: 1;
 }
-#wowslider-container'.$val.' a.ws_prev:hover{
+#wowslider-container' . $val . ' a.ws_prev:hover{
 	background-position: 100% 100%;
 	opacity: 1;
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 2.4em;
     height: 2.4em;
@@ -13639,47 +13321,47 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	opacity: 0.5;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 	background-position: 0 0; 
     opacity: 0.5;
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 	background-position: 0 0; 
     opacity: 0.5;
 }
 
-#wowslider-container'.$val.' .ws_pause:hover {
+#wowslider-container' . $val . ' .ws_pause:hover {
 	background-position: 0 100%; 
     opacity: 1;
 }
-#wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_play:hover {
 	background-position: 0 100%; 
     opacity: 1;
 }
 
-#wowslider-container'.$val.',
-#wowslider-container'.$val.' .ws_effect,
-#wowslider-container'.$val.' .ws_images img {
+#wowslider-container' . $val . ',
+#wowslider-container' . $val . ' .ws_effect,
+#wowslider-container' . $val . ' .ws_images img {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 }/* bottom right */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left: 50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 2em;
@@ -13694,17 +13376,17 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	opacity:1;
 	text-shadow: .2em .2em .5em #000;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     padding-top: 0.15em;
 	font-size: 2.8em;
 	color: #fff;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2em;
 	color: #DDF16E;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 20s infinite;
 	-moz-animation: wsBasic 20s infinite;
 	-webkit-animation: wsBasic 20s infinite;
@@ -13713,7 +13395,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 @-moz-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 20%{left:-100%} 30%{left:-100%} 40%{left:-200%} 50%{left:-200%} 60%{left:-300%} 70%{left:-300%} 80%{left:-400%} 90%{left:-400%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 20%{left:-100%} 30%{left:-100%} 40%{left:-200%} 50%{left:-200%} 60%{left:-300%} 70%{left:-300%} 80%{left:-400%} 90%{left:-400%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -13723,23 +13405,23 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
     border: 4px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:48px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:102px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:26px;
 	overflow:visible;
@@ -13747,7 +13429,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	cursor:pointer;
     border: 4px solid rgba(0,0,0,0.5);
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-11px;
@@ -13761,50 +13443,47 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/jquery.js"></script>
 	<!-- End WOWSlider.com HEAD section -->
 
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>is an automobile manufactured by the Ford Motor Company</li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/images/ford64041_1280.jpg" alt="wordpress gallery plugin online" title="Ford Mustang" id="wows1_0"/>is an automobile manufactured by the Ford Motor Company</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>is an automobile manufactured by the Ford Motor Company</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/images/ford64041_1280.jpg" alt="wordpress gallery plugin online" title="Ford Mustang" id="wows1_0"/>is an automobile manufactured by the Ford Motor Company</li>
 <li><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/images/crazy57942_1280.jpg" alt="wordpress gallery plugin reviews" title="Overpainted Wolksvagen" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/images/car101975_1280.jpg" alt="wordpress gallery plugin style" title="Yellow Car" id="wows1_2"/>Chevrolet Camaro</li>
 <li><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/images/audi87448_1280.jpg" alt="wordpress image gallery plugin" title="Audi A7" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/images/pontiacbonneville78259_1280.jpg" alt="wordpress gallery plugin guru" title="Pontiac Bonneville" id="wows1_4"/>1958 Classic</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Ford Mustang"><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/tooltips/ford64041_1280.jpg" alt="Ford Mustang"/>1</a>
 <a href="#" title="Overpainted Wolksvagen"><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/tooltips/crazy57942_1280.jpg" alt="Overpainted Wolksvagen"/>2</a>
@@ -13812,8 +13491,8 @@ $i++;
 <a href="#" title="Audi A7"><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/tooltips/audi87448_1280.jpg" alt="Audi A7"/>4</a>
 <a href="#" title="Pontiac Bonneville"><img src="http://www.wowslider.com/images/demo/grafito-seven/data1/tooltips/pontiacbonneville78259_1280.jpg" alt="Pontiac Bonneville"/>5</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 	<div class="ws_shadow"></div>
@@ -13821,8 +13500,8 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<script type="text/javascript" src="http://www.wowslider.com/images/demo/wowslider.js"></script>
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/grafito-seven/engine1/script.js"></script>-->
 	<script type="text/javascript">
-	function ws_seven(i,t,k){var l=jQuery;var j=i.distance||5;var c=i.cols;var s=i.rows;var a=i.duration*2;var m=i.blur||50;var w=k.find("ul");var z=[];var r=[];k=k.parent().css({overflow:"visible"});var p=!i.noCanvas&&!window.opera&&!!document.createElement("canvas").getContext;var h;var d=l("<div>").addClass("ws_effect");var u=l("<div>").addClass("ws_zoom");k.append(d,u);var e={t:l(window).scrollTop(),l:l(window).scrollLeft(),w:l(window).width(),h:l(window).height()};jQuery.extend(jQuery.easing,{easeOutQuart:function(B,C,A,E,D){return -E*((C=C/D-1)*C*C*C-1)+A},easeInExpo:function(B,C,A,E,D){return(C==0)?A:E*Math.pow(2,10*(C/D-1))+A},easeInCirc:function(B,C,A,E,D){return -E*(Math.sqrt(1-(C/=D)*C)-1)+A}});function o(B,A){return Math.abs((A%2?1:0)+((A-A%2)/2)-B)/A}function y(E,D,F,A){var C=(D>=A)?(A)/(D):1;var B=(E>=F)?(F)/(E):1;return{l:B,t:C,m:Math.min(B,C)}}function q(L,A,D,M){var H=d.width(),J=d.height(),K=j*H/c,F=j*J/s,G=a*(D?4:5)/(c*s),C=D?"easeInExpo":"easeOutQuart";var B=e.h+e.t-J/s,I=e.w+e.l-H/c,N=d.offset().top+d.height(),E=d.offset().left+d.width();if(B<N){B=N}if(I<E){I=E}l(L).each(function(V){var S=V%c,P=Math.floor(V/c),T=a*0.2*(o(S,c)*45+P*4)/(c*s),R=d.offset().left+e.l+K*S-H*j/2+K,U=d.offset().top+e.t+F*P-J*j/2+F,O=y(R,U,I,B),W={opacity:1,left:H*S/c,top:J*P/s,width:H/c,height:J/s,zIndex:Math.ceil(100-o(S,c)*100)},Z={opacity:0,left:(K*S-H*j/2)*O.l,top:(F*P-J*j/2)*O.t,width:K*O.m,height:F*O.m},Y={left:-(H*S/c),top:-(J*P/s),width:H,height:J},X={left:-K*S*O.m,top:-F*P*O.m,width:j*H*O.m,height:j*J*O.m};if(!D){var Q=W;W=Z;Z=Q;Q=Y;Y=X;X=Q}l(this).css(W).delay(T).animate(Z,G,C,D?function(){l(this).hide()}:{});l(this).find("img").css(Y).delay(T).animate(X,G,C)});if(D){l(A).each(function(Q){var R=Q%c;var P=Math.floor(Q/c);var O=a*0.2+a*0.15*(o(R,c)*35+P*4)/(c*s);l(this).css({left:H/2,top:J/2,width:0,height:0,zIndex:Math.ceil(100-o(R,c)*100)}).delay(O).animate({left:H*R/c,top:J*P/s,width:H/c+1,height:J/s+1},a*4/(c*s),"easeOutBack");l(this).find("img").css({left:0,top:0,width:0,height:0}).delay(O).animate({left:-(H*R/c),top:-(J*P/s),width:H,height:J},a*4/(c*s),"easeOutBack")});u.delay(a*0.1).animate({opacity:1},a*0.2,"easeInCirc")}setTimeout(M,D?a*0.5:a*0.4);return{stop:function(){M()}}}var g;this.go=function(I,C){if(g){return C}var H=(C==0&&I!=C+1)||(I==C-1)?false:true;e.t=l(window).scrollTop();e.l=l(window).scrollLeft();e.w=l(window).width();e.h=l(window).height();var A=Math.max((i.width||d.width())/(i.height||d.height())||3,3);c=c||Math.round(A<1?3:3*A);s=s||Math.round(A<1?3/A:3);d.css({position:"absolute",width:k.width(),height:k.height(),left:0,top:0,zIndex:8,transform:"translate3d(0,0,0)"});u.css({position:"absolute",width:k.width(),height:k.height(),top:0,left:0,zIndex:2,transform:"translate3d(0,0,0)"});for(var F=0;F<c*s;F++){var E=F%c;var D=Math.floor(F/c);l(z[F]=document.createElement("div")).css({position:"absolute",overflow:"hidden",transform:"translate3d(0,0,0)"}).appendTo(d).append(l("<img>").css({position:"absolute",transform:"translate3d(0,0,0)"}).attr("src",t.get(H?C:I).src));if(H){l(r[F]=document.createElement("div")).css({position:"absolute",overflow:"hidden",transform:"translate3d(0,0,0)"}).appendTo(u).append(l("<img>").css({position:"absolute",transform:"translate3d(0,0,0)"}).attr("src",t.get(I).src))}}z=l(z);if(H){r=l(r)}if(H){u.css("opacity",0);var B;if(p){try{document.createElement("canvas").getContext("2d").getImageData(0,0,1,1)}catch(G){p=0}w.hide();h="<canvas width="'+k.width()+'" height="'+k.height()+'"/>";h=l(h).css({"z-index":1,position:"absolute",width:"100%",height:"100%",left:0,top:0}).appendTo(k);B=x(l(t.get(C)),m,h.get(0))}else{p=0;B=x(l(t.get(C)),8)}}else{u.append(l("<img>").css({position:"absolute",width:"100%",height:"100%"}).attr("src",t.get(C).src))}g=new q(z,r,H,function(){w.css({left:-I+"00%"}).stop(true,true).show();d.empty().removeAttr("style");u.empty().removeAttr("style");if(h){h.remove()}g=0});return I};function x(B,D,C){var E=(parseInt(B.parent().css("z-index"))||0)+1;if(p){var A=C.getContext("2d");A.drawImage(B.get(0),0,0);if(!b(A,0,0,C.width,C.height,D)){return 0}return l(C)}}var n=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,482,454,428,405,383,364,345,328,312,298,284,271,259,496,475,456,437,420,404,388,374,360,347,335,323,312,302,292,282,273,265,512,497,482,468,454,441,428,417,405,394,383,373,364,354,345,337,328,320,312,305,298,291,284,278,271,265,259,507,496,485,475,465,456,446,437,428,420,412,404,396,388,381,374,367,360,354,347,341,335,329,323,318,312,307,302,297,292,287,282,278,273,269,265,261,512,505,497,489,482,475,468,461,454,447,441,435,428,422,417,411,405,399,394,389,383,378,373,368,364,359,354,350,345,341,337,332,328,324,320,316,312,309,305,301,298,294,291,287,284,281,278,274,271,268,265,262,259,257,507,501,496,491,485,480,475,470,465,460,456,451,446,442,437,433,428,424,420,416,412,408,404,400,396,392,388,385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,289,287,285,282,280,278,275,273,271,269,267,265,263,261,259];var v=[9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24];function b(ap,X,V,A,B,ag){if(isNaN(ag)||ag<1){return}ag|=0;var ak;try{ak=ap.getImageData(X,V,A,B)}catch(ao){console.log("error:unable to access image data: "+ao);return false}var F=ak.data;var ae,ad,am,aj,M,P,J,D,E,U,K,W,S,aa,af,N,I,O,Q,Z;var an=ag+ag+1;var ab=A<<2;var L=A-1;var ai=B-1;var H=ag+1;var ah=H*(H+1)/2;var Y=new f();var T=Y;for(am=1;am<an;am++){T=T.next=new f();if(am==H){var G=T}}T.next=Y;var al=null;var ac=null;J=P=0;var R=n[ag];var C=v[ag];for(ad=0;ad<B;ad++){aa=af=N=D=E=U=0;K=H*(I=F[P]);W=H*(O=F[P+1]);S=H*(Q=F[P+2]);D+=ah*I;E+=ah*O;U+=ah*Q;T=Y;for(am=0;am<H;am++){T.r=I;T.g=O;T.b=Q;T=T.next}for(am=1;am<H;am++){aj=P+((L<am?L:am)<<2);D+=(T.r=(I=F[aj]))*(Z=H-am);E+=(T.g=(O=F[aj+1]))*Z;U+=(T.b=(Q=F[aj+2]))*Z;aa+=I;af+=O;N+=Q;T=T.next}al=Y;ac=G;for(ae=0;ae<A;ae++){F[P]=(D*R)>>C;F[P+1]=(E*R)>>C;F[P+2]=(U*R)>>C;D-=K;E-=W;U-=S;K-=al.r;W-=al.g;S-=al.b;aj=(J+((aj=ae+ag+1)<L?aj:L))<<2;aa+=(al.r=F[aj]);af+=(al.g=F[aj+1]);N+=(al.b=F[aj+2]);D+=aa;E+=af;U+=N;al=al.next;K+=(I=ac.r);W+=(O=ac.g);S+=(Q=ac.b);aa-=I;af-=O;N-=Q;ac=ac.next;P+=4}J+=A}for(ae=0;ae<A;ae++){af=N=aa=E=U=D=0;P=ae<<2;K=H*(I=F[P]);W=H*(O=F[P+1]);S=H*(Q=F[P+2]);D+=ah*I;E+=ah*O;U+=ah*Q;T=Y;for(am=0;am<H;am++){T.r=I;T.g=O;T.b=Q;T=T.next}M=A;for(am=1;am<=ag;am++){P=(M+ae)<<2;D+=(T.r=(I=F[P]))*(Z=H-am);E+=(T.g=(O=F[P+1]))*Z;U+=(T.b=(Q=F[P+2]))*Z;aa+=I;af+=O;N+=Q;T=T.next;if(am<ai){M+=A}}P=ae;al=Y;ac=G;for(ad=0;ad<B;ad++){aj=P<<2;F[aj]=(D*R)>>C;F[aj+1]=(E*R)>>C;F[aj+2]=(U*R)>>C;D-=K;E-=W;U-=S;K-=al.r;W-=al.g;S-=al.b;aj=(ae+(((aj=ad+H)<ai?aj:ai)*A))<<2;D+=(aa+=(al.r=F[aj]));E+=(af+=(al.g=F[aj+1]));U+=(N+=(al.b=F[aj+2]));al=al.next;K+=(I=ac.r);W+=(O=ac.g);S+=(Q=ac.b);aa-=I;af-=O;N-=Q;ac=ac.next;P+=A}}ap.putImageData(ak,X,V);return true}function f(){this.r=0;this.g=0;this.b=0;this.a=0;this.next=null}};
-jQuery("#wowslider-container'.$val.'").wowSlider({
+	function ws_seven(i,t,k){var l=jQuery;var j=i.distance||5;var c=i.cols;var s=i.rows;var a=i.duration*2;var m=i.blur||50;var w=k.find("ul");var z=[];var r=[];k=k.parent().css({overflow:"visible"});var p=!i.noCanvas&&!window.opera&&!!document.createElement("canvas").getContext;var h;var d=l("<div>").addClass("ws_effect");var u=l("<div>").addClass("ws_zoom");k.append(d,u);var e={t:l(window).scrollTop(),l:l(window).scrollLeft(),w:l(window).width(),h:l(window).height()};jQuery.extend(jQuery.easing,{easeOutQuart:function(B,C,A,E,D){return -E*((C=C/D-1)*C*C*C-1)+A},easeInExpo:function(B,C,A,E,D){return(C==0)?A:E*Math.pow(2,10*(C/D-1))+A},easeInCirc:function(B,C,A,E,D){return -E*(Math.sqrt(1-(C/=D)*C)-1)+A}});function o(B,A){return Math.abs((A%2?1:0)+((A-A%2)/2)-B)/A}function y(E,D,F,A){var C=(D>=A)?(A)/(D):1;var B=(E>=F)?(F)/(E):1;return{l:B,t:C,m:Math.min(B,C)}}function q(L,A,D,M){var H=d.width(),J=d.height(),K=j*H/c,F=j*J/s,G=a*(D?4:5)/(c*s),C=D?"easeInExpo":"easeOutQuart";var B=e.h+e.t-J/s,I=e.w+e.l-H/c,N=d.offset().top+d.height(),E=d.offset().left+d.width();if(B<N){B=N}if(I<E){I=E}l(L).each(function(V){var S=V%c,P=Math.floor(V/c),T=a*0.2*(o(S,c)*45+P*4)/(c*s),R=d.offset().left+e.l+K*S-H*j/2+K,U=d.offset().top+e.t+F*P-J*j/2+F,O=y(R,U,I,B),W={opacity:1,left:H*S/c,top:J*P/s,width:H/c,height:J/s,zIndex:Math.ceil(100-o(S,c)*100)},Z={opacity:0,left:(K*S-H*j/2)*O.l,top:(F*P-J*j/2)*O.t,width:K*O.m,height:F*O.m},Y={left:-(H*S/c),top:-(J*P/s),width:H,height:J},X={left:-K*S*O.m,top:-F*P*O.m,width:j*H*O.m,height:j*J*O.m};if(!D){var Q=W;W=Z;Z=Q;Q=Y;Y=X;X=Q}l(this).css(W).delay(T).animate(Z,G,C,D?function(){l(this).hide()}:{});l(this).find("img").css(Y).delay(T).animate(X,G,C)});if(D){l(A).each(function(Q){var R=Q%c;var P=Math.floor(Q/c);var O=a*0.2+a*0.15*(o(R,c)*35+P*4)/(c*s);l(this).css({left:H/2,top:J/2,width:0,height:0,zIndex:Math.ceil(100-o(R,c)*100)}).delay(O).animate({left:H*R/c,top:J*P/s,width:H/c+1,height:J/s+1},a*4/(c*s),"easeOutBack");l(this).find("img").css({left:0,top:0,width:0,height:0}).delay(O).animate({left:-(H*R/c),top:-(J*P/s),width:H,height:J},a*4/(c*s),"easeOutBack")});u.delay(a*0.1).animate({opacity:1},a*0.2,"easeInCirc")}setTimeout(M,D?a*0.5:a*0.4);return{stop:function(){M()}}}var g;this.go=function(I,C){if(g){return C}var H=(C==0&&I!=C+1)||(I==C-1)?false:true;e.t=l(window).scrollTop();e.l=l(window).scrollLeft();e.w=l(window).width();e.h=l(window).height();var A=Math.max((i.width||d.width())/(i.height||d.height())||3,3);c=c||Math.round(A<1?3:3*A);s=s||Math.round(A<1?3/A:3);d.css({position:"absolute",width:k.width(),height:k.height(),left:0,top:0,zIndex:8,transform:"translate3d(0,0,0)"});u.css({position:"absolute",width:k.width(),height:k.height(),top:0,left:0,zIndex:2,transform:"translate3d(0,0,0)"});for(var F=0;F<c*s;F++){var E=F%c;var D=Math.floor(F/c);l(z[F]=document.createElement("div")).css({position:"absolute",overflow:"hidden",transform:"translate3d(0,0,0)"}).appendTo(d).append(l("<img>").css({position:"absolute",transform:"translate3d(0,0,0)"}).attr("src",t.get(H?C:I).src));if(H){l(r[F]=document.createElement("div")).css({position:"absolute",overflow:"hidden",transform:"translate3d(0,0,0)"}).appendTo(u).append(l("<img>").css({position:"absolute",transform:"translate3d(0,0,0)"}).attr("src",t.get(I).src))}}z=l(z);if(H){r=l(r)}if(H){u.css("opacity",0);var B;if(p){try{document.createElement("canvas").getContext("2d").getImageData(0,0,1,1)}catch(G){p=0}w.hide();h="<canvas width="' + \K . width() + '" height="' + \K . height() + '"/>";h=l(h).css({"z-index":1,position:"absolute",width:"100%",height:"100%",left:0,top:0}).appendTo(k);B=x(l(t.get(C)),m,h.get(0))}else{p=0;B=x(l(t.get(C)),8)}}else{u.append(l("<img>").css({position:"absolute",width:"100%",height:"100%"}).attr("src",t.get(C).src))}g=new q(z,r,H,function(){w.css({left:-I+"00%"}).stop(true,true).show();d.empty().removeAttr("style");u.empty().removeAttr("style");if(h){h.remove()}g=0});return I};function x(B,D,C){var E=(parseInt(B.parent().css("z-index"))||0)+1;if(p){var A=C.getContext("2d");A.drawImage(B.get(0),0,0);if(!b(A,0,0,C.width,C.height,D)){return 0}return l(C)}}var n=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,454,405,364,328,298,271,496,456,420,388,360,335,312,292,273,512,482,454,428,405,383,364,345,328,312,298,284,271,259,496,475,456,437,420,404,388,374,360,347,335,323,312,302,292,282,273,265,512,497,482,468,454,441,428,417,405,394,383,373,364,354,345,337,328,320,312,305,298,291,284,278,271,265,259,507,496,485,475,465,456,446,437,428,420,412,404,396,388,381,374,367,360,354,347,341,335,329,323,318,312,307,302,297,292,287,282,278,273,269,265,261,512,505,497,489,482,475,468,461,454,447,441,435,428,422,417,411,405,399,394,389,383,378,373,368,364,359,354,350,345,341,337,332,328,324,320,316,312,309,305,301,298,294,291,287,284,281,278,274,271,268,265,262,259,257,507,501,496,491,485,480,475,470,465,460,456,451,446,442,437,433,428,424,420,416,412,408,404,400,396,392,388,385,381,377,374,370,367,363,360,357,354,350,347,344,341,338,335,332,329,326,323,320,318,315,312,310,307,304,302,299,297,294,292,289,287,285,282,280,278,275,273,271,269,267,265,263,261,259];var v=[9,11,12,13,13,14,14,15,15,15,15,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24];function b(ap,X,V,A,B,ag){if(isNaN(ag)||ag<1){return}ag|=0;var ak;try{ak=ap.getImageData(X,V,A,B)}catch(ao){console.log("error:unable to access image data: "+ao);return false}var F=ak.data;var ae,ad,am,aj,M,P,J,D,E,U,K,W,S,aa,af,N,I,O,Q,Z;var an=ag+ag+1;var ab=A<<2;var L=A-1;var ai=B-1;var H=ag+1;var ah=H*(H+1)/2;var Y=new f();var T=Y;for(am=1;am<an;am++){T=T.next=new f();if(am==H){var G=T}}T.next=Y;var al=null;var ac=null;J=P=0;var R=n[ag];var C=v[ag];for(ad=0;ad<B;ad++){aa=af=N=D=E=U=0;K=H*(I=F[P]);W=H*(O=F[P+1]);S=H*(Q=F[P+2]);D+=ah*I;E+=ah*O;U+=ah*Q;T=Y;for(am=0;am<H;am++){T.r=I;T.g=O;T.b=Q;T=T.next}for(am=1;am<H;am++){aj=P+((L<am?L:am)<<2);D+=(T.r=(I=F[aj]))*(Z=H-am);E+=(T.g=(O=F[aj+1]))*Z;U+=(T.b=(Q=F[aj+2]))*Z;aa+=I;af+=O;N+=Q;T=T.next}al=Y;ac=G;for(ae=0;ae<A;ae++){F[P]=(D*R)>>C;F[P+1]=(E*R)>>C;F[P+2]=(U*R)>>C;D-=K;E-=W;U-=S;K-=al.r;W-=al.g;S-=al.b;aj=(J+((aj=ae+ag+1)<L?aj:L))<<2;aa+=(al.r=F[aj]);af+=(al.g=F[aj+1]);N+=(al.b=F[aj+2]);D+=aa;E+=af;U+=N;al=al.next;K+=(I=ac.r);W+=(O=ac.g);S+=(Q=ac.b);aa-=I;af-=O;N-=Q;ac=ac.next;P+=4}J+=A}for(ae=0;ae<A;ae++){af=N=aa=E=U=D=0;P=ae<<2;K=H*(I=F[P]);W=H*(O=F[P+1]);S=H*(Q=F[P+2]);D+=ah*I;E+=ah*O;U+=ah*Q;T=Y;for(am=0;am<H;am++){T.r=I;T.g=O;T.b=Q;T=T.next}M=A;for(am=1;am<=ag;am++){P=(M+ae)<<2;D+=(T.r=(I=F[P]))*(Z=H-am);E+=(T.g=(O=F[P+1]))*Z;U+=(T.b=(Q=F[P+2]))*Z;aa+=I;af+=O;N+=Q;T=T.next;if(am<ai){M+=A}}P=ae;al=Y;ac=G;for(ad=0;ad<B;ad++){aj=P<<2;F[aj]=(D*R)>>C;F[aj+1]=(E*R)>>C;F[aj+2]=(U*R)>>C;D-=K;E-=W;U-=S;K-=al.r;W-=al.g;S-=al.b;aj=(ae+(((aj=ad+H)<ai?aj:ai)*A))<<2;D+=(aa+=(al.r=F[aj]));E+=(af+=(al.g=F[aj+1]));U+=(N+=(al.b=F[aj+2]));al=al.next;K+=(I=ac.r);W+=(O=ac.g);S+=(Q=ac.b);aa-=I;af-=O;N-=Q;ac=ac.next;P+=A}}ap.putImageData(ak,X,V);return true}function f(){this.r=0;this.g=0;this.b=0;this.a=0;this.next=null}};
+jQuery("#wowslider-container' . $val . '").wowSlider({
 	effect:"seven", 
 	prev:"", 
 	next:"", 
@@ -13843,20 +13522,16 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 });
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslideremeraldphoto'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslideremeraldphoto') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/emerald-photo/engine1/style.css" />-->
 	
 	<style>
@@ -13865,7 +13540,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
  *	template Emerald
  */
 @import url("http://fonts.googleapis.com/css?family=Roboto+Condensed&subset=latin,cyrillic,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -13875,8 +13550,8 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -13888,7 +13563,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -13897,7 +13572,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -13905,54 +13580,54 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 	margin:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	border-left: 0px;
 	border-right: 0px;
 	border-top: 0px;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px 0; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:20px;
 	height:6px;
 	background: url(./bullet.png) left top;
@@ -13962,10 +13637,10 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	margin-left:0px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -13976,25 +13651,25 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 	background-size: 200%;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:0px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 1.8em;
     height: 2.8em;
@@ -14007,27 +13682,27 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	background-size: 100%;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     background-position: 100% 100% !important;
 }/* bottom right */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	right: 0px;
 }
 
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 2em;
@@ -14042,16 +13717,16 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	text-transform: none;
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
     padding-top: 0.15em;
 	font-size: 1.8em;
 	line-height: 1.8em;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2.6em;
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 30s infinite;
 	-moz-animation: wsBasic 30s infinite;
 	-webkit-animation: wsBasic 30s infinite;
@@ -14060,7 +13735,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 @-moz-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 16.67%{left:-100%} 26.67%{left:-100%} 33.33%{left:-200%} 43.33%{left:-200%} 50%{left:-300%} 60%{left:-300%} 66.67%{left:-400%} 76.67%{left:-400%} 83.33%{left:-500%} 93.33%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 10%{left:-0%} 16.67%{left:-100%} 26.67%{left:-100%} 33.33%{left:-200%} 43.33%{left:-200%} 50%{left:-300%} 60%{left:-300%} 66.67%{left:-400%} 76.67%{left:-400%} 83.33%{left:-500%} 93.33%{left:-500%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -14070,23 +13745,23 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
     border: 4px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:11px;
 	margin-left:0px;
@@ -14095,7 +13770,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	cursor:pointer;
     border: 4px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-9px;
@@ -14110,51 +13785,48 @@ jQuery("#wowslider-container'.$val.'").wowSlider({
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/images/cactuses.jpg" alt="Cactuses, Canary Islands: slider javascript plugin" title="Cactuses, Canary Islands" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/images/cactuses.jpg" alt="Cactuses, Canary Islands: slider javascript plugin" title="Cactuses, Canary Islands" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/images/crater.jpg" alt="Crater, Gran Canaria: slider javascript example" title="Crater, Gran Canaria" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/images/galdar.jpg" alt="Galdar, Gran Canaria: slider javascript mobile" title="Galdar, Gran Canaria" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/images/gran_canaria.jpg" alt="Panorama, Gran Canaria: image slider with javascript" title="Panorama, Gran Canaria" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/images/green_rocks.jpg" alt="Green Rocks, Gran Canaria: slider using javascript" title="Green Rocks, Gran Canaria" id="wows1_4"/></li>
 <li><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/images/maspalomas.jpg" alt="Maspalomas, Gran Canaria: download slider javascript" title="Maspalomas, Gran Canaria" id="wows1_5"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Cactuses, Canary Islands"><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/tooltips/cactuses.jpg" alt="Cactuses, Canary Islands"/>1</a>
 <a href="#" title="Crater, Gran Canaria"><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/tooltips/crater.jpg" alt="Crater, Gran Canaria"/>2</a>
@@ -14163,8 +13835,8 @@ $i++;
 <a href="#" title="Green Rocks, Gran Canaria"><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/tooltips/green_rocks.jpg" alt="Green Rocks, Gran Canaria"/>5</a>
 <a href="#" title="Maspalomas, Gran Canaria"><img src="http://www.wowslider.com/images/demo/emerald-photo/data1/tooltips/maspalomas.jpg" alt="Maspalomas, Gran Canaria"/>6</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">slider javascript free</a>
@@ -14174,23 +13846,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/emerald-photo/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_photo(c,f,j){var d=jQuery,l=d("ul",j),j=j.parent(),g=f.length,u=c.imagesCount||30,m=30,e=80,h=2*c.width/100;var a=d("<div>").css({position:"absolute",top:0,left:0,width:"100%",height:"100%",overflow:"hidden",backgroundColor:"#DDDDDD"}).appendTo(j);var n=d("<div>").css({position:"absolute",top:0,left:0,width:"100%",height:"100%",backgroundColor:"rgba(0,0,0,0.6)",zIndex:4}).appendTo(a);var b=a.width()/c.width,p=Math.max(u,f.length);for(var q=0,o=0;q<p;q++){if(o>f.length){o-=f.length}d(f[o]).clone().appendTo(a);o++}var r=a.children("img");d.support.transition=(function(){var i=document.body||document.documentElement,k=i.style;return k.transition!==undefined||k.WebkitTransition!==undefined||k.MozTransition!==undefined||k.MsTransition!==undefined||k.OTransition!==undefined})();function s(k,i){return parseFloat(Math.random()*(i-k)+k)}function t(E,z,i,w,A,k){if(w&&z){var F=e,D=50-F/2,C=50-F/2,v=0,B=5}else{var F=m,D=s(-10,90),C=s(-10,90),v=s(-30,30),B=z?5:(i?3:2)}E.css({position:"absolute",zIndex:B,border:h*A+"px solid white"});if(d.support.transition){E.css({top:C+"%",left:D+"%",marginLeft:-h*A,marginTop:-h*A,width:F+"%",height:F+"%",transform:"rotate("+v+"deg)",transition:"all "+k+"ms ease-in-out"})}else{E.animate({top:C+"%",left:D+"%",marginLeft:-h*A,marginTop:-h*A,width:F+"%",height:F+"%"},k)}}r.each(function(i){t(d(this),c.startSlide==i,false,true,b,0)});this.go=function(i,v){if(window.XMLHttpRequest){b=a.width()/c.width;var k=c.duration*0.5;r.each(function(w){t(d(this),i==w,v==w,false,b,k)});n.fadeOut(k);setTimeout(function(){r.each(function(w){t(d(this),i==w,v==w,true,b,k)});n.fadeIn(k)},k)}else{l.stop(true).animate({left:(i?-i+"00%":(/Safari/.test(navigator.userAgent)?"0%":0))},c.duration,"easeInOutExpo")}return i}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:"",duration:20*100,delay:30*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"photo",prev:"",next:"",duration:20*100,delay:30*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderglasslinear'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderglasslinear') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://wowslider.com/images/demo/glass-linear/engine1/style.css" />-->
 	<style>
 	/*
@@ -14198,7 +13866,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
  *	template Glass
  */
 @import url(http://fonts.googleapis.com/css?family=Oranienbaum&subset=latin,latin-ext,cyrillic);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -14208,8 +13876,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -14221,7 +13889,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -14230,7 +13898,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -14238,49 +13906,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 	margin:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 10px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	margin-left:5px;
 	width:14px;
 	height:13px;
@@ -14290,13 +13958,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	position:relative;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 } 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -14307,26 +13975,26 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 	background-size: 200%;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0; 
 	right:15px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	left:15px;
 	background-position: 0 0; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
 
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block} 
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block} 
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 5.3em;
     height: 5.3em;
@@ -14339,32 +14007,32 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	background-size: 100%;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     background-position: 100% 100% !important;
 }/* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom:0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws_bullets .ws_bulframe {
+#wowslider-container' . $val . ' .ws_bullets .ws_bulframe {
 	bottom: 20px;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position: absolute;
 	bottom:1.5em;
 	left: 0;
@@ -14382,27 +14050,27 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	-moz-border-radius: 0.5em;
 	text-shadow: none;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	margin-top:0.15em;
 	font-size: 1.8em;
 	line-height: 1.85em;
     font-weight: normal;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2.8em;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
 	font-size: 0px; 
 	position:absolute;
 	overflow:auto;
 	z-index:70;
 }
-#wowslider-container'.$val.' .ws_thumbs img{
+#wowslider-container' . $val . ' .ws_thumbs img{
 	text-decoration: none;
 	border: 0;
 	width: 100%;
 }
-#wowslider-container'.$val.' .ws_thumbs a {
+#wowslider-container' . $val . ' .ws_thumbs a {
 	position:relative;
 	text-indent: -4000px; 
 	color:transparent;
@@ -14415,33 +14083,33 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	padding: 0.15%;
 	width: 11.72%;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover{
+#wowslider-container' . $val . ' .ws_thumbs a:hover{
 	opacity:1;
 }
-#wowslider-container'.$val.' .ws_thumbs a:hover img{
+#wowslider-container' . $val . ' .ws_thumbs a:hover img{
 	visibility:visible;
 }
-#wowslider-container'.$val.'  .ws_thumbs { 
+#wowslider-container' . $val . '  .ws_thumbs { 
     bottom: -30.83%;
     left: 0;
 	width:100%;
 	max-height:$thumbFullHeight$px;
 }
-#wowslider-container'.$val.'  .ws_thumbs div{
+#wowslider-container' . $val . '  .ws_thumbs div{
 	position:relative;
 	letter-spacing:-4px;
 	width:213.36%;
-}#wowslider-container'.$val.' .ws_thumbs a.ws_selthumb{
+}#wowslider-container' . $val . ' .ws_thumbs a.ws_selthumb{
 	opacity: 1;
 }
 
-#wowslider-container'.$val.' .ws_thumbs  a{
+#wowslider-container' . $val . ' .ws_thumbs  a{
     background-color:#FFFFFF;
 	opacity: 0.5;
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50); 
 }
 
-#wowslider-container'.$val.' .ws_images ul{
+#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 40s infinite;
 	-moz-animation: wsBasic 40s infinite;
 	-webkit-animation: wsBasic 40s infinite;
@@ -14450,7 +14118,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 @-moz-keyframes wsBasic{0%{left:-0%} 7.5%{left:-0%} 12.5%{left:-100%} 20%{left:-100%} 25%{left:-200%} 32.5%{left:-200%} 37.5%{left:-300%} 45%{left:-300%} 50%{left:-400%} 57.5%{left:-400%} 62.5%{left:-500%} 70%{left:-500%} 75%{left:-600%} 82.5%{left:-600%} 87.5%{left:-700%} 95%{left:-700%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 7.5%{left:-0%} 12.5%{left:-100%} 20%{left:-100%} 25%{left:-200%} 32.5%{left:-200%} 37.5%{left:-300%} 45%{left:-300%} 50%{left:-400%} 57.5%{left:-400%} 62.5%{left:-500%} 70%{left:-500%} 75%{left:-600%} 82.5%{left:-600%} 87.5%{left:-700%} 95%{left:-700%} }
 
-#wowslider-container'.$val.' .ws_frame{
+#wowslider-container' . $val . ' .ws_frame{
 	display:block;
 	position: absolute;
 	left:0;
@@ -14462,11 +14130,11 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=40);
 	z-index:9;
 }
-* html #wowslider-container'.$val.' .ws_frame{
+* html #wowslider-container' . $val . ' .ws_frame{
 	width:$FrameW$px;
 	height:$FrameH$px;
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:15px;
@@ -14477,23 +14145,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	border-radius:0px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	overflow:visible;
 	position:absolute;
@@ -14501,7 +14169,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
     border: 2px solid #FFFFFF;
 	border-radius:0px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-9px;
@@ -14516,24 +14184,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"photo",prev:"",next:
 	<!-- End WOWSlider.com HEAD section -->
 
 	<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';								
-$i++;		
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/bratislavacastle.jpg" alt="Bratislava castle, Slovakia: responsive image gallery code" title="Bratislava castle, Slovakia" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/bratislavacastle.jpg" alt="Bratislava castle, Slovakia: responsive image gallery code" title="Bratislava castle, Slovakia" id="wows1_0"/></li>
 <li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/bratislava.jpg" alt="Bratislava, Slovakia: responsive image gallery download" title="Bratislava, Slovakia" id="wows1_1"/></li>
 <li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/bridge.jpg" alt="Bridge: responsive image gallery html" title="Bridge" id="wows1_2"/></li>
 <li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/dvorakovonabrezie.jpg" alt="Dvorakovo nabrezie, Bratislava: responsive image gallery javascript" title="Dvorakovo nabrezie, Bratislava" id="wows1_3"/></li>
@@ -14541,29 +14207,28 @@ $i++;
 <li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/night.jpg" alt="Night view: responsive image gallery jquery" title="Night view" id="wows1_5"/></li>
 <li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/tree.jpg" alt="Tree in the park, Bratislava: responsive image gallery software" title="Tree in the park, Bratislava" id="wows1_6"/></li>
 <li><img src="http://wowslider.com/images/demo/glass-linear/data1/images/twilight.jpg" alt="In the twilight: responsive image gallery free" title="In the twilight" id="wows1_7"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_thumbs">
 <div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Bratislava castle, Slovakia"><img src="http://wowslider.com/images/demo/glass-linear/data1/tooltips/bratislavacastle.jpg" alt="" /></a>
 <a href="#" title="Bratislava, Slovakia"><img src="http://wowslider.com/images/demo/glass-linear/data1/tooltips/bratislava.jpg" alt="" /></a>
@@ -14574,8 +14239,8 @@ $i++;
 <a href="#" title="Tree in the park, Bratislava"><img src="http://wowslider.com/images/demo/glass-linear/data1/tooltips/tree.jpg" alt="" /></a>
 <a href="#" title="In the twilight"><img src="http://wowslider.com/images/demo/glass-linear/data1/tooltips/twilight.jpg" alt="" /></a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div>
 </div>
@@ -14586,23 +14251,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://wowslider.com/images/demo/glass-linear/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_basic_linear(c,a,b){var d=jQuery;var e=d("<div></div>").css({position:"absolute",display:"none","z-index":2,width:"200%",height:"100%"}).appendTo(b);this.go=function(f,j){e.stop(1,1);var g=(!!((f-j+1)%a.length)^c.revers?"left":"right");d(a[j]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,0);d(a[f]).clone().css({position:"absolute",left:"auto",right:"auto",top:0,width:"50%"}).appendTo(e).css(g,"50%").show();e.css({left:"auto",right:"auto",top:0}).css(g,0).show();var h=b.find("ul").hide();var i={};i[g]="-100%";e.animate(i,c.duration,"easeInOutExpo",function(){h.css({left:-f+"00%"}).show();d(this).hide().html("")});return f}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"",next:"",duration:20*100,delay:30*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"basic_linear",prev:"",next:"",duration:20*100,delay:30*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:0,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderturquoisestackv'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderturquoisestackv') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/turquoise-stack-v/engine1/style.css" />-->
 	
 	<style>
@@ -14611,7 +14272,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
  *	template Turquoise
  */
 @import url(http://fonts.googleapis.com/css?family=Fjalla+One&subset=latin,latin-ext);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -14621,8 +14282,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -14634,7 +14295,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -14643,7 +14304,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -14651,50 +14312,50 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 	margin:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 3px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:15px;
 	height:13px;
 	background: url(./bullet.png) left top;
@@ -14704,10 +14365,10 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	margin-left:5px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover, #wowslider-container'.$val.' .ws_bullets a.ws_selbull{
+#wowslider-container' . $val . ' .ws_bullets a:hover, #wowslider-container' . $val . ' .ws_bullets a.ws_selbull{
 	background-position: 0 100%;
 }
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -14718,19 +14379,19 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	background-image: url(./themes/themebuilder/icons/arrows.png);
 	background-size:200%;
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:3px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 0 0; 
 	left:3px;
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 7.4em;
     height: 7.4em;
@@ -14743,29 +14404,29 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	background-size:100%;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     background-position: 100% 100% !important;
 }/* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 2em;
@@ -14780,15 +14441,15 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	font-weight: normal;
 	text-shadow: -4px 4px 0 #5B8990;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	margin-top:0.15em;
 	font-size: 2em;
 	line-height: 1.6em;
 	text-shadow: -3px 3px 0 #5B8990;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2.8em;
-}#wowslider-container'.$val.' .ws_images ul{
+}#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 27.6s infinite;
 	-moz-animation: wsBasic 27.6s infinite;
 	-webkit-animation: wsBasic 27.6s infinite;
@@ -14797,7 +14458,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 @-moz-keyframes wsBasic{0%{left:-0%} 9.42%{left:-0%} 16.67%{left:-100%} 26.09%{left:-100%} 33.33%{left:-200%} 42.75%{left:-200%} 50%{left:-300%} 59.42%{left:-300%} 66.67%{left:-400%} 76.09%{left:-400%} 83.33%{left:-500%} 92.75%{left:-500%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 9.42%{left:-0%} 16.67%{left:-100%} 26.09%{left:-100%} 33.33%{left:-200%} 42.75%{left:-200%} 50%{left:-300%} 59.42%{left:-300%} 66.67%{left:-400%} 76.09%{left:-400%} 83.33%{left:-500%} 92.75%{left:-500%} }
 
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -14807,23 +14468,23 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
     border: 4px solid #78b4be;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:48px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:128px;
 	background-color:#78b4be;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:20px;
 	overflow:visible;
@@ -14831,7 +14492,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	cursor:pointer;
     border: 4px solid #78b4be;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-12px;
@@ -14846,51 +14507,48 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"basic_linear",prev:"
 	<!-- End WOWSlider.com HEAD section -->
 	
 	<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/></li>
-';										
-$i++;
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/images/acacia.jpg" alt="Acacia, Tanzania: slideshow creator with music" title="Acacia, Tanzania" id="wows1_0"/></li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/></li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/images/acacia.jpg" alt="Acacia, Tanzania: slideshow creator with music" title="Acacia, Tanzania" id="wows1_0"/></li>
 <li><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/images/african_elephants.jpg" alt="African elephants: slideshow generator" title="African elephants" id="wows1_1"/></li>
 <li><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/images/herd.jpg" alt="Herd of elephants: slideshow images" title="Herd of elephants" id="wows1_2"/></li>
 <li><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/images/tarangire.jpg" alt="Tarangire National Park: slideshow javascript" title="Tarangire National Park" id="wows1_3"/></li>
 <li><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/images/wildebeests.jpg" alt="Wildebeests: slideshow creator free" title="Wildebeests" id="wows1_4"/></li>
 <li><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/images/zebras.jpg" alt="Zebras: slideshow creator html code" title="Zebras" id="wows1_5"/></li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Acacia, Tanzania"><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/tooltips/acacia.jpg" alt="Acacia, Tanzania"/>1</a>
 <a href="#" title="African elephants"><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/tooltips/african_elephants.jpg" alt="African elephants"/>2</a>
@@ -14899,8 +14557,8 @@ $i++;
 <a href="#" title="Wildebeests"><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/tooltips/wildebeests.jpg" alt="Wildebeests"/>5</a>
 <a href="#" title="Zebras"><img src="http://www.wowslider.com/images/demo/turquoise-stack-v/data1/tooltips/zebras.jpg" alt="Zebras"/>6</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">slideshow creator web</a>
@@ -14910,23 +14568,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/turquoise-stack-v/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_stack_vertical(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=(k-h+1)%c.length;if(Math.abs(m)>=1){g=(m>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?1:-1)+"00%";c.each(function(o){if(g&&o!=h){this.style.zIndex=(Math.max(0,this.style.zIndex-1))}});var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,top:(g?i:l)});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){j.stop(true,true).hide().css({left:-k+"00%"});if(d.fadeOut){j.fadeIn(d.duration)}else{j.show()}}else{if(d.fadeOut){j.fadeOut(d.duration)}}f.animate({top:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"}).stop(true,true).show()}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev:"",next:"",duration:20*100,delay:26*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack_vertical",prev:"",next:"",duration:20*100,delay:26*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"slide",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderzoomdomino'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderzoomdomino') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/zoom-domino/engine1/style.css" />-->
 	<style>
 	/*
@@ -14934,7 +14588,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
  *	template Zoom
  */
 @import url(http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,cyrillic,latin-ext);
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -14944,8 +14598,8 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	text-align:left; /* reset align=center */
 	font-size: 10px;
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -14957,7 +14611,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -14966,7 +14620,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -14974,47 +14628,47 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:35px;
 	height:35px;
 	background: url(./themes/themebuilder/icons/bullet2.png) left top;
@@ -15024,13 +14678,13 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	margin-left:0px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 50%;	
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull{ 
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull{ 
 	background-position: 0 100%;
 }	
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	background-size: 200%;
 	position:absolute;
 	display:none;
@@ -15040,25 +14694,25 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	height: 17.78%;
 	background-image: url(./themes/themebuilder/icons/arrows2.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:0.52%;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 0 0; 
 	left:0.52%; 
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 6.67%;
     height: 17.78%;
@@ -15068,32 +14722,32 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
     z-index: 59;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
 	background-size: 100%;
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
 	background-size: 100%;
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     background-position: 100% 100% !important;
 }/* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
    bottom: 0;
 	left:50%;
 	padding: 0px;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 0em;
@@ -15109,16 +14763,16 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
     -moz-border-radius: 1em;
     -webkit-border-radius: 1em;
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	margin-top: 0.3em;
 	font-size: 1.4em;
 	line-height: 0.9em;
 	font-weight: normal;
 	color: #8B8E94;
 }
-#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title span{
 	font-size: 2.5em;
-}#wowslider-container'.$val.' .ws_images ul{
+}#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 28s infinite;
 	-moz-animation: wsBasic 28s infinite;
 	-webkit-animation: wsBasic 28s infinite;
@@ -15127,36 +14781,36 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 @-moz-keyframes wsBasic{0%{left:-0%} 7.14%{left:-0%} 14.29%{left:-100%} 21.43%{left:-100%} 28.57%{left:-200%} 35.71%{left:-200%} 42.86%{left:-300%} 50%{left:-300%} 57.14%{left:-400%} 64.29%{left:-400%} 71.43%{left:-500%} 78.57%{left:-500%} 85.71%{left:-600%} 92.86%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 7.14%{left:-0%} 14.29%{left:-100%} 21.43%{left:-100%} 28.57%{left:-200%} 35.71%{left:-200%} 42.86%{left:-300%} 50%{left:-300%} 57.14%{left:-400%} 64.29%{left:-400%} 71.43%{left:-500%} 78.57%{left:-500%} 85.71%{left:-600%} 92.86%{left:-600%} }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width: 100%;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	width:240px;
 }
-#wowslider-container'.$val.' .ws_bulframe img{
+#wowslider-container' . $val . ' .ws_bulframe img{
 	width: 14.2857142857143%;
 }
 
 
 @media all and (max-width:400px){
-	#wowslider-container'.$val.':hover a.ws_playpause,
-	#wowslider-container'.$val.' a.ws_playpause,
-	#wowslider-container'.$val.':hover a.ws_prev,
-	#wowslider-container'.$val.' a.ws_prev,
-	#wowslider-container'.$val.':hover a.ws_next,
-	#wowslider-container'.$val.' a.ws_next,
-	#wowslider-container'.$val.' .ws_bullets,
-	#wowslider-container'.$val.' .ws_thumbs{
+	#wowslider-container' . $val . ':hover a.ws_playpause,
+	#wowslider-container' . $val . ' a.ws_playpause,
+	#wowslider-container' . $val . ':hover a.ws_prev,
+	#wowslider-container' . $val . ' a.ws_prev,
+	#wowslider-container' . $val . ':hover a.ws_next,
+	#wowslider-container' . $val . ' a.ws_next,
+	#wowslider-container' . $val . ' .ws_bullets,
+	#wowslider-container' . $val . ' .ws_thumbs{
 		display: none
 	}
-}#wowslider-container'.$val.' .ws_bullets  a img{
+}#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:25px;
@@ -15170,22 +14824,22 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 	border-radius:0px;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:100%;
 	background-color:#FFFFFF;	
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:37px;
 	overflow:visible;
@@ -15197,7 +14851,7 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 	border-radius:0px;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-8px;
@@ -15213,52 +14867,49 @@ wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack_vertical",prev
 
 
 	<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Barbados, Caribbean Sea</li>
-';									
-$i++;	
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '<li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/accra_beach.jpg" alt="Accra Beach: slideshow software transitions" title="Accra Beach" id="wows1_0"/>Barbados, Caribbean Sea</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Barbados, Caribbean Sea</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '<li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/accra_beach.jpg" alt="Accra Beach: slideshow software transitions" title="Accra Beach" id="wows1_0"/>Barbados, Caribbean Sea</li>
 <li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/bridgetown.jpg" alt="Bridgetown: slideshow software professional" title="Bridgetown" id="wows1_1"/>Barbados capital and main city</li>
 <li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/monkey.jpg" alt="Monkey: slideshow software animation" title="Monkey" id="wows1_2"/>Barbados fauna</li>
 <li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/mullins_beach.jpg" alt="Mullins Beach: slideshow software maker" title="Mullins Beach" id="wows1_3"/>Barbados, Caribbean Sea</li>
 <li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/sandy_beach.jpg" alt="Sandy Beach: slideshow software web" title="Sandy Beach" id="wows1_4"/>Barbados, Caribbean Sea</li>
 <li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/st._james,_sunset_point.jpg" alt="St. James, Sunset point: slideshow software for free" title="St. James, Sunset point" id="wows1_5"/>Barbados, Caribbean Sea</li>
 <li><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/images/worthing_bay.jpg" alt="Worthing Bay: photo slideshow software" title="Worthing Bay" id="wows1_6"/>Barbados, Caribbean Sea</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 </ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.'"><img src="'.$img.'" alt="'.$alt.'"/>1</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '"><img src="' . $img . '" alt="' . $alt . '"/>1</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 <a href="#" title="Accra Beach"><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/tooltips/accra_beach.jpg" alt="Accra Beach"/>1</a>
 <a href="#" title="Bridgetown"><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/tooltips/bridgetown.jpg" alt="Bridgetown"/>2</a>
@@ -15268,8 +14919,8 @@ $i++;
 <a href="#" title="St. James, Sunset point"><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/tooltips/st._james,_sunset_point.jpg" alt="St. James, Sunset point"/>6</a>
 <a href="#" title="Worthing Bay"><img src="http://www.wowslider.com/images/demo/zoom-domino/data1/tooltips/worthing_bay.jpg" alt="Worthing Bay"/>7</a>
 ';
-}
-${'SLIDER'.$arg .'_'. $val} .= '
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '
 
 </div></div>
 <a style="display:none" href="http://wowslider.com">slideshow software free download</a>
@@ -15279,23 +14930,19 @@ ${'SLIDER'.$arg .'_'. $val} .= '
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/zoom-domino/engine1/script.js"></script>-->
 	<script type="text/javascript">
 jQuery.extend(jQuery.easing,{easeInOutSine:function(j,i,b,c,d){return -c/2*(Math.cos(Math.PI*i/d)-1)+b}});function ws_domino(d,b,a){$=jQuery;jQuery.extend(d,{columns:d.columns||5,rows:d.rows||2,centerRow:d.centerRow||2,centerColumn:d.centerColumn||2});var c=$("<div/>").css({position:"absolute",width:"100%",height:"100%",top:"0%",overflow:"hidden"});c.hide().appendTo(a);var e=a.find("ul");this.go=function(r,q){function s(){c.find("img").stop(1,1);c.hide();c.empty()}s();if(d.fadeOut){e.fadeOut(d.duration)}var h=c.width();var g=c.height();var p=Math.floor(h/d.columns);var n=Math.floor(g/d.rows);var l=h-p*(d.columns-1);var v=g-n*(d.rows-1);function z(j,i){return Math.random()*(i-j+1)+j}var m=[];for(var u=0;u<d.rows;u++){m[u]=[];for(var t=0;t<d.columns;t++){var k=d.duration*(1-Math.abs((d.centerRow*d.centerColumn-u*t)/(2*d.rows*d.columns)));var w=t<d.columns-1?p:l;var f=u<d.rows-1?n:v;m[u][t]=$("<div/>").css({width:w,height:f,position:"absolute",top:u*n,left:t*p,overflow:"hidden"});var y=z(u-2,u+2);var x=z(t-2,t+2);m[u][t].appendTo(c);var A=$(b.get(r)).clone().css({position:"absolute",top:-y*n,left:-x*p,width:h,opacity:0,height:g}).appendTo(m[u][t])}}var o=0;c.show();for(var u=0;u<d.rows;u++){for(var t=0;t<d.columns;t++){m[u][t].find("img").animate({top:-u*n,left:-t*p,opacity:1,deg:d.domino_rotation},{duration:k,easing:"easeInOutSine",complete:function(){o++;if(o==d.rows*d.columns){s();e.stop(1,1);e.css("left",-r*100+"%").show()}}})}}return r}};
-jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
+jQuery("#wowslider-container' . $val . '").wowSlider({effect:"domino",prev:"",next:"",duration:20*100,delay:20*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"fade",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowsliderionospherestack'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '	<!-- Start WOWSlider.com HEAD section -->
+';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowsliderionospherestack') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '	<!-- Start WOWSlider.com HEAD section -->
 	<!--<link rel="stylesheet" type="text/css" href="http://www.wowslider.com/images/demo/ionosphere-stack/engine1/style.css" />-->
 	<style>
 	/*
@@ -15303,7 +14950,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
  *	template Ionosphere
  */
 @import url("http://fonts.googleapis.com/css?family=Oswald&subset=latin,latin-ext");
-#wowslider-container'.$val.' { 
+#wowslider-container' . $val . ' { 
 	zoom: 1; 
 	position: relative; 
 	/*max-width:960px;*/ max-width: none;
@@ -15312,8 +14959,8 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	border:3px solid #008AC3;
 	text-align:left; /* reset align=center */
 }
-* html #wowslider-container'.$val.'{ width:960px }
-#wowslider-container'.$val.' .ws_images ul{
+* html #wowslider-container' . $val . '{ width:960px }
+#wowslider-container' . $val . ' .ws_images ul{
 	position:relative;
 	width: 10000%; 
 	height:auto;
@@ -15325,7 +14972,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	overflow: visible;
 	/*table-layout:fixed;*/
 }
-#wowslider-container'.$val.' .ws_images ul li{
+#wowslider-container' . $val . ' .ws_images ul li{
 	width:1%;
 	line-height:0; /*opera*/
 	float:left;
@@ -15334,7 +14981,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	margin:0 0 0 0 !important;
 }
 
-#wowslider-container'.$val.' .ws_images{
+#wowslider-container' . $val . ' .ws_images{
 	position: relative;
 	left:0;
 	top:0;
@@ -15342,49 +14989,49 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	height:100%;
 	overflow:hidden;
 }
-#wowslider-container'.$val.' .ws_images a{
+#wowslider-container' . $val . ' .ws_images a{
 	width:100%;
 	display:block;
 	color:transparent;
 }
-#wowslider-container'.$val.' img{
+#wowslider-container' . $val . ' img{
 	max-width: none !important;
 }
-#wowslider-container'.$val.' .ws_images img{
+#wowslider-container' . $val . ' .ws_images img{
 	width:100%;
 	border:none 0;
 	max-width: none;
 	padding:0;
 }
-#wowslider-container'.$val.' a{ 
+#wowslider-container' . $val . ' a{ 
 	text-decoration: none; 
 	outline: none; 
 	border: none; 
 }
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	font-size: 0px; 
 	float: left;
 	position:absolute;
 	z-index:70;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	position:relative;
 	float:left;
 }
-#wowslider-container'.$val.'  .wsl{
+#wowslider-container' . $val . '  .wsl{
 	display:none;
 }
-#wowslider-container'.$val.' sound, 
-#wowslider-container'.$val.' object{
+#wowslider-container' . $val . ' sound, 
+#wowslider-container' . $val . ' object{
 	position:absolute;
 }
 
 
-#wowslider-container'.$val.'  .ws_bullets { 
+#wowslider-container' . $val . '  .ws_bullets { 
 	padding: 5px; 
 }
-#wowslider-container'.$val.' .ws_bullets a { 
+#wowslider-container' . $val . ' .ws_bullets a { 
 	width:9px;
 	height:9px;
 	background: url(./themes/themebuilder/icons/bullet.png) left top;
@@ -15394,10 +15041,10 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	margin-left:4px;
 	color:transparent;
 }
-#wowslider-container'.$val.' .ws_bullets a.ws_selbull, #wowslider-container'.$val.' .ws_bullets a:hover{
+#wowslider-container' . $val . ' .ws_bullets a.ws_selbull, #wowslider-container' . $val . ' .ws_bullets a:hover{
 	background-position: 0 100%;
 } 
-#wowslider-container'.$val.' a.ws_next, #wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_next, #wowslider-container' . $val . ' a.ws_prev {
 	position:absolute;
 	display:none;
 	top:50%;
@@ -15407,25 +15054,25 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	height: 50px;	
 	background-image: url(./themes/themebuilder/icons/arrows1.png);
 }
-#wowslider-container'.$val.' a.ws_next{
+#wowslider-container' . $val . ' a.ws_next{
 	background-position: 100% 0;
 	right:10px;
 }
-#wowslider-container'.$val.' a.ws_prev {
+#wowslider-container' . $val . ' a.ws_prev {
 	background-position: 0 0; 
 	left:10px;
 }
-#wowslider-container'.$val.' a.ws_next:hover{
+#wowslider-container' . $val . ' a.ws_next:hover{
 	background-position: 100% 100%;
 }
-#wowslider-container'.$val.' a.ws_prev:hover {
+#wowslider-container' . $val . ' a.ws_prev:hover {
 	background-position: 0 100%; 
 }
-* html #wowslider-container'.$val.' a.ws_next,* html #wowslider-container'.$val.' a.ws_prev{display:block}
-#wowslider-container'.$val.':hover a.ws_next, #wowslider-container'.$val.':hover a.ws_prev {display:block}
+* html #wowslider-container' . $val . ' a.ws_next,* html #wowslider-container' . $val . ' a.ws_prev{display:block}
+#wowslider-container' . $val . ':hover a.ws_next, #wowslider-container' . $val . ':hover a.ws_prev {display:block}
 
 /*playpause*/
-#wowslider-container'.$val.' .ws_playpause {
+#wowslider-container' . $val . ' .ws_playpause {
 	display:none;
     width: 31px;
     height: 50px;
@@ -15437,29 +15084,29 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
     z-index: 59;
 }
 
-#wowslider-container'.$val.':hover .ws_playpause {
+#wowslider-container' . $val . ':hover .ws_playpause {
 	display:block;
 }
 
-#wowslider-container'.$val.' .ws_pause {
+#wowslider-container' . $val . ' .ws_pause {
     background-image: url(./pause.png);
 }
 
-#wowslider-container'.$val.' .ws_play {
+#wowslider-container' . $val . ' .ws_play {
     background-image: url(./play.png);
 }
 
-#wowslider-container'.$val.' .ws_pause:hover, #wowslider-container'.$val.' .ws_play:hover {
+#wowslider-container' . $val . ' .ws_pause:hover, #wowslider-container' . $val . ' .ws_play:hover {
     background-position: 100% 100% !important;
 }/* bottom center */
-#wowslider-container'.$val.'  .ws_bullets {
+#wowslider-container' . $val . '  .ws_bullets {
     bottom: 0px;
 	left:50%;
 }
-#wowslider-container'.$val.'  .ws_bullets div{
+#wowslider-container' . $val . '  .ws_bullets div{
 	left:-50%;
 }
-#wowslider-container'.$val.' .ws-title{
+#wowslider-container' . $val . ' .ws-title{
 	position:absolute;
 	display:block;
 	bottom: 20px;
@@ -15472,19 +15119,19 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	line-height: 30px;
 	text-transform: uppercase;
 }
-#wowslider-container'.$val.' .ws-title div,#wowslider-container'.$val.' .ws-title span{
+#wowslider-container' . $val . ' .ws-title div,#wowslider-container' . $val . ' .ws-title span{
 	display:inline-block;
 	padding:15px 10px;
 	background:rgba(0, 0, 0, 0.9);
 	border-left:5px solid #008AC3; 
 }
-#wowslider-container'.$val.' .ws-title div{
+#wowslider-container' . $val . ' .ws-title div{
 	display:block;
 	margin-top:10px;
 	font-size: 16px;
 	line-height: 18px;
 	padding:10px;
-}#wowslider-container'.$val.' .ws_images ul{
+}#wowslider-container' . $val . ' .ws_images ul{
 	animation: wsBasic 29.4s infinite;
 	-moz-animation: wsBasic 29.4s infinite;
 	-webkit-animation: wsBasic 29.4s infinite;
@@ -15493,10 +15140,10 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 @-moz-keyframes wsBasic{0%{left:-0%} 8.5%{left:-0%} 14.29%{left:-100%} 22.79%{left:-100%} 28.57%{left:-200%} 37.07%{left:-200%} 42.86%{left:-300%} 51.36%{left:-300%} 57.14%{left:-400%} 65.65%{left:-400%} 71.43%{left:-500%} 79.93%{left:-500%} 85.71%{left:-600%} 94.22%{left:-600%} }
 @-webkit-keyframes wsBasic{0%{left:-0%} 8.5%{left:-0%} 14.29%{left:-100%} 22.79%{left:-100%} 28.57%{left:-200%} 37.07%{left:-200%} 42.86%{left:-300%} 51.36%{left:-300%} 57.14%{left:-400%} 65.65%{left:-400%} 71.43%{left:-500%} 79.93%{left:-500%} 85.71%{left:-600%} 94.22%{left:-600%} }
 
-#wowslider-container'.$val.' {
+#wowslider-container' . $val . ' {
     border-width: 0px 0px 3px 0px; 
 }
-#wowslider-container'.$val.' .ws_bullets  a img{
+#wowslider-container' . $val . ' .ws_bullets  a img{
 	text-indent:0;
 	display:block;
 	bottom:20px;
@@ -15506,23 +15153,23 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
     border: 3px solid #FFFFFF;
 	max-width:none;
 }
-#wowslider-container'.$val.' .ws_bullets a:hover img{
+#wowslider-container' . $val . ' .ws_bullets a:hover img{
 	visibility:visible;
 }
 
-#wowslider-container'.$val.' .ws_bulframe div div{
+#wowslider-container' . $val . ' .ws_bulframe div div{
 	height:90px;
 	overflow:visible;
 	position:relative;
 }
-#wowslider-container'.$val.' .ws_bulframe div {
+#wowslider-container' . $val . ' .ws_bulframe div {
 	left:0;
 	overflow:hidden;
 	position:relative;
 	width:240px;
 	background-color:#FFFFFF;
 }
-#wowslider-container'.$val.'  .ws_bullets .ws_bulframe{
+#wowslider-container' . $val . '  .ws_bullets .ws_bulframe{
 	display:none;
 	bottom:15px;
 	overflow:visible;
@@ -15530,7 +15177,7 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	cursor:pointer;
     border: 3px solid #FFFFFF;
 }
-#wowslider-container'.$val.' .ws_bulframe span{
+#wowslider-container' . $val . ' .ws_bulframe span{
 	display:block;
 	position:absolute;
 	bottom:-8px;
@@ -15545,53 +15192,50 @@ jQuery("#wowslider-container'.$val.'").wowSlider({effect:"domino",prev:"",next:"
 	<!-- End WOWSlider.com HEAD section -->
 
 		<!-- Start WOWSlider.com BODY section -->
-	<div id="wowslider-container'.$val.'">
+	<div id="wowslider-container' . $val . '">
 	<div class="ws_images"><ul>';
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 0;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '		
-		<li><img src="'.$img.'" alt="'.$alt.'" title="'.$alt.'" id="wows1_'.$i.'"/>Venice, Italy</li>
-';									
-$i++;	
-							}
-							
-						}else{
-							${'SLIDER'.$arg .'_'. $val} .= '															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/houses.jpg" alt="Bright houses: javascript slider" title="Bright houses" id="wows1_0"/>Venice, Italy</li>
+        $sql33                          = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33                       = $xoopsDB->query($sql33);
+        $count                          = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 0;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '		
+		<li><img src="' . $img . '" alt="' . $alt . '" title="' . $alt . '" id="wows1_' . $i . '"/>Venice, Italy</li>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/houses.jpg" alt="Bright houses: javascript slider" title="Bright houses" id="wows1_0"/>Venice, Italy</li>
 															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/cannaregio.jpg" alt="Cannaregio district: javascript image slider" title="Cannaregio district" id="wows1_1"/>The northernmost of the six historic sestieri (districts) of Venice</li>
 															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/street.jpg" alt="Narrow street: javascript slider free" title="Narrow street" id="wows1_2"/>Venice, Italy</li>
 															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/constitutionbridge.jpg" alt="Constitution bridge: javascript slider bar" title="Constitution bridge" id="wows1_3"/>The Ponte della Costituzione (English: Constitution Bridge)</li>
 															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/night.jpg" alt="Night lights: javascript slider control" title="Night lights" id="wows1_4"/>Venice, Italy</li>
 															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/dorsoduro.jpg" alt="Dorsoduro: javascript slider example" title="Dorsoduro" id="wows1_5"/>Dorsoduro is one of the six sestieri of Venice, northern Italy.</li>
 															<li><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/images/canal.jpg" alt="Canal: javascript slider gallery" title="Canal" id="wows1_6"/>Venice, Italy</li>
-							';					
-						}
-						${'SLIDER'.$arg .'_'. $val} .= '	
+							';
+        }
+        ${'SLIDER' . $arg . '_' . $val} .= '	
 	</ul></div>
 <div class="ws_bullets"><div>';
 
-					$sql33 = 'SELECT * FROM ' . $xoopsDB -> prefix( 'config_theme_menu' ) . ' WHERE image IS NOT NULL AND catmenu = '.$val.'';
-					$result33 = $xoopsDB -> query( $sql33 );
-					$count = $xoopsDB->getRowsNum($result33);
-						if ($count != 0) {
-						
-							$i = 1;
-							while ( $video_arrtheme1 = $xoopsDB -> fetchArray( $result33 ) ) {
-								$img = $video_arrtheme1['image'];
-								$alt = $video_arrtheme1['label'];
-									${'SLIDER'.$arg .'_'. $val} .= '
-									<a href="#" title="'.$alt.''.$i.'"><img src="'.$img.'" alt="'.$alt.''.$i.'"/>'.$i.'</a>
-';									
-$i++;	
-}
-							}else{
-									${'SLIDER'.$arg .'_'. $val} .= '
+        $sql33    = 'SELECT * FROM ' . $xoopsDB->prefix('config_theme_menu') . ' WHERE image IS NOT NULL AND catmenu = ' . $val . '';
+        $result33 = $xoopsDB->query($sql33);
+        $count    = $xoopsDB->getRowsNum($result33);
+        if ($count != 0) {
+            $i = 1;
+            while ($video_arrtheme1 = $xoopsDB->fetchArray($result33)) {
+                $img                            = $video_arrtheme1['image'];
+                $alt                            = $video_arrtheme1['label'];
+                ${'SLIDER' . $arg . '_' . $val} .= '
+									<a href="#" title="' . $alt . '' . $i . '"><img src="' . $img . '" alt="' . $alt . '' . $i . '"/>' . $i . '</a>
+';
+                $i++;
+            }
+        } else {
+            ${'SLIDER' . $arg . '_' . $val} .= '
 
 
 
@@ -15604,10 +15248,9 @@ $i++;
 													<a href="#" title="Canal"><img src="http://www.wowslider.com/images/demo/ionosphere-stack/data1/tooltips/canal.jpg" alt="Canal"/>7</a>
 
 													';
-											
-}
+        }
 
-${'SLIDER'.$arg .'_'. $val} .= '</div></div>
+        ${'SLIDER' . $arg . '_' . $val} .= '</div></div>
 <a style="display: none;" href="http://wowslider.com">javascript slider jquery</a>
 	<div class="ws_shadow"></div>
 	</div>
@@ -15615,56 +15258,38 @@ ${'SLIDER'.$arg .'_'. $val} .= '</div></div>
 	<!--<script type="text/javascript" src="http://www.wowslider.com/images/demo/ionosphere-stack/engine1/script.js"></script>-->
 	<script type="text/javascript">
 function ws_stack(d,a,b){var e=jQuery;var c=e("li",b);this.go=function(k,h,n,m){var g=c.length>2?(k-h+1)%c.length:1;if(Math.abs(n)>=1){g=(n>0)?0:1}g=!!g^!!d.revers;var i=(d.revers?-1:1)+"00%";var j=e("ul",b);var l=document.all?0:"0%";var f=e(c.get(g?k:h)).clone().css({position:"absolute","z-index":4,width:"100%",top:0,left:((g?i:l))});if(g){f.appendTo(b)}else{f.insertAfter(j)}if(!g){j.hide().css({left:-k+"00%"});if(d.fadeOut){j.stop(true,true).fadeIn(d.duration)}else{j.show()}}else{if(d.fadeOut){j.fadeOut(d.duration)}}f.animate({left:(g?l:i)},d.duration,"easeInOutExpo",function(){if(g){j.css({left:-k+"00%"}).stop(true,true).show()}e(this).remove()});return k}};
-wowReInitor(jQuery("#wowslider-container'.$val.'"),{effect:"stack",prev:"",next:"",duration:17*100,delay:25*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
+wowReInitor(jQuery("#wowslider-container' . $val . '"),{effect:"stack",prev:"",next:"",duration:17*100,delay:25*100,width:960,height:360,autoPlay:true,playPause:false,stopOnHover:false,loop:false,bullets:true,caption:true,captionEffect:"move",controls:true,onBeforeStep:0,images:0});
 	</script>
 	<!-- End WOWSlider.com BODY section -->
 	
-';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslider7'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'wowslider7'){
-		
-		
-													$SLIDER = 'SLIDER_' . $conf_name . '_' . $conf_id;
-													$arg = $conf_name; 
-													$val = $conf_id; 
-													$slidediv = 'SLIDER_'.$arg .'_'. $val;
-													
-		
-													${'SLIDER'.$arg .'_'. $val} = '';		
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'theme333'){
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'theme333'){
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}elseif ($conf_value == 'theme333'){
-		
-		
-		$this->assign($SLIDER, ${'SLIDER'.$arg .'_'. $val});
-		}
+';
 
-										
-	}
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslider7') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
 
+        ${'SLIDER' . $arg . '_' . $val} = '';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'wowslider7') {
+        $SLIDER   = 'SLIDER_' . $conf_name . '_' . $conf_id;
+        $arg      = $conf_name;
+        $val      = $conf_id;
+        $slidediv = 'SLIDER_' . $arg . '_' . $val;
+
+        ${'SLIDER' . $arg . '_' . $val} = '';
+
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'theme333') {
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'theme333') {
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    } elseif ($conf_value == 'theme333') {
+        $this->assign($SLIDER, ${'SLIDER' . $arg . '_' . $val});
+    }
+}
 
 ?>

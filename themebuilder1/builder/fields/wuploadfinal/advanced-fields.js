@@ -190,7 +190,7 @@ $(document).ready(function(){
 
         var html = '<div id="blocker-'+id+'" class="advmgr_blocker"></div><div id="window-'+id+'" class="advmgr_container">';
         html += '<div class="window-title cu-titlebar"><span></span>'+imgmgr_title+'</div>';
-        html += '<iframe src="admin/themebuilder/fields/uploadfinal/tiny-images.php?target=advInsertUrl&amp;idcontainer='+id+'&amp;type=external&amp;multi=no" name="image"></iframe></div>'
+        html += '<iframe src="admin/themebuilder1/fields/uploadfinal/tiny-images.php?target=advInsertUrl&amp;idcontainer='+id+'&amp;type=external&amp;multi=no" name="image"></iframe></div>'
         html += '</div>';
         $("body").append(html);
 

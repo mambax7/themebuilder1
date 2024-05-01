@@ -1,52 +1,54 @@
 <?php
-   header('content-type: text/css');
-   ob_start('ob_gzhandler');
-   header('Cache-Control: max-age=31536000, must-revalidate');
 
-$id = isset($_GET['id']) ? $_GET['id'] : '';
-   
-if ( !function_exists( 'css_font' ) ){ 		
-	function css_font( $args = array() ) {
-//var_dump($args);
-			$font = '';
-			if ( $args['font_family'] != '' && $args['font_family'] != false ) {
-				if ( $args['font_family'] == 'Inherit' ) {
-					$font .= "font-family: inherit;\n";
-				} else {
-					$font .= "font-family: " . $args['font_family'] . ", '" . $args['font_family'] . "';\n";
-				}
-			}
-			/*if ( $args['font_color'] != '' && $args['font_color'] != false ) {
-				$font .= "color: " . $args['font_color'] . ";\n";
-			}
-			if ( $args['font_size'] != '' && $args['font_size'] != false ) {
-				$font .= "font-size: " . $args['font_size'] . "px;\n";
-			}
-			if ( $args['font_weight'] != '' && $args['font_weight'] != false ) {
-				$font .= "font-weight: " . $args['font_weight'] . ";\n";
-			}*/
-			return $font;
-		}
+header('content-type: text/css');
+ob_start('ob_gzhandler');
+header('Cache-Control: max-age=31536000, must-revalidate');
+
+$id = $_GET['id'] ?? '';
+
+if (!function_exists('css_font')) {
+    function css_font($args = [])
+    {
+        //var_dump($args);
+        $font = '';
+        if ($args['font_family'] != '' && $args['font_family'] != false) {
+            if ($args['font_family'] == 'Inherit') {
+                $font .= "font-family: inherit;\n";
+            } else {
+                $font .= "font-family: " . $args['font_family'] . ", '" . $args['font_family'] . "';\n";
+            }
+        }
+        /*if ( $args['font_color'] != '' && $args['font_color'] != false ) {
+            $font .= "color: " . $args['font_color'] . ";\n";
+        }
+        if ( $args['font_size'] != '' && $args['font_size'] != false ) {
+            $font .= "font-size: " . $args['font_size'] . "px;\n";
+        }
+        if ( $args['font_weight'] != '' && $args['font_weight'] != false ) {
+            $font .= "font-weight: " . $args['font_weight'] . ";\n";
+        }*/
+        return $font;
+    }
 }
- if (file_exists("../../mainfile.php")) {   
-include("../../mainfile.php");  
-} elseif (file_exists("../../../mainfile.php")) {   
-include("../../../mainfile.php");  
-// Disable all debugging for this file. 
-error_reporting(0); 
-$xoopsLogger->activated = false;
-} 
- global $xoopsDB;
-$sql = "SELECT * FROM ".$xoopsDB->prefix("menu_group")." WHERE id = ".$id."";
-$result=$xoopsDB->query($sql);
+if (file_exists("../../mainfile.php")) {
+    include("../../mainfile.php");
+} elseif (file_exists("../../../mainfile.php")) {
+    include("../../../mainfile.php");
+    // Disable all debugging for this file.
+    error_reporting(0);
+    $xoopsLogger->activated = false;
+}
+global $xoopsDB;
+$sql     = "SELECT * FROM " . $xoopsDB->prefix("menu_group") . " WHERE id = " . $id . "";
+$result  = $xoopsDB->query($sql);
 $options = $xoopsDB->fetchArray($result);
 //var_dump($options['options']); 
 $unserialise = unserialize($options['options']);
 //$arg = 'menu'.$options['id'];
-$arg = 'menu'.$id;
+$arg = 'menu' . $id;
 
-$out = '@import url(https://fonts.googleapis.com/css?family=' . $unserialise["menu_first_level_link_font"] . '|'.$unserialise['menu_dropdown_link_font'].');';
-$out .= ' /* ' . $arg . ' */
+$out                       = '@import url(https://fonts.googleapis.com/css?family=' . $unserialise["menu_first_level_link_font"] . '|' . $unserialise['menu_dropdown_link_font'] . ');';
+$out                       .= ' /* ' . $arg . ' */
 /* initial_height */
 #mega_main_menu.' . $arg . '
 {
@@ -76,24 +78,24 @@ $out .= ' /* ' . $arg . ' */
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i,
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	height:' . ( $unserialise['first_level_item_height'] / 2 ) . 'px;
-	line-height:' . ( $unserialise['first_level_item_height'] / 3 ) . 'px;
+	height:' . ($unserialise['first_level_item_height'] / 2) . 'px;
+	line-height:' . ($unserialise['first_level_item_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link.with_icon > .link_content > .link_text
 {
-	height:' . ( $unserialise['first_level_item_height'] / 3 ) . 'px;
+	height:' . ($unserialise['first_level_item_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i
 {
-	padding-top:' . ( $unserialise['first_level_item_height'] / 3 / 2 ) . 'px;
+	padding-top:' . ($unserialise['first_level_item_height'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	padding-bottom:' . ( $unserialise['first_level_item_height'] / 3 / 2 ) . 'px;
+	padding-bottom:' . ($unserialise['first_level_item_height'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li.nav_buddypress > .item_link > i:before
 {	
-	width:' . ( $unserialise['first_level_item_height'] * 0.6 ) . 'px;
+	width:' . ($unserialise['first_level_item_height'] * 0.6) . 'px;
 }
 /* initial_height_sticky */
 #mega_main_menu.' . $arg . ' > .menu_holder.sticky_container > .menu_inner > .nav_logo > .logo_link, 
@@ -121,28 +123,28 @@ $out .= ' /* ' . $arg . ' */
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > i,
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > .link_content
 {
-	height:' . ( $unserialise['first_level_item_height_sticky'] / 2 ) . 'px;
-	line-height:' . ( $unserialise['first_level_item_height_sticky'] / 3 ) . 'px;
+	height:' . ($unserialise['first_level_item_height_sticky'] / 2) . 'px;
+	line-height:' . ($unserialise['first_level_item_height_sticky'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link.with_icon > .link_content > .link_text
 {
-	height:' . ( $unserialise['first_level_item_height_sticky'] / 3 ) . 'px;
+	height:' . ($unserialise['first_level_item_height_sticky'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > i
 {
-	padding-top:' . ( $unserialise['first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+	padding-top:' . ($unserialise['first_level_item_height_sticky'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . '.icons-top > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link > .link_content
 {
-	padding-bottom:' . ( $unserialise['first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+	padding-bottom:' . ($unserialise['first_level_item_height_sticky'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' > .menu_holder.sticky_container > .menu_inner > ul > li.nav_buddypress > .item_link > i:before
 {	
-	width:' . ( $unserialise['first_level_item_height_sticky'] * 0.6 ) . 'px;
+	width:' . ($unserialise['first_level_item_height_sticky'] * 0.6) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons > .menu_holder.sticky_container > .menu_inner > ul > li > .item_link 
 {
-	margin:' . ( ( $unserialise['first_level_item_height_sticky'] - $unserialise['first_level_button_height'] ) / 2 ) . 'px 4px;
+	margin:' . (($unserialise['first_level_item_height_sticky'] - $unserialise['first_level_button_height']) / 2) . 'px 4px;
 }
 #mega_main_menu.direction-horizontal > .menu_holder.sticky_container > .mmm_fullwidth_container {
     top: 0px !important;
@@ -196,24 +198,24 @@ $out .= ' /* ' . $arg . ' */
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i,
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 	{
-		height:' . ( $unserialise['first_level_item_height_sticky'] / 2 ) . 'px;
-		line-height:' . ( $unserialise['first_level_item_height_sticky'] / 3 ) . 'px;
+		height:' . ($unserialise['first_level_item_height_sticky'] / 2) . 'px;
+		line-height:' . ($unserialise['first_level_item_height_sticky'] / 3) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i
 	{
-		padding-top:' . ( $unserialise['first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+		padding-top:' . ($unserialise['first_level_item_height_sticky'] / 3 / 2) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 	{
-		padding-bottom:' . ( $unserialise['first_level_item_height_sticky'] / 3 / 2 ) . 'px;
+		padding-bottom:' . ($unserialise['first_level_item_height_sticky'] / 3 / 2) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.mobile_minimized-enable > .menu_holder > .menu_inner > ul > li.nav_buddypress > .item_link > i:before
 	{	
-		width:' . ( $unserialise['first_level_item_height_sticky'] * 0.6 ) . 'px;
+		width:' . ($unserialise['first_level_item_height_sticky'] * 0.6) . 'px;
 	}
 	#mega_main_menu.' . $arg . '.primary_style-buttons > .menu_holder > .menu_inner > ul > li > .item_link 
 	{
-		margin:' . ( ( $unserialise['first_level_item_height_sticky'] - $unserialise['first_level_button_height'] ) / 2 ) . 'px 4px;
+		margin:' . (($unserialise['first_level_item_height_sticky'] - $unserialise['first_level_button_height']) / 2) . 'px 4px;
 	}
 }
 /* style-buttons */
@@ -234,25 +236,25 @@ $out .= ' /* ' . $arg . ' */
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons > .menu_holder > .menu_inner > ul > li > .item_link 
 {
-	margin:' . ( ( $unserialise['first_level_item_height'] - $unserialise['first_level_button_height'] ) / 2 ) . 'px 4px;
+	margin:' . (($unserialise['first_level_item_height'] - $unserialise['first_level_button_height']) / 2) . 'px 4px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i,
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	height:' . ( $unserialise['first_level_button_height'] / 2 ) . 'px;
-	line-height:' . ( $unserialise['first_level_button_height'] / 3 ) . 'px;
+	height:' . ($unserialise['first_level_button_height'] / 2) . 'px;
+	line-height:' . ($unserialise['first_level_button_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link.with_icon > .link_content > .link_text 
 {
-	height:' . ( $unserialise['first_level_button_height'] / 3 ) . 'px;
+	height:' . ($unserialise['first_level_button_height'] / 3) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > i
 {
-	padding-top:' . ( $unserialise['first_level_button_height'] / 3 / 2 ) . 'px;
+	padding-top:' . ($unserialise['first_level_button_height'] / 3 / 2) . 'px;
 }
 #mega_main_menu.' . $arg . '.primary_style-buttons.icons-top > .menu_holder > .menu_inner > ul > li > .item_link > .link_content
 {
-	padding-bottom:' . ( $unserialise['first_level_button_height'] / 3 / 2 ) . 'px;
+	padding-bottom:' . ($unserialise['first_level_button_height'] / 3 / 2) . 'px;
 }
 /* color_scheme */
 #mega_main_menu.' . $arg . ' > .menu_holder > .mmm_fullwidth_container
@@ -272,9 +274,9 @@ $out .= ' /* ' . $arg . ' */
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li .post_details > .post_title > .item_link
 {
 	/*" . mm_common::css_font( $unserialise["_menu_first_level_link_font"] ) . "*/
-	/*' . css_font( $unserialise['menu_first_level_link_font'] ) . '*/
+	/*' . css_font($unserialise['menu_first_level_link_font']) . '*/
 /*font-family: Tahoma, "Tahoma";*/
-font-family: '.$unserialise['menu_first_level_link_font'].', serif;
+font-family: ' . $unserialise['menu_first_level_link_font'] . ', serif;
 font-size:' . $unserialise['menu_first_level_icon_font'] . 'px;
 font-weight: 200;
 }
@@ -365,9 +367,9 @@ font-weight: 200;
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li .post_details > .post_description
 {
 	/*" . mm_common::css_font( $unserialise["_menu_dropdown_link_font"] ) . "
-	' . css_font( $unserialise['menu_dropdown_link_font'] ) . '*/
+	' . css_font($unserialise['menu_dropdown_link_font']) . '*/
 		font-family: Verdana, "Verdana";
-		font-family: '.$unserialise['menu_dropdown_link_font'].', serif;
+		font-family: ' . $unserialise['menu_dropdown_link_font'] . ', serif;
 font-size: 12px;
 font-weight: 300;
 }
@@ -385,21 +387,21 @@ font-weight: 300;
 	height: ' . $unserialise['menu_dropdown_icon_font'] . 'px;
 	line-height: ' . $unserialise['menu_dropdown_icon_font'] . 'px;
 	font-size: ' . $unserialise['menu_dropdown_icon_font'] . 'px;
-	margin-top: -' . ( $unserialise['menu_dropdown_icon_font'] / 2 ) . 'px;
+	margin-top: -' . ($unserialise['menu_dropdown_icon_font'] / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' li.default_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . ' li.tabs_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . ' li.widgets_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . ' li.multicolumn_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content
 {
-	margin-left: ' . ( $unserialise['menu_dropdown_icon_font'] + 18 ) . 'px;
+	margin-left: ' . ($unserialise['menu_dropdown_icon_font'] + 18) . 'px;
 }
 #mega_main_menu.' . $arg . '.language_direction-rtl li.default_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . '.language_direction-rtl li.tabs_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . '.language_direction-rtl li.widgets_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content,
 #mega_main_menu.' . $arg . '.language_direction-rtl li.multicolumn_dropdown > .mega_dropdown > .menu-item > .item_link.with_icon > .link_content
 {
-	margin-right: ' . ( $unserialise['menu_dropdown_icon_font'] + 8 ) . 'px;
+	margin-right: ' . ($unserialise['menu_dropdown_icon_font'] + 8) . 'px;
 }
 #mega_main_menu.' . $arg . ' li.default_dropdown .mega_dropdown > li > .item_link,
 #mega_main_menu.' . $arg . ' li.widgets_dropdown .mega_dropdown > li > .item_link,
@@ -530,14 +532,14 @@ font-weight: 300;
 #mega_main_menu.' . $arg . ' .post_type_dropdown > .mega_dropdown > li .item_link,
 #mega_main_menu.' . $arg . ' .post_type_dropdown > .mega_dropdown > li .processed_image
 {
-	border-radius: ' . ( $unserialise['corners_rounding'] / 2 ) . 'px;
+	border-radius: ' . ($unserialise['corners_rounding'] / 2) . 'px;
 }
 ';
-			$additional_styles_presets = $unserialise['additional_styles_presets'];
-			if ( isset( $additional_styles_presets ) && is_array( $additional_styles_presets ) && count( $additional_styles_presets ) > 0 ) {
-				$out .= '/* additional_styles */ ';
-				foreach ( $unserialise['additional_styles_presets'] as $key => $value ) {
-					$out .= '
+$additional_styles_presets = $unserialise['additional_styles_presets'];
+if (isset($additional_styles_presets) && is_array($additional_styles_presets) && count($additional_styles_presets) > 0) {
+    $out .= '/* additional_styles */ ';
+    foreach ($unserialise['additional_styles_presets'] as $key => $value) {
+        $out .= '
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link
 {
 	/*" . mm_common::css_gradient( $value["bg_gradient"] ) . "*/
@@ -546,29 +548,29 @@ font-weight: 300;
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link > i
 {
 	color: ' . $value['text_color'] . ';
-	font-size: ' . $value[ 'icon' ]['font_size'] . 'px;
+	font-size: ' . $value['icon']['font_size'] . 'px;
 }
 #mega_main_menu.' . $arg . ' ul li .mega_dropdown li.additional_style_' . $key . ' > .item_link > i
 {
-	width: ' . $value[ 'icon' ]['font_size'] . 'px;
-	height: ' . $value[ 'icon' ]['font_size'] . 'px;
-	line-height: ' . $value[ 'icon' ]['font_size'] . 'px;
-	font-size: ' . $value[ 'icon' ]['font_size'] . 'px;
-	margin-top: -' . ( $value[ 'icon' ]['font_size'] / 2 ) . 'px;
+	width: ' . $value['icon']['font_size'] . 'px;
+	height: ' . $value['icon']['font_size'] . 'px;
+	line-height: ' . $value['icon']['font_size'] . 'px;
+	font-size: ' . $value['icon']['font_size'] . 'px;
+	margin-top: -' . ($value['icon']['font_size'] / 2) . 'px;
 }
 #mega_main_menu.' . $arg . ' ul li .mega_dropdown > li.additional_style_' . $key . ' > .item_link.with_icon > span
 {
-	margin-left: ' . ( $value[ 'icon' ]['font_size'] + 8 ) . 'px;
+	margin-left: ' . ($value['icon']['font_size'] + 8) . 'px;
 }
 #mega_main_menu.' . $arg . '.language_direction-rtl ul li .mega_dropdown > li.additional_style_' . $key . ' > .item_link.with_icon > span
 {
-	margin-right: ' . ( $value[ 'icon' ]['font_size'] + 8 ) . 'px;
+	margin-right: ' . ($value['icon']['font_size'] + 8) . 'px;
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link *,
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul li.additional_style_' . $key . ' > .item_link .link_content
 {
 	color: ' . $value['text_color'] . ';
-	' . mm_common::css_font( $value[ 'font' ] ) . '
+	' . mm_common::css_font($value['font']) . '
 }
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li.current-menu-ancestor.additional_style_' . $key . ' > .item_link,
 #mega_main_menu.' . $arg . ' > .menu_holder > .menu_inner > ul > li.current-page-ancestor.additional_style_' . $key . ' > .item_link,
@@ -592,32 +594,31 @@ font-weight: 300;
 	color: ' . $value['text_color_hover'] . ';
 }
 ';
-				}
-			}
+    }
+}
 /* set_of_custom_icons */
 $set_of_custom_icons = $unserialise['set_of_custom_icons'];
-if ( is_array( $set_of_custom_icons ) && count( $set_of_custom_icons ) > 0 ) {
-	$out .= '/* set_of_custom_icons */ ';
-	foreach ( $set_of_custom_icons as $value ) {
-		$icon_name = str_replace( array( '/', strrchr( $value[ 'custom_icon' ], '.' ) ), '', strrchr( $value[ 'custom_icon' ], '/' ) );
-		$out .= '
+if (is_array($set_of_custom_icons) && count($set_of_custom_icons) > 0) {
+    $out .= '/* set_of_custom_icons */ ';
+    foreach ($set_of_custom_icons as $value) {
+        $icon_name = str_replace(['/', strrchr((string) $value['custom_icon'], '.')], '', strrchr((string) $value['custom_icon'], '/'));
+        $out       .= '
 i.ci-icon-' . $icon_name . ':before
 {
-	background-image: url(' . $value[ 'custom_icon' ] . ');
+	background-image: url(' . $value['custom_icon'] . ');
 }
 ';
-		if ( isset( $value[ 'custom_icon_hover' ] ) && $value[ 'custom_icon_hover' ] != '' ) {
-		$out .= '
+        if (isset($value['custom_icon_hover']) && $value['custom_icon_hover'] != '') {
+            $out .= '
 #mega_main_menu li:hover > .item_link > i.ci-icon-' . $icon_name . ':before,
 i.ci-icon-' . $icon_name . ':hover:before
 {
-	background-image: url(' . $value[ 'custom_icon_hover' ] . ');
+	background-image: url(' . $value['custom_icon_hover'] . ');
 }
 ';
-		}
-	}
+        }
+    }
 }
 echo $out;
-
 
 ?>

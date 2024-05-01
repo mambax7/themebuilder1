@@ -1,40 +1,41 @@
 <?php
 
-function BuilderTableExists($tablename){
-	global $xoopsDB;
-	$result=$xoopsDB->queryF("SHOW TABLES LIKE '$tablename'");
-	return($xoopsDB->getRowsNum($result) > 0);
-}
-function BuilderfieldExists($column, $fieldname, $table){
-	global $xoopsDB;
-	$result = $xoopsDB->query("SELECT '$column' FROM $table WHERE $column = '$fieldname'");
-	return ($xoopsDB->getRowsNum($result) > 0);
+function BuilderTableExists($tablename)
+{
+    global $xoopsDB;
+    $result = $xoopsDB->queryF("SHOW TABLES LIKE '$tablename'");
+    return ($xoopsDB->getRowsNum($result) > 0);
 }
 
-if (!BuilderfieldExists('conf_name', 'active_themebuilder1', $xoopsDB->prefix('config'))){
-	
-	echo 'not exist';
-	echo 'Theme builder a besoin d\'ajouter la configuration necessaire dans la table sql';
-	echo 'il faut refaire linstallation du script';
-	redirect_header(XOOPS_URL . "/modules/system/admin/themebuilder1/install/install.php", 5, $message);
-					exit();
-	}else{
-	echo ' exist';
-	}
-if (!file_exists("./language/english/admin/themebuilder1.php")) { 
-echo 'file does not exist';
-$file = '../themebuilder1.php'; //a changer le chemin dans le dossier themebuilder a+
-$newfile = './language/english/admin/themebuilder1.php';
-if (!copy($file, $newfile)) {
-    echo "La copie $file du fichier a échoué...\n";
-	echo 'il faut refaire linstallation du script';
-}
+function BuilderfieldExists($column, $fieldname, $table)
+{
+    global $xoopsDB;
+    $result = $xoopsDB->query("SELECT '$column' FROM $table WHERE $column = '$fieldname'");
+    return ($xoopsDB->getRowsNum($result) > 0);
 }
 
-//ajouter la ligne define("XOOPS_SYSTEM_THEME", 18); dans le fichier /modules/system/constants.php
+if (!BuilderfieldExists('conf_name', 'active_themebuilder1', $xoopsDB->prefix('config'))) {
+    echo 'not exist';
+    echo 'Theme builder a besoin d\'ajouter la configuration necessaire dans la table sql';
+    echo 'il faut refaire linstallation du script';
+    redirect_header(XOOPS_URL . "/modules/system/admin/themebuilder1/install/install.php", 5, $message);
+    exit();
+} else {
+    echo ' exist';
+}
+if (!file_exists("./language/english/admin/themebuilder1.php")) {
+    echo 'file does not exist';
+    $file    = '../themebuilder1.php'; //a changer le chemin dans le dossier themebuilder a+
+    $newfile = './language/english/admin/themebuilder1.php';
+    if (!copy($file, $newfile)) {
+        echo "La copie $file du fichier a échoué...\n";
+        echo 'il faut refaire linstallation du script';
+    }
+}
 
+//add the line define("XOOPS_SYSTEM_THEME", 18); in the file /modules/system/constants.php
 
-	echo'<style>
+echo '<style>
 	/* menu */
 div.rmmenuicon {
     margin: 3px;
@@ -102,13 +103,13 @@ div.CPbigTitle {
 <tbody><tr>
 <td width="70%">
 <div class="rmmenuicon">
-	<a href="admin.php?fct=themebuilder1" title="'._AM_SYSTEM_THEMEBUILDER_Index.'"><img src="../../Frameworks/moduleclasses/icons/32/home.png" alt="'._AM_SYSTEM_THEMEBUILDER_Index.'"><span>'._AM_SYSTEM_THEMEBUILDER_Index.'</span></a>
-	<a href="admin.php?fct=themebuilder1&op=menu&action=menumanager" title="'._AM_SYSTEM_THEMEBUILDER_Menu.'"><img src="../../Frameworks/moduleclasses/icons/32/prune.png" alt="'._AM_SYSTEM_THEMEBUILDER_Menu.'"><span>'._AM_SYSTEM_THEMEBUILDER_Menu.'</span></a>
-	<a href="admin.php?fct=themebuilder1&op=slider" title="'._AM_SYSTEM_THEMEBUILDER_Slider.'"><img src="../../Frameworks/moduleclasses/icons/32/metagen.png" alt="'._AM_SYSTEM_THEMEBUILDER_Slider.'"><span>'._AM_SYSTEM_THEMEBUILDER_Slider.'</span></a>
-	<a href="admin.php?fct=themebuilder1&op=options" title="'._AM_SYSTEM_THEMEBUILDER_Options.'"><img width="32px" src="../../Frameworks/moduleclasses/icons/32/type.png" alt="'._AM_SYSTEM_THEMEBUILDER_Options.'"> <span>'._AM_SYSTEM_THEMEBUILDER_Options.'</span></a>
-	<a href="admin.php?fct=themebuilder1&op=ThemeBuilder" title="'._AM_SYSTEM_THEMEBUILDER_ThemeBuilder.'"><img src="../../Frameworks/moduleclasses/icons/32/groupmod.png" alt="'._AM_SYSTEM_THEMEBUILDER_ThemeBuilder.'"><span>'._AM_SYSTEM_THEMEBUILDER_ThemeBuilder.'</span></a>
-	<a href="admin.php?fct=themebuilder1&op=miseajour" title="'._AM_SYSTEM_THEMEBUILDER_Miseajour.'"><img src="../../Frameworks/moduleclasses/icons/32/penguin.png" alt="'._AM_SYSTEM_THEMEBUILDER_Miseajour.'"><span>'._AM_SYSTEM_THEMEBUILDER_Miseajour.'</span></a>
-	<a href="admin.php?fct=themebuilder1&op=apropos" title="'._AM_SYSTEM_THEMEBUILDER_apropos.'"><img width="32px" src="../../Frameworks/moduleclasses/icons/32/about.png" alt="'._AM_SYSTEM_THEMEBUILDER_apropos.'"> <span>'._AM_SYSTEM_THEMEBUILDER_apropos.'</span></a></div>
+	<a href="admin.php?fct=themebuilder1" title="' . _AM_SYSTEM_THEMEBUILDER_Index . '"><img src="../../Frameworks/moduleclasses/icons/32/home.png" alt="' . _AM_SYSTEM_THEMEBUILDER_Index . '"><span>' . _AM_SYSTEM_THEMEBUILDER_Index . '</span></a>
+	<a href="admin.php?fct=themebuilder1&op=menu&action=menumanager" title="' . _AM_SYSTEM_THEMEBUILDER_Menu . '"><img src="../../Frameworks/moduleclasses/icons/32/prune.png" alt="' . _AM_SYSTEM_THEMEBUILDER_Menu . '"><span>' . _AM_SYSTEM_THEMEBUILDER_Menu . '</span></a>
+	<a href="admin.php?fct=themebuilder1&op=slider" title="' . _AM_SYSTEM_THEMEBUILDER_Slider . '"><img src="../../Frameworks/moduleclasses/icons/32/metagen.png" alt="' . _AM_SYSTEM_THEMEBUILDER_Slider . '"><span>' . _AM_SYSTEM_THEMEBUILDER_Slider . '</span></a>
+	<a href="admin.php?fct=themebuilder1&op=options" title="' . _AM_SYSTEM_THEMEBUILDER_Options . '"><img width="32px" src="../../Frameworks/moduleclasses/icons/32/type.png" alt="' . _AM_SYSTEM_THEMEBUILDER_Options . '"> <span>' . _AM_SYSTEM_THEMEBUILDER_Options . '</span></a>
+	<a href="admin.php?fct=themebuilder1&op=ThemeBuilder" title="' . _AM_SYSTEM_THEMEBUILDER_ThemeBuilder . '"><img src="../../Frameworks/moduleclasses/icons/32/groupmod.png" alt="' . _AM_SYSTEM_THEMEBUILDER_ThemeBuilder . '"><span>' . _AM_SYSTEM_THEMEBUILDER_ThemeBuilder . '</span></a>
+	<a href="admin.php?fct=themebuilder1&op=miseajour" title="' . _AM_SYSTEM_THEMEBUILDER_Miseajour . '"><img src="../../Frameworks/moduleclasses/icons/32/penguin.png" alt="' . _AM_SYSTEM_THEMEBUILDER_Miseajour . '"><span>' . _AM_SYSTEM_THEMEBUILDER_Miseajour . '</span></a>
+	<a href="admin.php?fct=themebuilder1&op=apropos" title="' . _AM_SYSTEM_THEMEBUILDER_apropos . '"><img width="32px" src="../../Frameworks/moduleclasses/icons/32/about.png" alt="' . _AM_SYSTEM_THEMEBUILDER_apropos . '"> <span>' . _AM_SYSTEM_THEMEBUILDER_apropos . '</span></a></div>
 </div>
 <div style="clear: both;"></div>
 </td>
@@ -117,35 +118,30 @@ div.CPbigTitle {
 </tr>
 <tr>
 <td colspan="2">
-<fieldset><legend class="label">'._AM_SYSTEM_THEMEBUILDER_ThemeBuilder.'</legend>
-	<span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> '._AM_SYSTEM_THEMEBUILDER_YOUCAN1.'</span>
-<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> '._AM_SYSTEM_THEMEBUILDER_YOUCAN2.'</span>
-<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> '._AM_SYSTEM_THEMEBUILDER_YOUCAN3.'</span>
-<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> '._AM_SYSTEM_THEMEBUILDER_YOUCAN4.'</span>
-<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> '._AM_SYSTEM_THEMEBUILDER_YOUCAN5.'</span>
-<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> '._AM_SYSTEM_THEMEBUILDER_YOUCAN6.'</span>
-<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> '._AM_SYSTEM_THEMEBUILDER_YOUCAN7.'</span>
+<fieldset><legend class="label">' . _AM_SYSTEM_THEMEBUILDER_ThemeBuilder . '</legend>
+	<span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> ' . _AM_SYSTEM_THEMEBUILDER_YOUCAN1 . '</span>
+<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> ' . _AM_SYSTEM_THEMEBUILDER_YOUCAN2 . '</span>
+<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> ' . _AM_SYSTEM_THEMEBUILDER_YOUCAN3 . '</span>
+<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> ' . _AM_SYSTEM_THEMEBUILDER_YOUCAN4 . '</span>
+<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> ' . _AM_SYSTEM_THEMEBUILDER_YOUCAN5 . '</span>
+<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> ' . _AM_SYSTEM_THEMEBUILDER_YOUCAN6 . '</span>
+<br><span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png"> ' . _AM_SYSTEM_THEMEBUILDER_YOUCAN7 . '</span>
 <br></fieldset>
 </td>
 </tr>
 </tbody></table>';
-	
 
-	
-	// 1) if it does not exists, the config_theme table
-	$taktak = '';
-	if(!BuilderTableExists($xoopsDB->prefix('config_theme'))){
-		echo 'il faut refaire linstallation du script';
+// 1) if it does not exists, the config_theme table
+$taktak = '';
+if (!BuilderTableExists($xoopsDB->prefix('config_theme'))) {
+    echo 'il faut refaire linstallation du script';
+} else {
+    $taktak .= '<span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png">' . _AM_SYSTEM_THEMEBUILDER_tableconfig_themeinstalee . '</span><br>';
+}
 
-	}else{
-	$taktak .= '<span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/on.png">'._AM_SYSTEM_THEMEBUILDER_tableconfig_themeinstalee.'</span><br>';
-	}
-	
-	
-	echo'<fieldset><legend class="label">'._AM_SYSTEM_THEMEBUILDER_Resume.'</legend>
-			'.$taktak.'
-			<span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/add.png">  '._AM_SYSTEM_THEMEBUILDER_Conseil.'</span>
-		</fieldset>';	
-	
+echo '<fieldset><legend class="label">' . _AM_SYSTEM_THEMEBUILDER_Resume . '</legend>
+			' . $taktak . '
+			<span style="color : green;"><img src="../../Frameworks/moduleclasses/icons/16/add.png">  ' . _AM_SYSTEM_THEMEBUILDER_Conseil . '</span>
+		</fieldset>';
 
 ?>

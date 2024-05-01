@@ -1,103 +1,102 @@
 <?php
-class MFN_Options_upload_multi {
 
-	/**
-	 * Constructor
-	 */
-	function __construct( $field = array(), $value = '', $prefix = false ){
+class MFN_Options_upload_multi
+{
+    public $field;
+    public $value;
+    public $prefix;
 
-		$this->field = $field;
-		$this->value = $value;
+    /**
+     * Constructor
+     */
+    function __construct($field = [], $value = '', $prefix = false)
+    {
+        $this->field = $field;
+        $this->value = $value;
 
-		// theme options 'opt_name'
-		$this->prefix = $prefix;
+        // theme options 'opt_name'
+        $this->prefix = $prefix;
+    }
 
-	}
+    /**
+     * Render
+     */
+    function render($meta = false)
+    {
+        // class ----------------------------------------------------
+        if (isset($this->field['class'])) {
+            $class = $this->field['class'];
+        } else {
+            $class = 'image';
+        }
 
-	/**
-	 * Render
-	 */
-	function render( $meta = false ){
+        // name -----------------------------------------------------
+        if ($meta == 'new') {
+            // builder new
+            $name = 'data-name="' . $this->field['id'] . '"';
+        } elseif ($meta) {
+            // page mata & builder existing items
+            $name = 'name="' . $this->field['id'] . '"';
+        } else {
+            // theme options
+            $name = 'name="' . $this->prefix . '[' . $this->field['id'] . ']"';
+        }
 
-		// class ----------------------------------------------------
-		if( isset( $this->field['class']) ){
-			$class = $this->field['class'];
-		} else {
-			$class = 'image';
-		}
+        // value is empty -------------------------------------------
+        if (!$this->value) {
+            $remove = 'style="display:none;"';
+        } else {
+            $remove = '';
+        }
 
-		// name -----------------------------------------------------
-		if( $meta == 'new' ){
+        // echo -----------------------------------------------------
+        echo '<div class="mfnf-upload multi">';
 
-			// builder new
-			$name = 'data-name="'. $this->field['id'] .'"';
+        echo '<input type="text" class="upload-input" ' . $name . ' value="' . $this->value . '" autocomplete=off />';
 
-		} elseif( $meta ){
+        echo ' <a href="javascript:void(0);" class="upload-add btn-blue" data-button="' . __('Add Images', 'mfn-opts') . '"  ><span></span>' . __('Browse', 'mfn-opts') . '</a>';
+        echo ' <a href="javascript:void(0);" class="upload-remove all" ' . $remove . '>' . __('Remove All Uploads', 'mfn-opts') . '</a>';
 
-			// page mata & builder existing items
-			$name = 'name="'. $this->field['id'] .'"';
+        echo '<section class="gallery-container clearfix">';
+        echo $this->loop_over_the_images();
+        echo '</section>';
 
-		} else {
+        if (isset($this->field['desc']) && !empty($this->field['desc'])) {
+            echo '<span class="description">' . $this->field['desc'] . '</span>';
+        }
 
-			// theme options
-			$name = 'name="'. $this->prefix .'['. $this->field['id'] .']"';
+        echo '</div>';
 
-		}
+        $this->enqueue();
+    }
 
-		// value is empty -------------------------------------------
-		if( ! $this->value ){
-			$remove = 'style="display:none;"';
-		} else {
-			$remove = '';
-		}
+    private function loop_over_the_images()
+    {
+        $unsplited_string = $this->value;
 
-		// echo -----------------------------------------------------
-		echo '<div class="mfnf-upload multi">';
+        if ($unsplited_string === '') {
+            return;
+        }
 
-			echo '<input type="text" class="upload-input" '. $name .' value="'. $this->value .'" autocomplete=off />';
+        $array_of_img_ids = explode(",", (string) $unsplited_string);
 
-			echo ' <a href="javascript:void(0);" class="upload-add btn-blue" data-button="'. __( 'Add Images', 'mfn-opts' ) .'"  ><span></span>'. __('Browse', 'mfn-opts') .'</a>';
-			echo ' <a href="javascript:void(0);" class="upload-remove all" '. $remove .'>'.__('Remove All Uploads', 'mfn-opts').'</a>';
+        foreach ($array_of_img_ids as $img_id) {
+            $img_src = wp_get_attachment_image_src($img_id, 'thumbnail');
+            $img_src = $img_src[0];
 
-			echo '<section class="gallery-container clearfix">';
-				echo $this->loop_over_the_images();
-			echo '</section>';
+            echo '<div class="image-container">';
+            echo '<img class="screenshot image" data-pic-id="' . $img_id . '" src="' . $img_src . '" />';
+            echo '<a href="#" class="upload-remove single dashicons dashicons-no"></a>';
+            echo '</div>';
+        }
+    }
 
-			if( isset( $this->field['desc'] ) && ! empty( $this->field['desc'] ) ){
-				echo '<span class="description">'. $this->field['desc'] .'</span>';
-			}
-
-		echo '</div>';
-
-		$this->enqueue();
-	}
-
-	private function loop_over_the_images() {
-		$unsplited_string  = $this->value;
-
-		if ( $unsplited_string === '' ) { return; }
-
-		$array_of_img_ids = explode( ",", $unsplited_string );
-
-		foreach ( $array_of_img_ids as $img_id ) {
-
-			$img_src = wp_get_attachment_image_src( $img_id, 'thumbnail' );
-			$img_src = $img_src[0];
-
-			echo '<div class="image-container">';
-				echo '<img class="screenshot image" data-pic-id="'. $img_id .'" src="'. $img_src .'" />';
-				echo '<a href="#" class="upload-remove single dashicons dashicons-no"></a>';
-			echo '</div>';
-		}
-	}
-
-  /**
-   * Enqueue
-   */
-  function enqueue() {
-
-  	wp_enqueue_media();
-		wp_enqueue_script( 'mfn-opts-field-upload-multi-js', MFN_OPTIONS_URI .'fields/upload_multi/field_upload_multi.js', array( 'jquery' ), THEME_VERSION, true );
-
-	}
+    /**
+     * Enqueue
+     */
+    function enqueue()
+    {
+        wp_enqueue_media();
+        wp_enqueue_script('mfn-opts-field-upload-multi-js', MFN_OPTIONS_URI . 'fields/upload_multi/field_upload_multi.js', ['jquery'], THEME_VERSION, true);
+    }
 }

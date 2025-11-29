@@ -1,0 +1,8 @@
+1. Replace manual SQL string building in `ajax.php` with prepared statements or `$xoopsDB->quoteString()` plus strict type casting for IDs to eliminate SQL injection vectors and to enforce column-level validation.
+2. Gate every AJAX action behind XOOPS authentication/authorization checks and CSRF/XOOPS token verification, and ensure the handlers only run for `POST` requests with a JSON `Content-Type` header.
+3. Validate and sanitize all incoming slider/menu/option payloads (arrays, integers, booleans, enums) before use; reject unexpected keys and provide structured error responses instead of `die()`.
+4. Centralize bootstrap loading for AJAX endpoints using a single, deterministic `mainfile.php` inclusion path and remove the multi-level file_exists chain to reduce path traversal risk and improve readability.
+5. Implement the currently stubbed actions (`crellyslider_deleteSlider`, `crellyslider_duplicateSlider`, header/footer cases in `main.php`) with safe database operations and permission checks, or remove them if unused.
+6. Stop suppressing errors in AJAX handlers; route exceptions and database failures through XOOPS logging and return consistent JSON error payloads for client handling.
+7. Refactor procedural controller logic into small, testable classes (e.g., `SliderService`, `ElementRepository`) injected with the database connection so PHPUnit can mock them without relying on globals.
+8. Expand the PHPUnit suite to cover each AJAX action branch and menu/layout builders, using fixtures/mocks to assert correct queries, permission enforcement, and response payloads across PHP 7.4–8.4.

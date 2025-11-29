@@ -1,7 +1,20 @@
 <?php
 
-// Get Action type
-$op = system_CleanVars($_REQUEST, 'op', 'default', 'string');
+// Check if XOOPS is loaded. It should be if accessed via admin.php?fct=themebuilder1
+if (!defined('XOOPS_ROOT_PATH')) {
+    die('XOOPS root path not defined');
+}
+
+// Ensure the user is an admin
+global $xoopsUser;
+if (!is_object($xoopsUser) || !$xoopsUser->isAdmin()) {
+    die('Access Denied');
+}
+
+// Get Action type - using $_GET or $_POST explicitly is better, but system_CleanVars handles input sanitization.
+// We will favor GET for navigation 'op'.
+$op = isset($_GET['op']) ? trim(strip_tags($_GET['op'])) : 'default';
+
 // Call header
 xoops_cp_header();
 // Define Stylesheet
@@ -13,131 +26,93 @@ $xoTheme->addScript('browse.php?Frameworks/jquery/plugins/jquery.ui.js');
 $xoTheme->addScript('browse.php?Frameworks/jquery/plugins/jquery.tablesorter.js');
 $xoTheme->addScript('modules/system/js/admin.js');
 
+// Helper to generate menu link
+function tb_menu_link($op, $label) {
+    return '<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
+            <a href="admin.php?fct=themebuilder1&op=' . htmlspecialchars($op) . '"> ' . htmlspecialchars($label) . '</a>
+        </span>';
+}
+
 echo '
-	<div style="font-size: 10px; text-align: left; color: #2F5376; padding: 2px 6px; line-height: 18px;">
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1"> Index</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1&op=menu"> Menu</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1&op=slider"> Slider</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1&op=side"> Side Bar</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1&op=header"> Header</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1&op=footer"> Footer</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1&op=options"> Options</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">		
-			<a href="admin.php?fct=themebuilder1&op=ThemeBuilder"> Theme Builder</a>
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
-			<a href="admin.php?fct=themebuilder1&op=miseajour"> Update</a>
-			
-			<span class="update-plugins">1</span>
-			
-		</span>
-		<span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">		
-			<a href="admin.php?fct=themebuilder1&op=apropos"> About</a>
-		</span>
-	</div></br>';
+    <div style="font-size: 10px; text-align: left; color: #2F5376; padding: 2px 6px; line-height: 18px;">
+        ' . tb_menu_link('', 'Index') . '
+        ' . tb_menu_link('menu', 'Menu') . '
+        ' . tb_menu_link('slider', 'Slider') . '
+        ' . tb_menu_link('side', 'Side Bar') . '
+        ' . tb_menu_link('header', 'Header') . '
+        ' . tb_menu_link('footer', 'Footer') . '
+        ' . tb_menu_link('options', 'Options') . '
+        ' . tb_menu_link('ThemeBuilder', 'Theme Builder') . '
+        <span style="margin: 1px; padding: 4px; border: #E8E8E8 1px solid;">
+            <a href="admin.php?fct=themebuilder1&op=miseajour"> Update</a>
+            <span class="update-plugins">1</span>
+        </span>
+        ' . tb_menu_link('apropos', 'About') . '
+    </div><br/>';
+
+$module_path = __DIR__; // Since this main.php is in the module root
 
 switch ($op) {
     case 'menu':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/include/menu.php';
-
+        include $module_path . '/include/menu.php';
         break;
 
     case 'slider':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/include/slider.php';
-
+        include $module_path . '/include/slider.php';
         break;
 
     case 'options':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/options/theme-options.php';
-
+        include $module_path . '/options/theme-options.php';
         break;
 
     case 'ThemeBuilder':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/builder/themebuilder.php';
-
+        include $module_path . '/builder/themebuilder.php';
         break;
 
     case 'blockbuilder':
         echo 'ajouter des block prédéfeni à xoops to be done later';
-
         break;
 
     case 'pagebuilder':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/builder/pagebuilder.php';
-
+        include $module_path . '/builder/pagebuilder.php';
         break;
 
     case 'layoutbuilder':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/builder/layoutbuilder.php';
-
+        include $module_path . '/builder/layoutbuilder.php';
         break;
 
     case 'miseajour':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/include/miseajour.php';
-
+        include $module_path . '/include/miseajour.php';
         break;
 
     case 'siteclosed':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/include/siteclosed.php';
-
+        include $module_path . '/include/siteclosed.php';
         break;
 
     case 'side':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/include/side.php';
-
+        include $module_path . '/include/side.php';
         break;
 
     case 'apropos':
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/include/apropos.php';
-
+        include $module_path . '/include/apropos.php';
         break;
 
     case 'footer':
-        break;
-
     case 'header':
-        break;
-
     case 'importer':
-        break;
-
     case 'exporter':
         break;
 
     case 'install':
-        //include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/install/install.php';
-        /* redirect_header("/modules/system/admin/themebuilder1/install/install.php", 5, $message);
-                exit(); */
+        // Code removed as it was commented out and potential security risk if enabled
         break;
 
     default:
-
-        include XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/include/index.php';
-
+        if (file_exists($module_path . '/include/index.php')) {
+            include $module_path . '/include/index.php';
+        } else {
+             echo "Welcome to Theme Builder";
+        }
         break;
 }
 xoops_cp_footer();

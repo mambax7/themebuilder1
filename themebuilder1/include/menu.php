@@ -1,37 +1,35 @@
 <?php
 
 $op = system_CleanVars($_REQUEST, 'action', 'default', 'string');
+global $xoopsDB;
+
 switch ($op) {
     case 'menumanager':
         //////////////////////
         if (isset($_POST['submitextra']) && $_POST['submitextra'] == 'Submit') {
-            global $xoopsDB;
-            $mfn_items = $_POST;
 
-            /*foreach ( $mfn_items as $key => $value ){
-                foreach ( $value as $keys => $values ){
-                    $meta_arr[$keys] = $value[$keys];
-                }
-            }*/
-            $menuid    = (isset($_POST['menuid']) && is_numeric($_POST['menuid'])) ? intval($_POST['menuid']) : intval($_GET['menuid']);
+            $mfn_items = $_POST;
+            $menuid    = (isset($_POST['menuid']) && is_numeric($_POST['menuid'])) ? intval($_POST['menuid']) : (isset($_GET['menuid']) && is_numeric($_GET['menuid']) ? intval($_GET['menuid']) : 0);
+
+            // Serialize and escape
             $serialise = serialize($mfn_items);
-            //var_dump($mfn_items);
-            //var_dump($serialise);
-            //var_dump($mfn_items);
+
+            // Use quotes string. serialize() can contain characters that need escaping.
+            // XOOPS DB quoteString wraps in quotes.
+            $serialise_safe = $xoopsDB->quoteString($serialise);
 
             if ($menuid != 0 && $serialise != '') {
-                $sqlr = "UPDATE " . $xoopsDB->prefix('menu_group') . " SET options ='" . addslashes($serialise) . "' WHERE id=" . intval($menuid);
+                // Use quoteString result
+                $sqlr = "UPDATE " . $xoopsDB->prefix('menu_group') . " SET options =$serialise_safe WHERE id=" . $menuid;
                 if ($resultr = $xoopsDB->queryF($sqlr)) {
                     $message = "menu modifié";
                 } else {
                     $message = _AM_SYSTEM_THEMEBUILDER_probleme_mod_menu;
                 }
-                //echo $message;
-                //echo $menuid;
                 redirect_header("admin.php?fct=themebuilder1&op=menu&action=menumanager&group_id=$menuid", 5, $message);
                 exit();
             } else {
-                $message = 'pas bon essayez une autre fois';
+                $message = 'Invalid data';
                 redirect_header('admin.php?fct=themebuilder1&op=menu&action=modifymenuoptions&menuid=' . $menuid . '', 5, $message);
                 exit();
             }
@@ -40,12 +38,15 @@ switch ($op) {
         $src1 = __DIR__;
         $dst1 = str_replace('include', 'menu', $src1);
         define('_DOC_ROOT', $dst1 . '/');
-        function site_url($url = '')
-        {
-            if (!empty($url)) {
-                return './admin/themebuilder1/menu/index.php?act=' . $url;
+
+        if (!function_exists('site_url')) {
+            function site_url($url = '')
+            {
+                if (!empty($url)) {
+                    return './admin/themebuilder1/menu/index.php?act=' . $url;
+                }
+                return _BASE_URL;
             }
-            return _BASE_URL;
         }
 
         /**
@@ -53,36 +54,41 @@ switch ($op) {
          * This is the base class for all controllers
          * Every controller will extend this class
          */
-        class GController
-        {
-            protected $xoops;
-            public $xoopsDB;
-
-            /**
-             * Constructor. Initialize database connection
-             */
-            public function __construct()
+        if (!class_exists('GController')) {
+            class GController
             {
-                include _DOC_ROOT . 'includes/db.php';
-                $this->db = new DB;
-            }
+                protected $xoops;
+                public $xoopsDB;
+                public $db;
 
-            /**
-             * Includes the view file and display the data
-             *
-             * @param string $view_file
-             * @param array  $data
-             */
-            protected function view($view_file, $data = '')
-            {
-                if (is_array($data)) {
-                    extract($data);
+                /**
+                 * Constructor. Initialize database connection
+                 */
+                public function __construct()
+                {
+                    if (file_exists(_DOC_ROOT . 'includes/db.php')) {
+                        include_once _DOC_ROOT . 'includes/db.php';
+                        $this->db = new DB;
+                    }
                 }
-                $file = _DOC_ROOT . 'templates/' . $view_file . '.php';
-                if (file_exists($file)) {
-                    include $file;
-                } else {
-                    die("Cannot include $view_file");
+
+                /**
+                 * Includes the view file and display the data
+                 *
+                 * @param string $view_file
+                 * @param array  $data
+                 */
+                protected function view($view_file, $data = '')
+                {
+                    if (is_array($data)) {
+                        extract($data);
+                    }
+                    $file = _DOC_ROOT . 'templates/' . $view_file . '.php';
+                    if (file_exists($file)) {
+                        include $file;
+                    } else {
+                        die("Cannot include $view_file");
+                    }
                 }
             }
         }
@@ -99,9 +105,9 @@ switch ($op) {
          */
         if (isset($_GET['act'])) {
             $act        = explode('.', (string) $_GET['act']);
-            $controller = $act[0];
+            $controller = preg_replace('/[^a-zA-Z0-9_]/', '', $act[0]); // Sanitize controller name
             if (isset($act[1])) {
-                $method = $act[1];
+                $method = preg_replace('/[^a-zA-Z0-9_]/', '', $act[1]); // Sanitize method name
             }
         }
 
@@ -110,11 +116,16 @@ switch ($op) {
         if (file_exists($controller_file)) {
             include $controller_file;
             $Class_name = ucfirst($controller);
-            $instance   = new $Class_name;
-            if (!is_callable([$instance, $method])) {
-                die("Cannot call method $method");
+            if (class_exists($Class_name)) {
+                $instance   = new $Class_name;
+                if (method_exists($instance, $method) && is_callable([$instance, $method])) {
+                   $instance->$method();
+                } else {
+                    die("Cannot call method $method");
+                }
+            } else {
+                die("Class $Class_name not found");
             }
-            $instance->$method();
         } else {
             die("Cannot include controller $controller");
         }
@@ -125,43 +136,22 @@ switch ($op) {
 
     case 'modifymenuoptions':
 
-        $menuid = (isset($_POST['menuid']) && is_numeric($_POST['menuid'])) ? intval($_POST['menuid']) : intval($_GET['menuid']);
-        global $xoopsDB;
+        $menuid = (isset($_POST['menuid']) && is_numeric($_POST['menuid'])) ? intval($_POST['menuid']) : (isset($_GET['menuid']) && is_numeric($_GET['menuid']) ? intval($_GET['menuid']) : 0);
+
         $sql2        = "SELECT distinct id, title, options FROM " . $xoopsDB->prefix("menu_group") . " WHERE id =" . $menuid;
         $result2     = $xoopsDB->query($sql2);
-        $video_array = $xoopsDB->fetchArray($result2);
-        $menuid      = $video_array['id'] ?: 0;
-        $saved_value = unserialize($video_array['options']);
+        if ($result2) {
+            $video_array = $xoopsDB->fetchArray($result2);
+            $menuid      = isset($video_array['id']) ? $video_array['id'] : 0;
+            $saved_value = isset($video_array['options']) ? unserialize($video_array['options']) : array();
+        } else {
+            $menuid = 0;
+            $saved_value = array();
+        }
+
         //var_dump($saved_value);
         if ($menuid) {
             $locations_options = [
-                /*array(
-                    'title' => 'AM_SYSTEM_THEMEBUILDER_catmenu',
-                    'descr' => 'Here you can specify ',
-                    'id' => 'cat_menu',
-                    'type' => 'text',
-                    'values' => '',
-                    'default' => '',
-
-                ),	*/
-                /*array(
-                    'title' => 'Categorie Skin',
-                    'desc' => 'Select the type of skin to displaying in menu.',
-                    'id' => 'cat_skin',
-                    'type' => 'select',
-                    'options' => array(
-                        'mega_menu1' => 'mega_menu1',
-                        'mega_menu' => 'mega_menu',
-                        'skin1' => 'skin1',
-                        'skin2' => 'skin2',
-                        'skin3' => 'skin3',
-                        'skin4' => 'skin4',
-                        'skin5' => 'skin5',
-                        'skin6' => 'skin6',
-                    ),
-                    'default' => array( 'mega_menu', ),
-                ),	*/
-
                 [
                     'title'   => 'Add to Mega Main Menu:',
                     'desc'    => 'You can add to the menu container: logo and search...',
@@ -420,19 +410,6 @@ switch ($op) {
                     'type'  => 'number',
                     'std'   => 90,
                 ],
-                /*array(
-                    'title' => 'Backup of the configuration',
-                    'desc' => 'You can make a backup of the plugin configuration and restore this configuration later. Notice: Options of each menu item from the section "Menu Structure" is not imported.',
-                    'id' => 'backup',
-                    //'type' => 'just_html',
-                    'std' => '<a href="_page=backup_file">Download backup file with current settings)</a><br /><br />Upload backup file and restore settings. Chose file and click "Save All Settings")<br /><input class="col-xs-12 form-control input-sm" type="file" name="_backup" />'
-                ),*/
-                /*array(
-                    'title' => 'Background Gradient (Color) of the primary container ',
-                    'id' => 'menu_bg_gradient',
-                    'type' => 'gradient',
-                    'default' => array( 'color1' => '#428bca', 'color2' => '#2a6496', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                ),*/
                 [
                     'title' => 'Background Gradient (Color) of the primary container ',
                     'id'    => 'menu_bg_gradient',
@@ -448,12 +425,6 @@ switch ($op) {
                     'std'   => '',
                 ],
                 [
-                    /*'title' => 'Font of the First Level Item',
-                    'desc' => 'You can change size and weight of the font for first level items.',
-                    'id' => 'menu_first_level_link_font',
-                    'type' => 'font',
-                    'options' => array( 'font_family', 'font_size', 'font_weight' ),
-                    'default' => array( 'font_family' => 'Inherit', 'font_size' => '13', 'font_weight' => '400' ),*/
                     'title'  => 'Font of the First Level Item',
                     'desc'   => 'You can change size and weight of the font for first level items.',
                     'id'     => 'menu_first_level_link_font',
@@ -472,11 +443,6 @@ switch ($op) {
                 [
                     'title'     => 'Icons in the first level item',
                     'id'        => 'menu_first_level_icon_font',
-                    /*
-                                                'type' => 'font',
-                                                'options' => array( 'font_size', ),
-                                                'default' => array( 'font_size' => '15', ),
-                    */
                     'type'      => 'number',
                     'col_width' => 3,
                     'min'       => 0,
@@ -485,12 +451,6 @@ switch ($op) {
                     'values'    => '15',
                     'std'       => '15',
                 ],
-                /*array(
-                    'title' => 'Background Gradient (Color) of the first level item',
-                    'id' => 'menu_first_level_link_bg',
-                    'type' => 'gradient',
-                    'default' => array( 'color1' => '#428bca', 'color2' => '#2a6496', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                ),*/
                 [
                     'title' => 'Background Gradient (Color) of the first level item',
                     'id'    => 'menu_first_level_link_bg',
@@ -505,12 +465,6 @@ switch ($op) {
                     'type'  => 'color',
                     'std'   => '#f8f8f8',
                 ],
-                /*array(
-                    'title' => 'Background Gradient (Color) of the active first level item',
-                    'id' => 'menu_first_level_link_bg_hover',
-                    'type' => 'gradient',
-                    'default' => array( 'color1' => '#3498db', 'color2' => '#2980b9', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                ),*/
                 [
                     'title' => 'Background Gradient (Color) of the active first level item',
                     'id'    => 'menu_first_level_link_bg_hover',
@@ -522,7 +476,6 @@ switch ($op) {
                     'title' => 'Background color of the Search Box',
                     'id'    => 'menu_search_bg',
                     'type'  => 'color1',
-                    //'default' => '#3498db',
                     'class' => 'bg_color_section',
                     'std'   => '#3498db',
                 ],
@@ -533,12 +486,6 @@ switch ($op) {
                     'class' => '_menu_search_color',
                     'std'   => '#f8f8f8',
                 ],
-                /*array(
-                    'title' => 'Background Gradient (Color) of the Dropdown Area',
-                    'id' => 'menu_dropdown_wrapper_gradient',
-                    'type' => 'gradient',
-                    'default' => array( 'color1' => '#ffffff', 'color2' => '#ffffff', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                ),*/
                 [
                     'title' => 'Background Gradient (Color) of the Dropdown Area',
                     'id'    => 'menu_dropdown_wrapper_gradient',
@@ -547,11 +494,6 @@ switch ($op) {
                     'std'   => '#ffffff',
                 ],
                 [
-                    /*'title' => 'Font of the dropdown menu item',
-                    'id' => 'menu_dropdown_link_font',
-                    //'type' => 'font',
-                    'options' => array( 'font_family', 'font_size', 'font_weight' ),
-                    'default' => array( 'font_family' => 'Inherit', 'font_size' => '12', 'font_weight' => '400' ),*/
                     'title'  => 'Font of the dropdown menu item',
                     'desc'   => 'You can change size and weight of the font for dropdown menu item.',
                     'id'     => 'menu_dropdown_link_font',
@@ -569,11 +511,6 @@ switch ($op) {
                 [
                     'title'     => 'Icons of the dropdown menu item',
                     'id'        => 'menu_dropdown_icon_font',
-                    /*
-                                                'type' => 'font',
-                                                'options' => array( 'font_size', ),
-                                                'default' => array( 'font_size' => '12', ),
-                    */
                     'type'      => 'number',
                     'col_width' => 3,
                     'min'       => 0,
@@ -582,12 +519,6 @@ switch ($op) {
                     'values'    => '12',
                     'std'       => '12',
                 ],
-                /*array(
-                    'title' => 'Background Gradient (Color) of the dropdown menu item',
-                    'id' => 'menu_dropdown_link_bg',
-                    'type' => 'gradient',
-                    'default' => array( 'color1' => 'rgba(255,255,255,0)', 'color2' => 'rgba(255,255,255,0)', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                ),*/
                 [
                     'title' => 'Background Gradient (Color) of the dropdown menu item',
                     'id'    => 'menu_dropdown_link_bg',
@@ -609,12 +540,6 @@ switch ($op) {
                     'class' => '_menu_dropdown_link_color_hover',
                     'std'   => '#f8f8f8',
                 ],
-                /*array(
-                    'title' => 'Background Gradient (Color) of the dropdown active menu item',
-                    'id' => 'menu_dropdown_link_bg_hover',
-                    'type' => 'gradient',
-                    'default' => array( 'color1' => '#3498db', 'color2' => '#2980b9', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                ),*/
                 [
                     'title' => 'Background Gradient (Color) of the dropdown active menu item',
                     'id'    => 'menu_dropdown_link_bg_hover',
@@ -629,150 +554,6 @@ switch ($op) {
                     'class' => '_menu_dropdown_plain_text_color',
                     'std'   => '#333333',
                 ],
-
-                /*array(
-                    'title' => 'Set of Installed Google Fonts',
-                    'desc' => 'Select the fonts to be included on the site. Remember that a lot of fonts affect on the speed of load page. Always remove unnecessary fonts. Font faces can see on this page - ' . '<a href="http://www.google.com/fonts" target="_blank">Google fonts</a>',
-                    'id' => 'set_of_google_fonts',
-                    //'type' => 'multiplier',
-                    'std' => '0',
-                    'options' => array(
-                        array(
-                            'title' => 'Font 1',
-                            'id' => 'font_item',
-                            'type' => 'collapse_start',
-                        ),
-                        array(
-                            'title' => 'Fonts Faily',
-                            'id' => 'family',
-                            'type' => 'select',
-                            //'values' => mm_datastore::get_googlefonts_list()'',
-                            'std' => 'Open Sans'
-                        ),
-                        array(
-                            'title' => '',
-                            'id' => 'font_item',
-                            'type' => 'collapse_end',
-                        ),
-                    ),
-                ),*/
-                /*array(
-                    'title' => 'Custom Icons',
-                    'desc' => 'You can add custom raster icons. After saving these settings, icons will become available in a modal window of icons selection. Recommended size 64x64 pixels.',
-                    'id' => 'set_of_custom_icons',
-                    //'type' => 'multiplier',
-                    'std' => '1',
-                    'options' => array(
-                        array(
-                            'title' => 'Custom Icon 1',
-                            'id' => 'icon_item',
-                            'type' => 'collapse_start',
-                        ),
-                        array(
-                            'title' => 'Icon File',
-                            'id' => 'custom_icon',
-                            'type' => 'uploadframe',
-                            'std' => '/images/logo.png',
-                        ),
-                        array(
-                            'title' => 'Icon File on Hover',
-                            'desc' => 'Keep empty to use regular for both',
-                            'id' => 'custom_icon_hover',
-                            'type' => 'uploadframe',
-                            'std' => '',
-                        ),
-                        array(
-                            'title' => '',
-                            'id' => 'icon_item',
-                            'type' => 'collapse_end',
-                        ),
-                    ),
-                ),
-                array(
-                    'title' =>  'Additional Styles: ',
-                    'desc' => 'Here you can add and edit highlighting styles. After that you can select these styles for menu item in "Menus -> Your Menu Item -> Style of This Item" option.'	,
-                    'id' => 'additional_styles_presets',
-                    //'type' => 'multiplier',
-                    'std' => '0',
-                    'options' => array(
-                        array(
-                            'title' => 'Style 1',
-                            'id' => 'additional_style_item',
-                            'type' => 'collapse_start',
-                        ),
-                        array(
-                            'title' => 'Style Name',
-                            'id' => 'style_name',
-                            'type' => 'textfield',
-                            'std' => 'My Highlight Style'
-                        ),
-                        array(
-                            'title' => 'Font',
-                            'id' => 'font',
-                            //'type' => 'font',
-                            'options' => array( 'font_family', 'font_size', 'font_weight' ),
-                            'default' => array( 'font_family' => 'Inherit', 'font_size' => '12', 'font_weight' => '400' ),
-                        ),
-                        array(
-                            'title' => 'Icon Size',
-                            'id' => 'icon',
-                            //'type' => 'font',
-                            'options' => array( 'font_size', ),
-                            'default' => array( 'font_size' => '12', ),
-                        ),
-                        array(
-                            'title' => 'Text color',
-                            'id' => 'text_color',
-                            'type' => 'color',
-                            'class' 	=> 'text_color',
-                            'std' => '#f8f8f8',
-                        ),
-                        array(
-                            'title' => 'Background Gradient (Color) ',
-                            'id' => 'bg_gradient',
-                            'type' => 'gradient',
-                            'default' => array( 'color1' => '#34495E', 'color2' => '#2C3E50', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                        ),
-                        array(
-                        'title' => 'Background Gradient (Color) ',
-                        'id' => 'bg_gradient',
-                        'type' => 'color',
-                        'class' 	=> 'bg_gradient',
-                        'std' => '#34495E',
-                    ),
-                        array(
-                            'title' => 'Text color of the active item',
-                            'id' => 'text_color_hover',
-                            'type' => 'color',
-                            'class' 	=> 'text_color_hover',
-                            'std' => '#f8f8f8',
-                        ),
-                        array(
-                            'title' => 'Background Gradient (Color) of the active item',
-                            'id' => 'bg_gradient_hover',
-                            'type' => 'gradient',
-                            'default' => array( 'color1' => '#3d566e', 'color2' => '#354b60', 'start' => '0', 'end' => '100', 'orientation' => 'top' ),
-                        ),
-                        array(
-                        'title' => 'Background Gradient (Color) of the active item',
-                        'id' => 'bg_gradient_hover',
-                        'type' => 'color',
-                        'class' 	=> 'bg_gradient_hover',
-                        'std' => '#3d566e',
-                    ),
-                        array(
-                            'title' => '',
-                            'id' => 'additional_style_item',
-                            'type' => 'collapse_end',
-                        ),
-                    ),
-                ),*/
-
-                /*array(
-                    'title' => 'Specific Options',
-                    'id' => 'mm_specific_options',
-                    'icon' => 'im-icon-hammer',
-                    'options' => array(*/
                 [
                     'title'     => 'Custom CSS',
                     'desc'      => 'You can place here any necessary custom CSS properties.',
@@ -863,137 +644,11 @@ switch ($op) {
                         'ltr',
                     ],
                 ],
-                /*	), // 'options' => array
-                ),*/
-                /*array(
-                    'title' => 'Settings of the structure',
-                    'id' => 'mm_structure_settings',
-                    'icon' => 'im-icon-checkbox',
-                    'options' => array(
-                        array(
-                            'title' => 'Here you can deactivate the options that you  do not use to customize the menu structure. It helps reduce the number of options and reduce the load on the server.',
-                            'id' => 'menu_structure_settings',
-                            'type' => 'caption',
-                        ),
-                        array(
-                            'title' => 'Description of the item',
-                            'id' => 'item_descr',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                        array(
-                            'title' => 'Style of the item',
-                            'id' => 'item_style',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                            'default' => array( 'true', ),
-                        ),
-                        array(
-                            'title' => 'Visibility Control',
-                            'id' => 'item_visibility',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                            'default' => array( 'true', ),
-                        ),
-                        array(
-                            'title' => 'Icon of the item',
-                            'id' => 'item_icon',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
+            ];
 
-                        array(
-                            'title' => 'Hide Icon of the Item',
-                            'id' => 'disable_icon',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-
-                        array(
-                            'title' => 'Hide Text of the Item',
-                            'id' => 'disable_text',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                        array(
-                            'title' => 'Disable Link',
-                            'id' => 'disable_link',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                        array(
-                            'title' => 'Pull to the Other Side',
-                            'id' => 'pull_to_other_side',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                            'default' => array( 'true', ),
-                        ),
-                        array(
-                            'title' => 'Submenu Type',
-                            'id' => 'submenu_type',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                        array(
-                            'title' => 'Side of dropdown elements',
-                            'id' => 'submenu_drops_side',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                        array(
-                            'title' => 'Submenu Columns',
-                            'id' => 'submenu_columns',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                        array(
-                            'title' => 'Enable Full Width Dropdown',
-                            'id' => 'submenu_enable_full_width',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                        array(
-                            'title' => 'Dropdown Background Image',
-                            'id' => 'submenu_bg_image',
-                            'type' => 'checkbox',
-                            'options' => array(
-                                'Disable' => 'disable',
-                            ),
-                        ),
-                    ), // 'options' => array
-                ),*/
-
-            ]; // END FRIMARY ARRAY
-
-            //////////////////////////////
-
-            $sqls     = "SELECT * FROM " . $xoopsDB->prefix("menu_group") . " WHERE id = " . $_GET['menuid'] . "";
+            $sqls     = "SELECT * FROM " . $xoopsDB->prefix("menu_group") . " WHERE id = " . $menuid . "";
             $css_arrs = $xoopsDB->fetchArray($xoopsDB->query($sqls));
-            $item     = unserialize($css_arrs['options']);
+            $item     = $css_arrs && isset($css_arrs['options']) ? unserialize($css_arrs['options']) : array();
             //var_dump($item);
 
             echo '	<link rel="stylesheet" href="admin/themebuilder1/assets/js/colorpicker.css" type="text/css" />
@@ -1005,10 +660,10 @@ switch ($op) {
 	<script src="admin/themebuilder1/builder/fields/uploadframe/mlib-includes/js/init.js" type="text/javascript"></script>';
             echo '<style>
 .div-table {
-  display: table;         
-  width: auto;         
-  background-color: #eee;         
-  border: 1px solid #666666;         
+  display: table;
+  width: auto;
+  background-color: #eee;
+  border: 1px solid #666666;
   border-spacing: 1px; /* cellspacing:poor IE support for  this */
 }
 .div-table-row {
@@ -1017,12 +672,12 @@ switch ($op) {
   clear: both;
 }
 .div-table-col {
-  display: table-cell;         
-  width: 49%;  
-padding: 2px 12px;  
-  background-color: #ccc;  
+  display: table-cell;
+  width: 49%;
+padding: 2px 12px;
+  background-color: #ccc;
 }
- 
+
  /* -------------- .mfn-radio-img --------------- */
 .olivee-radio-item .olivee-radio-img input[type="radio"]{ display:none; }
 
@@ -1141,6 +796,10 @@ padding: 2px 12px;
 
             echo '<div class="div-table">';
             echo '<form method="post" action="?fct=themebuilder1&op=menu&action=menumanager">';
+
+            // Generate valid pageid for the form
+            $menuid_safe = htmlspecialchars($menuid);
+
             foreach ($locations_options as $fields => $field) {
                 // values for existing items
                 if ($item && key_exists($field['id'], $item)) {
@@ -1177,12 +836,18 @@ padding: 2px 12px;
                     //  Options Field & Description
                     echo '<div class="div-table-col">';
                     $field_class = 'OLIVEE_Options_' . $field['type'];
-                    require_once XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/builder/fields/' . $field['type'] . '/field_' . $field['type'] . '.php';
-                    if (class_exists($field_class)) {
-                        $field_object = new $field_class($field, $meta);
-                        $field_object->render(1);
+                    $field_file = XOOPS_ROOT_PATH . '/modules/system/admin/themebuilder1/builder/fields/' . $field['type'] . '/field_' . $field['type'] . '.php';
+
+                    if (file_exists($field_file)) {
+                        require_once $field_file;
+                        if (class_exists($field_class)) {
+                            $field_object = new $field_class($field, $meta);
+                            $field_object->render(1);
+                        } else {
+                            echo 'Class not found';
+                        }
                     } else {
-                        echo 'pas de class';
+                         echo 'Field type not found';
                     }
 
                     echo '</div>';
@@ -1193,7 +858,7 @@ padding: 2px 12px;
                 }
             }
 
-            echo '<div class="even div-table-row"><input type="hidden" name="menuid" id="menuid" value="' . $_GET['menuid'] . '"><input type="submit" name="submitextra" value="Submit"></div>';
+            echo '<div class="even div-table-row"><input type="hidden" name="menuid" id="menuid" value="' . $menuid_safe . '"><input type="submit" name="submitextra" value="Submit"></div>';
             echo '</form>';
             echo '</div>';
         }
@@ -1207,6 +872,7 @@ padding: 2px 12px;
 
         $sql0    = "SELECT * FROM " . $xoopsDB->prefix("menu_group") . "";
         $result0 = $xoopsDB->query($sql0);
+        $data1 = [];
         while ($myrow1 = $xoopsDB->fetchArray($result0)) {
             $data1[] = $myrow1;
         }
@@ -1221,20 +887,20 @@ padding: 2px 12px;
             while ($myrow = $xoopsDB->fetchArray($result)) {
                 $data[] = $myrow;
             }
-            echo $row1['title'];
+            echo htmlspecialchars($row1['title']);
             foreach ($data as $row) {
-                $label = '<a title="' . $row['title'] . '" href="' . $row['url'] . '" class="item_link  with_icon" tabindex="16">';
-                $label .= '<i class="' . $row['icon'] . '"></i>';
+                $label = '<a title="' . htmlspecialchars($row['title']) . '" href="' . htmlspecialchars($row['url']) . '" class="item_link  with_icon" tabindex="16">';
+                $label .= '<i class="' . htmlspecialchars($row['icon']) . '"></i>';
                 $label .= '<span class="link_content">';
                 $label .= '<span class="link_text">';
-                $label .= $row['title'];
+                $label .= htmlspecialchars($row['title']);
                 $label .= '</span>';
                 $label .= '</span>';
                 $label .= '</a>';
 
                 $li_attr = '';
                 if ($row['class']) {
-                    $li_attr = $row['class'];
+                    $li_attr = htmlspecialchars($row['class']);
                 }
                 $tree->add_row($row['id'], $row['parent_id'], $li_attr, $label);
             }
@@ -1254,34 +920,39 @@ padding: 2px 12px;
         break;
 
     default:
+        // Use the menumanager case for default handling if submitting, or redirect?
+        // The original code copied the menumanager logic into default.
+        // I will just redirect to index or menumanager to avoid code duplication
         if (isset($_POST['submitextra']) && $_POST['submitextra'] == 'Submit') {
-            global $xoopsDB;
-            $mfn_items = $_POST;
+             // Redirect to self with op=menumanager to handle it
+             // But we need to preserve POST data.
+             // Since this is legacy code, let's keep the logic here but cleaner.
+             // Actually, I can just include the logic by falling through if I structure it right, but they are separate blocks.
 
-            /*foreach ( $mfn_items as $key => $value ){
-                foreach ( $value as $keys => $values ){
-                    $meta_arr[$keys] = $value[$keys];
-                }
-            }*/
-            $menuid    = (isset($_POST['menuid']) && is_numeric($_POST['menuid'])) ? intval($_POST['menuid']) : intval($_GET['menuid']);
+             // Let's call the 'menumanager' block via recursion or redirect?
+             // Since headers are already sent likely (or not), redirect is safer but POST is lost.
+             // Best to just duplicate the logic call or refactor.
+
+             // Refactoring: The 'menumanager' block handles the update.
+             // I'll copy the sanitized logic.
+
+            $mfn_items = $_POST;
+            $menuid    = (isset($_POST['menuid']) && is_numeric($_POST['menuid'])) ? intval($_POST['menuid']) : (isset($_GET['menuid']) && is_numeric($_GET['menuid']) ? intval($_GET['menuid']) : 0);
+
             $serialise = serialize($mfn_items);
-            //var_dump($mfn_items);
-            //var_dump($serialise);
-            //var_dump($mfn_items);
+            $serialise_safe = $xoopsDB->quoteString($serialise);
 
             if ($menuid != 0 && $serialise != '') {
-                $sqlr = "UPDATE " . $xoopsDB->prefix('menu_group') . " SET options ='" . addslashes($serialise) . "' WHERE id=" . intval($menuid);
+                $sqlr = "UPDATE " . $xoopsDB->prefix('menu_group') . " SET options =$serialise_safe WHERE id=" . $menuid;
                 if ($resultr = $xoopsDB->queryF($sqlr)) {
                     $message = "menu modifié";
                 } else {
                     $message = _AM_SYSTEM_THEMEBUILDER_probleme_mod_menu;
                 }
-                //echo $message;
-                //echo $menuid;
                 redirect_header("admin.php?fct=themebuilder1&op=menu&action=menumanager&group_id=$menuid", 5, $message);
                 exit();
             } else {
-                $message = 'pas bon essayez une autre fois';
+                $message = 'Invalid data';
                 redirect_header('admin.php?fct=themebuilder1&op=menu&action=modifymenuoptions&menuid=' . $menuid . '', 5, $message);
                 exit();
             }
@@ -1290,52 +961,61 @@ padding: 2px 12px;
         $src1 = __DIR__;
         $dst1 = str_replace('include', 'menu', $src1);
         define('_DOC_ROOT', $dst1 . '/');
-        function site_url($url = '')
-        {
-            if (!empty($url)) {
-                return './admin/themebuilder1/menu/index.php?act=' . $url;
+
+        if (!function_exists('site_url')) {
+            function site_url($url = '')
+            {
+                if (!empty($url)) {
+                    return './admin/themebuilder1/menu/index.php?act=' . $url;
+                }
+                return _BASE_URL;
             }
-            return _BASE_URL;
         }
 
-        /**
+         /**
          * GController
          * This is the base class for all controllers
          * Every controller will extend this class
          */
-        class GController
-        {
-            protected $xoops;
-            public $xoopsDB;
-
-            /**
-             * Constructor. Initialize database connection
-             */
-            public function __construct()
+        if (!class_exists('GController')) {
+            class GController
             {
-                include _DOC_ROOT . 'includes/db.php';
-                $this->db = new DB;
-            }
+                protected $xoops;
+                public $xoopsDB;
+                public $db;
 
-            /**
-             * Includes the view file and display the data
-             *
-             * @param string $view_file
-             * @param array  $data
-             */
-            protected function view($view_file, $data = '')
-            {
-                if (is_array($data)) {
-                    extract($data);
+                /**
+                 * Constructor. Initialize database connection
+                 */
+                public function __construct()
+                {
+                    if (file_exists(_DOC_ROOT . 'includes/db.php')) {
+                        include_once _DOC_ROOT . 'includes/db.php';
+                        $this->db = new DB;
+                    }
                 }
-                $file = _DOC_ROOT . 'templates/' . $view_file . '.php';
-                if (file_exists($file)) {
-                    include $file;
-                } else {
-                    die("Cannot include $view_file");
+
+                /**
+                 * Includes the view file and display the data
+                 *
+                 * @param string $view_file
+                 * @param array  $data
+                 */
+                protected function view($view_file, $data = '')
+                {
+                    if (is_array($data)) {
+                        extract($data);
+                    }
+                    $file = _DOC_ROOT . 'templates/' . $view_file . '.php';
+                    if (file_exists($file)) {
+                        include $file;
+                    } else {
+                        die("Cannot include $view_file");
+                    }
                 }
             }
         }
+
 
         /**
          * default controller & method
@@ -1349,9 +1029,9 @@ padding: 2px 12px;
          */
         if (isset($_GET['act'])) {
             $act        = explode('.', (string) $_GET['act']);
-            $controller = $act[0];
+            $controller = preg_replace('/[^a-zA-Z0-9_]/', '', $act[0]);
             if (isset($act[1])) {
-                $method = $act[1];
+                $method = preg_replace('/[^a-zA-Z0-9_]/', '', $act[1]);
             }
         }
 
@@ -1360,11 +1040,18 @@ padding: 2px 12px;
         if (file_exists($controller_file)) {
             include $controller_file;
             $Class_name = ucfirst($controller);
-            $instance   = new $Class_name;
-            if (!is_callable([$instance, $method])) {
-                die("Cannot call method $method");
+            if (class_exists($Class_name)) {
+                $instance   = new $Class_name;
+                if (method_exists($instance, $method) && is_callable([$instance, $method])) {
+                    $instance->$method();
+                } else {
+                    die("Cannot call method $method");
+                }
+            } else {
+                 // Try instantiating it even if class_exists check failed (autoload issues?), but safer to fail.
+                 // The original code did: $instance = new $Class_name;
+                 // We will skip for safety.
             }
-            $instance->$method();
         } else {
             die("Cannot include controller $controller");
         }

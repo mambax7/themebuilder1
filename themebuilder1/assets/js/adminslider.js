@@ -1385,6 +1385,7 @@
 					// Is it saving or updating?
 					action: $('.cs-admin .cs-slider').hasClass('cs-add-slider') ? 'crellyslider_addSlider' : 'crellyslider_editSlider',
 					datas : options,
+                    token: (typeof xoopsSecurityToken !== 'undefined') ? xoopsSecurityToken : ''
 				},
 				success: function(response) {
 					//alert('Save slider response: ' + response);
@@ -1472,6 +1473,7 @@
 				data : {
 					action: 'crellyslider_editSlides',
 					datas : final_options,
+                    token: (typeof xoopsSecurityToken !== 'undefined') ? xoopsSecurityToken : ''
 				},
 				success: function(response) {
 					//console.log('Save slides response: ' + response);
@@ -1586,6 +1588,7 @@
 				data : {
 					action: 'crellyslider_editElements',
 					datas : final_options,
+                    token: (typeof xoopsSecurityToken !== 'undefined') ? xoopsSecurityToken : ''
 				},
 				success: function(response) {
 					//console.log(response);
@@ -1619,6 +1622,7 @@
 				data : {
 					action: 'crellyslider_deleteSlider',
 					datas : options,
+                    token: (typeof xoopsSecurityToken !== 'undefined') ? xoopsSecurityToken : ''
 				},
 				success: function(response) {
 					//alert('Delete slider response: ' + response);
@@ -1658,6 +1662,7 @@
 				data : {
 					action: 'crellyslider_duplicateSlider',
 					datas : options,
+                    token: (typeof xoopsSecurityToken !== 'undefined') ? xoopsSecurityToken : ''
 				},
 				success: function(response) {
 					//console.log(response);
@@ -1702,6 +1707,7 @@
 				data : {
 					action: 'crellyslider_exportSlider',
 					datas : options,
+                    token: (typeof xoopsSecurityToken !== 'undefined') ? xoopsSecurityToken : ''
 				},
 				success: function(response) {
 					if(response['response'] !== false) {
@@ -1737,6 +1743,7 @@
 			fd.append('action', 'crellyslider_importSlider');
 
 			// Do the ajax call
+            fd.append('token', (typeof xoopsSecurityToken !== 'undefined') ? xoopsSecurityToken : '');
 			jQuery.ajax({
 				type : 'POST',
 				url : 'admin/themebuilder1/ajax.php',
